@@ -33,4 +33,5 @@
     </ItemGroup>
 
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />
+    <Import Project="./PostBuild.targets"/>
 </Project>
