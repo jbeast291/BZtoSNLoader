@@ -80,13 +80,20 @@ public static class PrefabReaderUtils
 
         ReconstructAssociationsRecursive(rootData, rootTransform);
 
+        List<(Component instance, PrefabFormat.Component data)> addedComponents = new();
         foreach (var goData in data.gameObjects)
         {
             var go = gameObjectById[goData.id];
             foreach (var componentToAdd in goData.components)
             {
-                AddComponentFromDto(go, componentToAdd);
+                var added = AddComponentFromDto(go, componentToAdd);
+                if (added) addedComponents.Add((added, componentToAdd));
             }
+        }
+
+        foreach (var addedComponent in addedComponents)
+        {
+            ResolveComponentReferencesAtRuntime(gameObjectById, addedComponent.data, addedComponent.instance);
         }
 
         return;
@@ -192,30 +199,58 @@ public static class PrefabReaderUtils
         return true;
     }
 
-    private static void AddComponentFromDto(GameObject obj, PrefabFormat.Component componentData)
+    private static Component AddComponentFromDto(GameObject obj, PrefabFormat.Component componentData)
     {
         // TODO: Fix this bullshit resulting from RequireComponent
         if (componentData.type == "LiveMixin")
         {
             ErrorMessage.AddMessage("Skipping LiveMixin");
-            return;
+            return null;
         }
         if (componentData.type == "CreatureUtils")
         {
             ErrorMessage.AddMessage("Skipping CreatureUtils");
-            return;
+            return null;
         }
         
         if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, out var componentType))
         {
             Plugin.Logger.LogWarning("Failed to load component by name: " + componentData.type);
-            return;
+            return null;
         }
         
         ErrorMessage.AddMessage("Reconstructing component by type: " + componentType);
 
         var component = obj.AddComponent(componentType);
         JsonUtility.FromJsonOverwrite(componentData.serializedUnityJson, component);
+        return component;
+    }
+
+    private static void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, PrefabFormat.Component componentData, Component component)
+    {
+        foreach (var referenceData in componentData.objectReferences)
+        {
+            switch (referenceData.Value.referenceType)
+            {
+                case PrefabFormat.ComponentAssetReference.Type.LocalComponent:
+                    var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
+                    if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], out var referenceType))
+                    {
+                        Plugin.Logger.LogWarning("Could not find type by name " + rawId[0]);
+                        continue;
+                    }
+                    Guid containerGuid = Guid.Parse(rawId[1]);
+                    var containerGameObject = gameObjectsByGuid[containerGuid];
+                    Component targetComponent = containerGameObject.GetComponent(referenceType);
+                    string fieldName = referenceData.Key;
+                    var field = component.GetType().GetField(fieldName,
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    field.SetValue(component, targetComponent);
+                    break;
+                default:
+                    throw new ArgumentException("Unexpected reference type: " + referenceData.Value.referenceType);
+            }
+        }
     }
 
     // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system
