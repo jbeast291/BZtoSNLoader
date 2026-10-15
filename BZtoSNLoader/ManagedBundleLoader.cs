@@ -12,7 +12,7 @@ internal class ManagedBundleLoader
     private readonly Dictionary<string, BundleInstance> _bundles = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly IOut<AssetBundle> _disposedOut = new TaskResult<AssetBundle>();
-    
+
     public IEnumerator RequestBundleAndAddUser(string path)
     {
         yield return RequestBundleAndAddUser(path, _disposedOut);
@@ -21,17 +21,17 @@ internal class ManagedBundleLoader
     public IEnumerator RequestBundleAndAddUser(string path, IOut<AssetBundle> result)
     {
         string id = GetIdentifierFromBundlePath(path);
-        
+
         if (!_bundles.TryGetValue(id, out var bundle))
         {
             bundle = new BundleInstance();
             _bundles.Add(id, bundle);
         }
-        
+
         bundle.Users++;
 
         bool wasAlreadyLoaded;
-        
+
         switch (bundle.State)
         {
             case BundleState.Unloaded:
@@ -66,7 +66,7 @@ internal class ManagedBundleLoader
             }
             yield break;
         }
-        
+
         // Load bundle
         bundle.State = BundleState.Loading;
         var request = AssetBundle.LoadFromFileAsync(path);
@@ -75,11 +75,11 @@ internal class ManagedBundleLoader
         bundle.LoadedBundle = request.assetBundle;
         bundle.State = BundleState.Loaded;
     }
-    
+
     public IEnumerator RemoveBundleUser(string path)
     {
         string id = GetIdentifierFromBundlePath(path);
-        
+
         if (!_bundles.TryGetValue(id, out var bundle) || bundle.Users == 0)
         {
             Plugin.Logger.LogError("Critical error: releasing bundle with 0 users");
@@ -87,7 +87,7 @@ internal class ManagedBundleLoader
         }
 
         bundle.Users--;
-        
+
         if (bundle.Users > 0)
         {
             // The bundle still has users, so, continue
@@ -129,17 +129,15 @@ internal class ManagedBundleLoader
             Plugin.Logger.LogWarning("Cannot unload a bundle that is null");
             yield break;
         }
-        
+
         bundle.State = BundleState.Releasing;
         bundle.LoadedBundle.Unload(true);
         bundle.State = BundleState.Unloaded;
         bundle.LoadedBundle = null;
     }
-    
-    private string GetIdentifierFromBundlePath(string fullBundlePath)
-    {
-        return Path.GetFileName(fullBundlePath);
-    }
+
+    private static string GetIdentifierFromBundlePath(string fullBundlePath) 
+        => Path.GetFileName(fullBundlePath);
 
     private class BundleInstance
     {
