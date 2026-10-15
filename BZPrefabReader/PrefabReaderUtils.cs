@@ -96,6 +96,11 @@ public static class PrefabReaderUtils
             ResolveComponentReferencesAtRuntime(gameObjectById, addedComponent.data, addedComponent.instance);
         }
 
+        // TODO: see why they're even inactive at all
+        foreach (var addedComponent in addedComponents)
+        {
+            if (addedComponent.instance != null && addedComponent.instance is Behaviour behaviour) behaviour.enabled = true;
+        }
         return;
 
         // I actually hate this
@@ -213,7 +218,7 @@ public static class PrefabReaderUtils
             return null;
         }
         
-        if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, out var componentType))
+        if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, false, out var componentType))
         {
             Plugin.Logger.LogWarning("Failed to load component by name: " + componentData.type);
             return null;
@@ -234,7 +239,7 @@ public static class PrefabReaderUtils
             {
                 case PrefabFormat.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
-                    if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], out var referenceType))
+                    if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], true, out var referenceType))
                     {
                         Plugin.Logger.LogWarning("Could not find type by name " + rawId[0]);
                         continue;
@@ -245,6 +250,11 @@ public static class PrefabReaderUtils
                     string fieldName = referenceData.Key;
                     var field = component.GetType().GetField(fieldName,
                         BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                    if (field == null)
+                    {
+                        Plugin.Logger.LogError($"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
+                        continue;
+                    }
                     field.SetValue(component, targetComponent);
                     break;
                 default:

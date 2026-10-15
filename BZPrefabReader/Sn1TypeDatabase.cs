@@ -9,6 +9,20 @@ public class Sn1TypeDatabase
     private static Dictionary<string, Type> _types = new();
     private static Dictionary<Type, string> _typeNames = new();
     
+    private static Dictionary<string, Type> _unityTypes = new();
+    private static Dictionary<Type, string> _unityTypeNames = new();
+
+    private static readonly List<string> AllUnityAssemblies = new()
+    {
+        "UnityEngine.CoreModule",
+        "UnityEngine.PhysicsModule",
+        "UnityEngine.ParticleSystemModule",
+        "UnityEngine.UIModule",
+        "UnityEngine.UIElementsModule",
+        "UnityEngine.VFXModule",
+        "UnityEngine.AnimationModule"
+    };
+    
     public void Initialize(string[] types)
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -29,10 +43,42 @@ public class Sn1TypeDatabase
             _types.Add(typeName, type);
             _typeNames.Add(type, typeName);
         }
-    }
-    
-    public bool TryGetTypeByName(string name, out Type type) => _types.TryGetValue(name, out type);
 
+        foreach (var assembly in assemblies)
+        {
+            string assemblyName = assembly.GetName().Name;
+            bool valid = false;
+            foreach (var unityAssembly in AllUnityAssemblies)
+            {
+                if (unityAssembly.Equals(assemblyName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    valid = true;
+                    break;
+                }
+            }
+            if (valid)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    string typeName = type.Name;
+                    _unityTypes[typeName] = type;
+                    _unityTypeNames[type] = typeName;
+                }
+            }
+        }
+    }
+
+    public bool TryGetTypeByName(string name, bool includeUnityTypes, out Type type)
+    {
+        if (includeUnityTypes)
+        {
+            if (_unityTypes.TryGetValue(name, out type))
+                return true;
+        }
+        return _types.TryGetValue(name, out type);
+    }
+
+    // TODO: option to allow unity types?
     public bool TryGetNameForType(Type type, out string typeName)
     {
         if (_typeNames.TryGetValue(type, out typeName))
