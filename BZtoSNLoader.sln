@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZtoSNLoader", "BZtoSNLoader\BZtoSNLoader.csproj", "{D3F8BDE8-6930-4136-B5C9-3721A7E43920}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DependencyDataFormat", "DataFormat\DependencyDataFormat.shproj", "{6B38DC37-C338-455D-B46D-363246C5664C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZAddressablesExport", "BZAddressablesExport\BZAddressablesExport.csproj", "{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3F8BDE8-6930-4136-B5C9-3721A7E43920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3F8BDE8-6930-4136-B5C9-3721A7E43920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3F8BDE8-6930-4136-B5C9-3721A7E43920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3F8BDE8-6930-4136-B5C9-3721A7E43920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
