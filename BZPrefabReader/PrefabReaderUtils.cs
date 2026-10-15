@@ -5,9 +5,25 @@ using Object = UnityEngine.Object;
 
 namespace BZPrefabReader;
 
+// Only useful for prefabs with missing scripts that can't load at all
 public static class PrefabReaderUtils
 {
+    // TODO: Make this generic then later remove this entirely (it's only for testing)
     private static Dictionary<string, Mesh> _meshesLol = new();
+    
+    // TODO: Hardcode unity type stuff
+    /*
+     * Renderer: sharedMaterials
+     * MeshFilter: mesh
+     * SkinnedMeshRenderer: mesh, bone data????
+     * BoxCollider
+     * SphereCollider
+     * CapsuleCollider
+     * Light
+     * Animator
+     */
+    
+    // Handle SN types arbitrarily with JsonUtil + handle references automatically
     
     public static PrefabFormat ReadPrefab(GameObject prefab)
     {
@@ -119,6 +135,7 @@ public static class PrefabReaderUtils
         return first;
     }
 
+    // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system
     private static string EncodeAssetReference(Object asset)
     {
         _meshesLol.Add(asset.name, (Mesh)asset);
