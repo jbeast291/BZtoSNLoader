@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using DependencyDataFormat;
+using Nautilus.Handlers;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -17,64 +18,41 @@ internal class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
     private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
-
-    private const string dependencyDataFile = "assetPathToBundleDeps.json";
-    private static BundleDependencyFormat dependencyData;
-
+    private const string DependencyDataFileName = "assetPathToBundleDeps.json";
+    // TODO: Only initialize these 2 upon loading the game (early load task?)
+    private static BelowZeroGameData _bzGameData;
+    private static ManagedBundleLoader _managedBundleLoader;
+    public static BelowZeroAssetLoader AssetLoader { get; private set; }
+    
     private void Awake()
     {
         Logger = base.Logger;
-        LoadDependencyJson();
+        LoadDependencyData();
+        _managedBundleLoader = new ManagedBundleLoader();
+        AssetLoader = new BelowZeroAssetLoader(_bzGameData, _managedBundleLoader);
+        
+        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
     }
 
-    private static void LoadDependencyJson() 
+    private static void LoadDependencyData() 
     {
-        string jsonData = File.ReadAllText(GetPathFor(dependencyDataFile));
-        dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
+        // TODO: Remove hardcoding, add platform-specific loading, move to later
+        var hardcodedBzPath = @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero";
+        string bzAddressablesFolder = Path.Combine(hardcodedBzPath,
+            "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64/");
+        
+        // Load bundles dependency data
+        string jsonData = File.ReadAllText(GetModFolderPath(DependencyDataFileName));
+        var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
+
+        _bzGameData = new BelowZeroGameData(hardcodedBzPath, bzAddressablesFolder, dependencyData);
 
         if (dependencyData.Version != BundleDependencyFormat.latestVersion)
         {
-            Logger.LogError($"Invalid Dependency Version! Please ensure you replaced the \"{dependencyDataFile}\" when updating!");
+            Logger.LogError($"Invalid Dependency Version! Please ensure you replaced the \"{DependencyDataFileName}\" when updating!");
         }
     }
-
-    private void CreatePrefabAtPlayer(string assetPath)
-    {
-        GameObject prefab = (GameObject) LoadPrefab(assetPath);
-        GameObject go = Instantiate(prefab);
-        go.transform.position = Player.main.transform.position;
-    }
-
-    private UnityEngine.Object LoadPrefab(string assetPath)
-    {
-        if(!dependencyData.assetPathToBundleDeps.TryGetValue(assetPath, out List<string> bundles))
-        {
-            throw new InvalidKeyException($"Invalid BZ Addresables Path: \"{assetPath}\"!");
-        }
-
-        for(int i = bundles.Count - 1; i > 0; i--)
-        {
-            string bundlePath = GetPathToBZBundle(bundles[i]);
-            if (!File.Exists(bundlePath)) 
-            {
-                throw new Exception($"Required Dependency at: \"{bundlePath}\" not found!");
-            }
-            AssetBundle.LoadFromFile(bundlePath);
-        }
-
-        string bundleWithAsset = GetPathToBZBundle(bundles[0]);
-        var gos = AssetBundle.LoadFromFile(bundleWithAsset).LoadAllAssets();
-        return gos[0];
-    }
-
-    private const string pathToBZAddressablesFolder = @"Z:\home\jbeast\.local\share\Steam\steamapps\common\SubnauticaZero\";
-
-    private static readonly string bzAddressableFolder 
-        = Path.Combine(pathToBZAddressablesFolder, "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64/");
     
-    private static string GetPathToBZBundle(string bundleName) 
-        => Path.Combine(bzAddressableFolder, bundleName);
-
-    private static string GetPathFor(string assetName) 
-        => Path.Combine(Path.GetDirectoryName(Assembly.Location)!, assetName);
+    private static string GetModFolderPath(string assetName) =>
+        Path.Combine(Path.GetDirectoryName(Assembly.Location)!, assetName);
 } 
