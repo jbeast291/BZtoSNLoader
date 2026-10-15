@@ -70,10 +70,10 @@ internal class ManagedBundleLoader
         // Load bundle
         bundle.State = BundleState.Loading;
         var request = AssetBundle.LoadFromFileAsync(path);
-        bundle.State = BundleState.Loaded;
         yield return request;
         result.Set(request.assetBundle);
         bundle.LoadedBundle = request.assetBundle;
+        bundle.State = BundleState.Loaded;
     }
     
     public IEnumerator RemoveBundleUser(string path)
