@@ -41,7 +41,7 @@ public class BelowZeroAssetLoader
             {
                 throw new Exception($"Required Dependency at: \"{bundlePath}\" not found!");
             }
-            yield return BundleLoader.RequestBundleAndAddUser(assetPath);
+            yield return BundleLoader.RequestBundleAndAddUser(bundlePath);
         }
         
         string bundleWithAsset = GameData.GetPathToBelowZeroBundle(bundles[0]);
