@@ -39,7 +39,7 @@ internal class Plugin : BaseUnityPlugin
         // TODO: Remove hardcoding, add platform-specific loading, move to later
         var hardcodedBzPath = @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero";
         string bzAddressablesFolder = Path.Combine(hardcodedBzPath,
-            "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64/");
+            "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64");
         
         // Load bundles dependency data
         string jsonData = File.ReadAllText(GetModFolderPath(DependencyDataFileName));

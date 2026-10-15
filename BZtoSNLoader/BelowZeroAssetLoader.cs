@@ -19,7 +19,7 @@ public class BelowZeroAssetLoader
         BundleLoader = bundleLoader;
     }
     
-    public IEnumerable LoadAsset<T>(string assetPath, IOut<T> result) where T : Object
+    public IEnumerator LoadAsset<T>(string assetPath, IOut<T> result) where T : Object
     {
         TaskResult<AssetBundle> bundle = new TaskResult<AssetBundle>();
         yield return LoadAssetDependencies(assetPath, bundle);
@@ -27,7 +27,7 @@ public class BelowZeroAssetLoader
         result.Set((T)asset);
     }
 
-    private IEnumerable LoadAssetDependencies(string assetPath, IOut<AssetBundle> assetBundle)
+    private IEnumerator LoadAssetDependencies(string assetPath, IOut<AssetBundle> assetBundle)
     {
         if (!GameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(assetPath, out List<string> bundles))
         {
