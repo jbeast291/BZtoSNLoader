@@ -25,9 +25,7 @@ public static class Commands
             Debug.LogFormat("Spawning {0} {1}", count, distance);
             for (int i = 0; i < count; i++)
             {
-                GameObject gameObject = Utils.CreatePrefab(result, distance, i > 0);
-                LargeWorldEntity.Register(gameObject);
-                gameObject.SendMessage("StartConstruction", SendMessageOptions.DontRequireReceiver);
+                Utils.CreatePrefab(result, distance, i > 0);
             }
         }
         else
