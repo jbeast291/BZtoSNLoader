@@ -1,29 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace BZPrefabReader;
 
-// Only useful for prefabs with missing scripts that can't load at all
 public static class PrefabReaderUtils
 {
     // TODO: Make this generic then later remove this entirely (it's only for testing)
     private static Dictionary<string, Mesh> _meshesLol = new();
     
-    // TODO: Hardcode unity type stuff
-    /*
-     * Renderer: sharedMaterials
-     * MeshFilter: mesh
-     * SkinnedMeshRenderer: mesh, bone data????
-     * BoxCollider
-     * SphereCollider
-     * CapsuleCollider
-     * Light
-     * Animator
-     */
-    
-    // Handle SN types arbitrarily with JsonUtil + handle references automatically
+    // TODO: Handle SN1/BZ types arbitrarily with JsonUtil + handle references automatically
     
     public static PrefabFormat ReadPrefab(GameObject prefab)
     {
@@ -52,37 +40,16 @@ public static class PrefabReaderUtils
             }
             gameObject.transform = new PrefabFormat.Transform
             {
-                localPosition = new PrefabFormat.FakeVector3(go.Value.transform.localPosition),
-                localRotation = new PrefabFormat.FakeQuaternion(go.Value.transform.localRotation),
-                localScale = new PrefabFormat.FakeVector3(go.Value.transform.localScale),
-                parent = parentId
+                parent = parentId,
+                siblingIndex = go.Value.transform.GetSiblingIndex(),
+                depth = GetDepth(go.Value.transform)
             };
             var components = new List<PrefabFormat.Component>();
             foreach (var component in go.Value.GetComponents<Component>())
             {
-                if (component is Transform) continue;
-                if (component is MeshFilter meshFilter)
+                if (TryWriteComponentToDto(component, out var componentResult))
                 {
-                    components.Add(new PrefabFormat.Component
-                    {
-                        type = "MeshFilter",
-                        values = new Dictionary<string, PrefabFormat.ComponentValue>
-                        {
-                            {"sharedMesh", new PrefabFormat.ComponentValue
-                            {
-                                isReference = true,
-                                reference = EncodeAssetReference(meshFilter.sharedMesh)
-                            }}
-                        }
-                    });
-                }
-
-                if (component is MeshRenderer)
-                {
-                    components.Add(new PrefabFormat.Component
-                    {
-                        type = "MeshRenderer"
-                    });
+                    components.Add(componentResult);
                 }
             }
             gameObject.components = components;
@@ -92,47 +59,105 @@ public static class PrefabReaderUtils
         return result;
     }
 
-    public static GameObject ReconstructPrefab(PrefabFormat data)
+    public static void ReconstructComponents(GameObject instance, PrefabFormat data)
     {
-        GameObject first = null;
+        var allTransformsInChildren = instance.GetComponentsInChildren<Transform>(true);
+        
         var gameObjectById = new Dictionary<Guid, GameObject>();
         var idByGameObject = new Dictionary<GameObject, Guid>();
+        
+        // Reconstruct IDs by hierarchy
+        gameObjectById.Clear();
+        idByGameObject.Clear();
+
+        var dataById = data.gameObjects.ToDictionary(go => go.id);
+        var rootData = data.gameObjects.Single(go => go.transform.parent == Guid.Empty);
+
+        var rootTransform = allTransformsInChildren.Single(t => t.parent == null);
+
+        ReconstructAssociationsRecursive(rootData, rootTransform);
 
         foreach (var goData in data.gameObjects)
         {
-            var go = new GameObject(goData.name);
-            if (first == null) first = go.gameObject;
-            gameObjectById.Add(goData.id, go);
-            idByGameObject.Add(go, goData.id);
-
-            foreach (var component in goData.components)
+            var go = gameObjectById[goData.id];
+            foreach (var componentToAdd in goData.components)
             {
-                if (component.type == "MeshRenderer")
-                {
-                    go.AddComponent<MeshRenderer>();
-                }
-                else if (component.type == "MeshFilter")
-                {
-                    go.AddComponent<MeshFilter>().mesh = DecodeAssetReference(component.values["sharedMesh"].reference);
-                }
+                AddComponentFromDto(go, componentToAdd);
             }
         }
 
-        foreach (var goData in data.gameObjects)
+        return;
+
+        // I actually hate this
+        void ReconstructAssociationsRecursive(PrefabFormat.GameObject goData, Transform transform)
         {
-            var go = gameObjectById[goData.id]; 
-            var parentId = goData.transform.parent;
-            if (parentId != Guid.Empty)
-            {
-                go.transform.parent = gameObjectById[parentId].transform;
-            }
+            gameObjectById.Add(goData.id, transform.gameObject);
+            idByGameObject.Add(transform.gameObject, goData.id);
 
-            go.transform.localPosition = goData.transform.localPosition.ToVector3();
-            go.transform.localRotation = goData.transform.localRotation.ToQuaternion();
-            go.transform.localScale = goData.transform.localScale.ToVector3();
+            PrefabFormat.GameObject[] children = data.gameObjects
+                .Where(go => go.transform.parent == goData.id)
+                .OrderBy(go => go.transform.siblingIndex)
+                .ToArray();
+
+            foreach (var childData in children)
+            {
+                var childTransform = transform.GetChild(childData.transform.siblingIndex);
+
+                if (childTransform.name != childData.name)
+                {
+                    Plugin.Logger.LogError(
+                        $"Expected '{childData.name}' at sibling index {childData.transform.siblingIndex} under child " +
+                        $"'{transform.name}', but instead found '{childTransform.name}'");
+                    continue;
+                }
+
+                ReconstructAssociationsRecursive(childData, childTransform);
+            }
+        }
+    }
+
+    private static int GetDepth(Transform transform)
+    {
+        int c = 0;
+        while (transform.parent != null)
+        {
+            transform = transform.parent;
+            c++;
         }
 
-        return first;
+        return c;
+    }
+
+    private static bool TryWriteComponentToDto(Component component, out PrefabFormat.Component result)
+    {
+        if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), out var typeName))
+        {
+            Plugin.Logger.LogWarning("Skipping serializing component: " + component);
+            result = null;
+            return false;
+        }
+
+        var unitySerializedJson = JsonUtility.ToJson(component);
+        result = new PrefabFormat.Component
+        {
+            type = typeName,
+            serializedUnityJson = unitySerializedJson
+        };
+        return true;
+    }
+
+    private static void AddComponentFromDto(GameObject obj, PrefabFormat.Component componentData)
+    {
+        if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, out var componentType))
+        {
+            Plugin.Logger.LogWarning("Failed to load component by name: " + componentData.type);
+            return;
+        }
+        
+        ErrorMessage.AddMessage("Reconstructing component by type: " + componentType);
+
+        var component = obj.AddComponent(componentType);
+        JsonUtility.FromJsonOverwrite(componentData.serializedUnityJson, component);
     }
 
     // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system

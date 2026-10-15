@@ -21,26 +21,17 @@ public class PrefabFormat
     [Serializable]
     public class Transform
     {
-        public FakeVector3 localPosition;
-        public FakeQuaternion localRotation;
-        public FakeVector3 localScale;
         public Guid parent;
+        public int siblingIndex;
+        public int depth;
     }
 
     [Serializable]
     public class Component
     {
         public string type;
-        public Dictionary<string, ComponentValue> values = new();
-    }
-
-    [Serializable]
-    public class ComponentValue
-    {
-        public object value;
-        public string reference;
-        
-        public bool isReference;
+        public string serializedUnityJson;
+        public Dictionary<string, object> objectReferences = new();
     }
 
     public struct FakeVector3

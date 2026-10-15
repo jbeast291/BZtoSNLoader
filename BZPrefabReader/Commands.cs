@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using Nautilus.Commands;
 using Newtonsoft.Json;
+using UnityEngine;
 using UWE;
 
 namespace BZPrefabReader;
@@ -19,16 +20,25 @@ public static class Commands
     {
         ErrorMessage.AddMessage("Reading prefabs...");
 
-        var task = CraftData.GetPrefabForTechTypeAsync(TechType.LilyPadStage2);
+        var task = CraftData.GetPrefabForTechTypeAsync(TechType.ArcticPeeper);
         yield return task;
 
-        ErrorMessage.AddMessage("loaded lily pad");
+        ErrorMessage.AddMessage("Loaded arctic peeper");
         
-        var result = task.GetResult();
-        var prefab = PrefabReaderUtils.ReadPrefab(result);
-        File.WriteAllText("READ-PREFAB.txt", JsonConvert.SerializeObject(prefab));
-        var reconstructed = PrefabReaderUtils.ReconstructPrefab(prefab);
+        var prefab = task.GetResult();
+        var prefabData = PrefabReaderUtils.ReadPrefab(prefab);
+        File.WriteAllText("READ-PREFAB.txt", JsonConvert.SerializeObject(prefabData));
+
+        var arcticPeeper = UWE.Utils.InstantiateDeactivated(prefab, Vector3.zero, Quaternion.identity);
+        ComponentStripUtils.StripComponents(arcticPeeper);
         
-        ErrorMessage.AddMessage("Done reading prefabs...");
+        ErrorMessage.AddMessage("Stripped components from Arctic Peeper");
+        
+        PrefabReaderUtils.ReconstructComponents(arcticPeeper, prefabData);
+        arcticPeeper.SetActive(true);
+        
+        ErrorMessage.AddMessage("Reconstructed Arctic Peeper");
+        
+        // ErrorMessage.AddMessage("Done reading prefabs...");
     }
 }
