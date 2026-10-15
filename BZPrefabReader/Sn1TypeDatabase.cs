@@ -78,9 +78,13 @@ public class Sn1TypeDatabase
         return _types.TryGetValue(name, out type);
     }
 
-    // TODO: option to allow unity types?
-    public bool TryGetNameForType(Type type, out string typeName)
+    public bool TryGetNameForType(Type type, bool includeUnityTypes, out string typeName)
     {
+        if (includeUnityTypes && _unityTypeNames.TryGetValue(type, out typeName))
+        {
+            return true;
+        }
+        
         if (_typeNames.TryGetValue(type, out typeName))
         {
             return true;
@@ -88,7 +92,7 @@ public class Sn1TypeDatabase
 
         if (TrySubstituteBaseType(type, out var substitutedType))
         {
-            return TryGetNameForType(substitutedType, out typeName);
+            return TryGetNameForType(substitutedType, false, out typeName);
         }
 
         return false;

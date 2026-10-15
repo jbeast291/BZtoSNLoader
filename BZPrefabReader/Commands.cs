@@ -20,10 +20,10 @@ public static class Commands
     {
         ErrorMessage.AddMessage("Reading prefabs...");
 
-        var task = CraftData.GetPrefabForTechTypeAsync(TechType.ArcticPeeper);
+        var task = CraftData.GetPrefabForTechTypeAsync(TechType.ArcticRay);
         yield return task;
 
-        ErrorMessage.AddMessage("Loaded arctic peeper");
+        ErrorMessage.AddMessage("Loaded arctic ray");
         
         var prefab = task.GetResult();
         var prefabData = PrefabReaderUtils.ReadPrefab(prefab);
@@ -32,7 +32,7 @@ public static class Commands
         var arcticPeeper = UWE.Utils.InstantiateDeactivated(prefab, Vector3.zero, Quaternion.identity);
         ComponentStripUtils.StripComponents(arcticPeeper);
         
-        ErrorMessage.AddMessage("Stripped components from Arctic Peeper");
+        ErrorMessage.AddMessage("Stripped components from Arctic Ray");
         
         PrefabReaderUtils.ReconstructComponents(arcticPeeper, prefabData);
         arcticPeeper.SetActive(true);

@@ -2,20 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace BZPrefabReader;
 
 public static class PrefabReaderUtils
 {
-    // TODO: Make this generic then later remove this entirely (it's only for testing)
-    private static Dictionary<string, Mesh> _meshesLol = new();
-    
-    // TODO: Handle SN1/BZ types arbitrarily with JsonUtil + handle references automatically
-    
     public static PrefabFormat ReadPrefab(GameObject prefab)
     {
         var result = new PrefabFormat();
@@ -80,7 +73,10 @@ public static class PrefabReaderUtils
 
         ReconstructAssociationsRecursive(rootData, rootTransform);
 
+        // -- Add components! --
         List<(Component instance, PrefabFormat.Component data)> addedComponents = new();
+        
+        // add the new components
         foreach (var goData in data.gameObjects)
         {
             var go = gameObjectById[goData.id];
@@ -91,15 +87,52 @@ public static class PrefabReaderUtils
             }
         }
 
+        HashSet<Component> pickedUpInstances = new HashSet<Component>();
+        foreach (var added in addedComponents) pickedUpInstances.Add(added.instance);
+        
+        // get components that weren't picked up
+        foreach (var component in instance.GetComponentsInChildren<Component>())
+        {
+            if (!pickedUpInstances.Contains(component) &&
+                Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
+            {
+                addedComponents.Add((component, new PrefabFormat.Component()
+                {
+                    type = typeName,
+                    serializedUnityJson = "{}"
+                }));
+            }
+        }
+
+        // resolve component references
         foreach (var addedComponent in addedComponents)
         {
             ResolveComponentReferencesAtRuntime(gameObjectById, addedComponent.data, addedComponent.instance);
         }
 
-        // TODO: see why they're even inactive at all
+        // TODO: fix this hardcoding
         foreach (var addedComponent in addedComponents)
         {
-            if (addedComponent.instance != null && addedComponent.instance is Behaviour behaviour) behaviour.enabled = true;
+            if (addedComponent.instance == null) continue;
+            if (addedComponent.instance is Behaviour behaviour) behaviour.enabled = true;
+            if (addedComponent.instance is LiveMixin lm)
+            {
+                lm.data = ScriptableObject.CreateInstance<LiveMixinData>();
+            }
+
+            if (addedComponent.instance is Creature creature)
+            {
+                creature.liveMixin = creature.GetComponent<LiveMixin>();
+                // DOES THIS NEED TO BE DONE? WHY??
+                creature.traitsAnimator = null;
+                creature.traitsAnimator = creature.GetComponentInChildren<Animator>();
+            }
+            
+            if (addedComponent.instance is AnimateByVelocity abv)
+            {
+                // WHY DOES THIS NEED TO BE DONE? DOES IT EVEN NEED THIS!????
+                abv.animator = abv.GetComponentInChildren<Animator>();
+            }
         }
         return;
 
@@ -145,7 +178,7 @@ public static class PrefabReaderUtils
 
     private static bool TryWriteComponentToDto(Component component, out PrefabFormat.Component result, Dictionary<GameObject, Guid> guidByGameObject)
     {
-        if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), out var typeName))
+        if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
         {
             Plugin.Logger.LogWarning("Skipping serializing component: " + component);
             result = null;
@@ -186,7 +219,12 @@ public static class PrefabReaderUtils
                     continue;
                 }
                 var referencedComponent = fieldValue as Component;
-                string componentRefString = $"{fieldValue.GetType().Name}::{guidByGameObject[referencedComponent.gameObject]}";
+                if (!Plugin.TypeDatabase.TryGetNameForType(fieldValue.GetType(), true, out var finalTypeName))
+                {
+                    Plugin.Logger.LogWarning("Failed to find name for type (or substitution): " + fieldValue.GetType());
+                    continue;
+                }
+                string componentRefString = $"{finalTypeName}::{guidByGameObject[referencedComponent.gameObject]}";
                 objectReferences[unityRef.Key] = new PrefabFormat.ComponentAssetReference
                 {
                     referenceType = PrefabFormat.ComponentAssetReference.Type.LocalComponent,
@@ -233,8 +271,19 @@ public static class PrefabReaderUtils
 
     private static void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, PrefabFormat.Component componentData, Component component)
     {
+        if (componentData.objectReferences == null) return;
         foreach (var referenceData in componentData.objectReferences)
         {
+            string fieldName = referenceData.Key;
+            var field = component.GetType().GetField(fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (field == null)
+            {
+                Plugin.Logger.LogError($"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
+                continue;
+            }
+
+            // TODO: Add support for gameobject references (needed to fix AnimateByVelocity and such)
             switch (referenceData.Value.referenceType)
             {
                 case PrefabFormat.ComponentAssetReference.Type.LocalComponent:
@@ -247,15 +296,8 @@ public static class PrefabReaderUtils
                     Guid containerGuid = Guid.Parse(rawId[1]);
                     var containerGameObject = gameObjectsByGuid[containerGuid];
                     Component targetComponent = containerGameObject.GetComponent(referenceType);
-                    string fieldName = referenceData.Key;
-                    var field = component.GetType().GetField(fieldName,
-                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-                    if (field == null)
-                    {
-                        Plugin.Logger.LogError($"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
-                        continue;
-                    }
                     field.SetValue(component, targetComponent);
+                    Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{targetComponent}'");
                     break;
                 default:
                     throw new ArgumentException("Unexpected reference type: " + referenceData.Value.referenceType);
@@ -263,6 +305,7 @@ public static class PrefabReaderUtils
         }
     }
 
+    /*
     // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system
     // Needs to be able to reference 1) components on the same GO and 2) arbitrary assets
     private static string EncodeAssetReference(Object asset)
@@ -275,4 +318,5 @@ public static class PrefabReaderUtils
     {
         return _meshesLol[reference];
     }
+    */
 }
