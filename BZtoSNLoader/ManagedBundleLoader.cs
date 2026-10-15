@@ -73,6 +73,7 @@ internal class ManagedBundleLoader
         bundle.State = BundleState.Loaded;
         yield return request;
         result.Set(request.assetBundle);
+        bundle.LoadedBundle = request.assetBundle;
     }
     
     public IEnumerator RemoveBundleUser(string path)
@@ -132,6 +133,7 @@ internal class ManagedBundleLoader
         bundle.State = BundleState.Releasing;
         bundle.LoadedBundle.Unload(true);
         bundle.State = BundleState.Unloaded;
+        bundle.LoadedBundle = null;
     }
     
     private string GetIdentifierFromBundlePath(string fullBundlePath)
