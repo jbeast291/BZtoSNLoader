@@ -20,7 +20,8 @@ public static class ComponentStripUtils
         typeof(CanvasRenderer),
         typeof(Canvas),
         typeof(FMOD_CustomEmitter),
-        typeof(Rigidbody)
+        typeof(Rigidbody),
+        typeof(Collider)
     };
 
     public static void StripComponents(GameObject obj)

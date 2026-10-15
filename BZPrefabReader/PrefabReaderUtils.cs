@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -47,7 +50,7 @@ public static class PrefabReaderUtils
             var components = new List<PrefabFormat.Component>();
             foreach (var component in go.Value.GetComponents<Component>())
             {
-                if (TryWriteComponentToDto(component, out var componentResult))
+                if (TryWriteComponentToDto(component, out var componentResult, idByGameObject))
                 {
                     components.Add(componentResult);
                 }
@@ -128,7 +131,7 @@ public static class PrefabReaderUtils
         return c;
     }
 
-    private static bool TryWriteComponentToDto(Component component, out PrefabFormat.Component result)
+    private static bool TryWriteComponentToDto(Component component, out PrefabFormat.Component result, Dictionary<GameObject, Guid> guidByGameObject)
     {
         if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), out var typeName))
         {
@@ -138,16 +141,71 @@ public static class PrefabReaderUtils
         }
 
         var unitySerializedJson = JsonUtility.ToJson(component);
+        
+        var jsonData = JObject.Parse(unitySerializedJson);
+        
+        var unityRefs = jsonData.Properties()
+            .Where(p =>
+                p.Value.Type == JTokenType.Object &&
+                p.Value["m_FileID"] != null)
+            .ToDictionary(
+                p => p.Name,
+                p => p.Value.ToObject<PrefabFormat.UnityComponentAssetReference>()
+            );
+        
+        var objectReferences = new Dictionary<string, PrefabFormat.ComponentAssetReference>();
+        foreach (var unityRef in unityRefs)
+        {
+            if (string.IsNullOrEmpty(unityRef.Value.m_FileID)) continue;
+            
+            var field = component.GetType().GetField(unityRef.Key, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (field == null)
+            {
+                Plugin.Logger.LogError("Failed to find field " + unityRef.Key);
+                continue;
+            }
+
+            if (typeof(Component).IsAssignableFrom(field.FieldType))
+            {
+                var fieldValue = field.GetValue(component);
+                if (fieldValue == null)
+                {
+                    Plugin.Logger.LogInfo("Skipping serializing empty field");
+                    continue;
+                }
+                var referencedComponent = fieldValue as Component;
+                string componentRefString = $"{fieldValue.GetType().Name}::{guidByGameObject[referencedComponent.gameObject]}";
+                objectReferences[unityRef.Key] = new PrefabFormat.ComponentAssetReference
+                {
+                    referenceType = PrefabFormat.ComponentAssetReference.Type.LocalComponent,
+                    identifier = componentRefString
+                };
+            }
+        }
+        
         result = new PrefabFormat.Component
         {
             type = typeName,
-            serializedUnityJson = unitySerializedJson
+            serializedUnityJson = unitySerializedJson,
+            objectReferences = objectReferences
         };
         return true;
     }
 
     private static void AddComponentFromDto(GameObject obj, PrefabFormat.Component componentData)
     {
+        // TODO: Fix this bullshit resulting from RequireComponent
+        if (componentData.type == "LiveMixin")
+        {
+            ErrorMessage.AddMessage("Skipping LiveMixin");
+            return;
+        }
+        if (componentData.type == "CreatureUtils")
+        {
+            ErrorMessage.AddMessage("Skipping CreatureUtils");
+            return;
+        }
+        
         if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, out var componentType))
         {
             Plugin.Logger.LogWarning("Failed to load component by name: " + componentData.type);
@@ -161,6 +219,7 @@ public static class PrefabReaderUtils
     }
 
     // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system
+    // Needs to be able to reference 1) components on the same GO and 2) arbitrary assets
     private static string EncodeAssetReference(Object asset)
     {
         _meshesLol.Add(asset.name, (Mesh)asset);

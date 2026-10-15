@@ -31,9 +31,10 @@ public class PrefabFormat
     {
         public string type;
         public string serializedUnityJson;
-        public Dictionary<string, object> objectReferences = new();
+        public Dictionary<string, ComponentAssetReference> objectReferences = new();
     }
 
+    [Serializable]
     public struct FakeVector3
     {
         public float x;
@@ -50,6 +51,7 @@ public class PrefabFormat
         public Vector3 ToVector3() => new Vector3(x, y, z);
     }
     
+    [Serializable]
     public struct FakeQuaternion
     {
         public float x;
@@ -66,5 +68,27 @@ public class PrefabFormat
         }
 
         public Quaternion ToQuaternion() => new Quaternion(x, y, z, w);
+    }
+
+    [Serializable]
+    public struct UnityComponentAssetReference
+    {
+        public string m_FileID;
+    }
+
+    [Serializable]
+    public struct ComponentAssetReference
+    {
+        public string identifier;
+        public Type referenceType;
+
+        public enum Type : byte
+        {
+            Undefined,
+            LocalComponent,
+            GameObject,
+            Transform,
+            ExternalAsset
+        }
     }
 }
