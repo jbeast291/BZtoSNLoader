@@ -6,6 +6,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DependencyDataFormat", "Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZAddressablesExport", "BZAddressablesExport\BZAddressablesExport.csproj", "{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZPrefabReader", "BZPrefabReader\BZPrefabReader.csproj", "{7CA95156-B3A1-4765-B52D-18362E41A8CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentPortFramework", "ComponentPortFramework\ComponentPortFramework.csproj", "{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,5 +24,13 @@ Global
 		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DFB1D77-A0DF-469C-82FD-24B8DCF6D2F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CA95156-B3A1-4765-B52D-18362E41A8CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA95156-B3A1-4765-B52D-18362E41A8CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA95156-B3A1-4765-B52D-18362E41A8CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA95156-B3A1-4765-B52D-18362E41A8CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

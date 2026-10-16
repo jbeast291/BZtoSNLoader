@@ -34,6 +34,11 @@
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="ComponentDataExport.json" />
+      <Resource Include="ComponentDataExport.json" />
+    </ItemGroup>
+
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />
     <Import Project="./PostBuild.targets"/>
 </Project>
