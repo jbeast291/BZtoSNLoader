@@ -89,7 +89,7 @@ public class PrefabComponentSerializer
         var rootTransform = allTransformsInChildren.Single(t => t.parent == null);
 
         ReconstructAssociationsRecursive(rootData, rootTransform);
-
+        
         // -- Add components! --
         List<(Component instance, JsonPrefab.Component data)> addedComponents = new();
         
@@ -120,7 +120,7 @@ public class PrefabComponentSerializer
                 }));
             }
         }
-
+        
         // resolve component references
         foreach (var addedComponent in addedComponents)
         {

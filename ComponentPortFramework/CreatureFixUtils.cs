@@ -33,5 +33,10 @@ public static class CreatureFixUtils
             // WHY DOES THIS NEED TO BE DONE? DOES IT EVEN NEED THIS!????
             abv.animator = abv.GetComponentInChildren<Animator>();
         }
+
+        if (component is WorldForces wf)
+        {
+            wf.handleGravity = true;
+        }
     }
 }

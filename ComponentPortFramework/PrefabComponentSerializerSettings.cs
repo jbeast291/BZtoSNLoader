@@ -12,7 +12,7 @@ public class PrefabComponentSerializerSettings
     /// </summary>
     public bool EnableAllComponents { get; init; } = true;
 
-    public bool SkipFmodComponents { get; init; } = true;
+    public bool SkipFmodComponents { get; init; } = false;
 
-    public int RecursionDepthLimit { get; init; } = 50;
+    public int RecursionDepthLimit { get; init; } = 100;
 }
