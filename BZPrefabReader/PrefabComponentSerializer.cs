@@ -229,6 +229,24 @@ public static class PrefabComponentSerializer
 
                 }
             }
+            else if (field.FieldType == typeof(Transform))
+            {
+                var referenced = field.GetValue(component);
+                if (referenced is not Transform referencedTransform)
+                {
+                    Plugin.Logger.LogInfo("Skipping serializing empty Transform field");
+                    continue;
+                }
+
+                if (guidByGameObject.TryGetValue(referencedTransform.gameObject, out var guid))
+                {
+                    objectReferences[unityRef.Key] = new JsonPrefab.ComponentAssetReference
+                    {
+                        referenceType = JsonPrefab.ComponentAssetReference.Type.Transform,
+                        identifier = guid.ToString()
+                    };
+                }
+            }
             else if (typeof(Component).IsAssignableFrom(field.FieldType))
             {
                 var fieldValue = field.GetValue(component);
@@ -306,9 +324,29 @@ public static class PrefabComponentSerializer
             switch (referenceData.Value.referenceType)
             {
                 case JsonPrefab.ComponentAssetReference.Type.GameObject:
-                    var referencedGo = gameObjectsByGuid[Guid.Parse(referenceData.Value.identifier)];
-                    field.SetValue(component, referencedGo);
-                    Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
+                    var goId = Guid.Parse(referenceData.Value.identifier);
+                    if (gameObjectsByGuid.TryGetValue(goId, out var referencedGo))
+                    {
+                        field.SetValue(component, referencedGo);
+                        Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
+                    }
+                    else
+                    {
+                        Plugin.Logger.LogWarning("Failed to find GameObject of ID " + goId);
+                    }
+                    break;
+                case JsonPrefab.ComponentAssetReference.Type.Transform:
+                    var transformId = Guid.Parse(referenceData.Value.identifier);
+                    if (gameObjectsByGuid.TryGetValue(transformId, out var referencedTransformGo))
+                    {
+                        var referencedTransform = referencedTransformGo.transform;
+                        field.SetValue(component, referencedTransform);
+                        Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedTransform}'");
+                    }
+                    else
+                    {
+                        Plugin.Logger.LogWarning("Failed to find Transform of ID " + transformId);
+                    }
                     break;
                 case JsonPrefab.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
