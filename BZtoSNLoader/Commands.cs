@@ -6,7 +6,7 @@ using UWE;
 
 namespace BZtoSNLoader;
 
-public static class Commands
+internal static class Commands
 {
     [UsedImplicitly]
     [ConsoleCommand("spawnbz")]
@@ -14,11 +14,11 @@ public static class Commands
     {
         CoroutineHost.StartCoroutine(SpawnAsync(prefabName, count, distance));
     }
-    
-    private static IEnumerator SpawnAsync(string prefabName, int count, float distance)
+
+    private static IEnumerator SpawnAsync(string assetPath, int count, float distance)
     {
         TaskResult<GameObject> requestResult = new();
-        yield return Plugin.AssetLoader.LoadAsset(prefabName, requestResult);
+        yield return Plugin.AssetLoader.LoadAssetAsync(new(assetPath), requestResult);
         GameObject result = requestResult.Get();
         if (result != null)
         {
@@ -30,7 +30,7 @@ public static class Commands
         }
         else
         {
-            ErrorMessage.AddDebug("Could not find prefab by name: " + prefabName);
+            ErrorMessage.AddDebug("Could not find prefab by name: " + assetPath);
         }
     }
 }

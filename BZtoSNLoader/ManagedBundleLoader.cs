@@ -2,64 +2,48 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace BZtoSNLoader;
 
+
 // This class is not safe to expose. You must request and release for users of a bundle.
 internal class ManagedBundleLoader
 {
+    internal readonly record struct BundleFullPath(string location);
+
     private readonly Dictionary<string, BundleInstance> _bundles = new(StringComparer.OrdinalIgnoreCase);
 
-    private readonly IOut<AssetBundle> _disposedOut = new TaskResult<AssetBundle>();
-
-    public IEnumerator RequestBundleAndAddUser(string path)
+    internal IEnumerator RequestBundleAndAddUser(BundleFullPath bundlePath, [CanBeNull] IOut<AssetBundle> result)
     {
-        yield return RequestBundleAndAddUser(path, _disposedOut);
-    }
-
-    public IEnumerator RequestBundleAndAddUser(string path, IOut<AssetBundle> result)
-    {
-        string id = GetIdentifierFromBundlePath(path);
+        string id = GetIdentifierFromBundlePath(bundlePath);
 
         if (!_bundles.TryGetValue(id, out var bundle))
         {
-            bundle = new BundleInstance();
+            bundle = new();
             _bundles.Add(id, bundle);
         }
 
         bundle.Users++;
 
         bool wasAlreadyLoaded;
-
         switch (bundle.State)
         {
-            case BundleState.Unloaded:
-                // Load the bundle
-                wasAlreadyLoaded = false;
-                break;
-            case BundleState.Loading:
-                // Wait for the bundle to finish loading
-                yield return new WaitUntil(() => bundle.State == BundleState.Loaded);
-                wasAlreadyLoaded = true;
-                break;
-            case BundleState.Loaded:
-                // Do nothing
-                wasAlreadyLoaded = true;
-                break;
-            case BundleState.Releasing:
-                // Wait and restart (since we can't easily cancel the release)
-                yield return new WaitUntil(() => bundle.State == BundleState.Releasing);
-                wasAlreadyLoaded = false;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(bundle.State), bundle.State, null);
+            // Load the bundle
+            case BundleState.Unloaded: wasAlreadyLoaded = false; break;
+            // Wait for the bundle to finish loading
+            case BundleState.Loading: yield return new WaitUntil(() => bundle.State == BundleState.Loaded); goto case BundleState.Loaded;
+            // Do nothing
+            case BundleState.Loaded: wasAlreadyLoaded = true; break;
+            
+            default: throw new ArgumentOutOfRangeException(nameof(bundle.State), bundle.State, null);
         }
 
         // If the bundle is already loaded, return it
         if (wasAlreadyLoaded)
         {
-            result.Set(bundle.LoadedBundle);
+            result?.Set(bundle.LoadedBundle);
             if (bundle.LoadedBundle == null)
             {
                 Plugin.Logger.LogError("Bundle was designated as loaded while it doesn't exist");
@@ -69,14 +53,19 @@ internal class ManagedBundleLoader
 
         // Load bundle
         bundle.State = BundleState.Loading;
-        var request = AssetBundle.LoadFromFileAsync(path);
+        //      Patch bundle
+        TaskResult<byte[]> patchRequest = new();
+        yield return BZBundlePatcher.GetPatchedBundleAsync(bundlePath.location, patchRequest);
+        //      Load patched bundle
+        var request = AssetBundle.LoadFromMemoryAsync(patchRequest.value);
         yield return request;
-        result.Set(request.assetBundle);
+
+        result?.Set(request.assetBundle);
         bundle.LoadedBundle = request.assetBundle;
         bundle.State = BundleState.Loaded;
     }
 
-    public IEnumerator RemoveBundleUser(string path)
+    internal IEnumerator RemoveBundleUser(BundleFullPath path)
     {
         string id = GetIdentifierFromBundlePath(path);
 
@@ -104,15 +93,9 @@ internal class ManagedBundleLoader
             case BundleState.Loading:
                 Plugin.Logger.LogError("Attempting to unload bundle that is currently loading");
                 yield return new WaitUntil(() => bundle.State == BundleState.Loaded);
+                goto case BundleState.Loaded;
+            case BundleState.Loaded: // Unload like normal
                 shouldUnload = true;
-                break;
-            case BundleState.Loaded:
-                // Unload like normal
-                shouldUnload = true;
-                break;
-            case BundleState.Releasing:
-                // Do nothing
-                shouldUnload = false;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(bundle.State), bundle.State, null);
@@ -130,14 +113,13 @@ internal class ManagedBundleLoader
             yield break;
         }
 
-        bundle.State = BundleState.Releasing;
         bundle.LoadedBundle.Unload(true);
         bundle.State = BundleState.Unloaded;
         bundle.LoadedBundle = null;
     }
 
-    private static string GetIdentifierFromBundlePath(string fullBundlePath) 
-        => Path.GetFileName(fullBundlePath);
+    private static string GetIdentifierFromBundlePath(BundleFullPath path) 
+        => Path.GetFileName(path.location);
 
     private class BundleInstance
     {
@@ -150,7 +132,6 @@ internal class ManagedBundleLoader
     {
         Unloaded,
         Loading,
-        Loaded,
-        Releasing
+        Loaded
     }
 }
