@@ -13,6 +13,9 @@ public class PrefabComponentSerializer
     private readonly ILogger _logger;
     private readonly PrefabComponentSerializerSettings _settings;
 
+    private static readonly Guid NullArrayEntry = new(131094391, 9424, 2843, new byte[]
+        { 2, 127, 13, 34, 34, 11, 102, 49 }); 
+
     public PrefabComponentSerializer(ILogger logger, PrefabComponentSerializerSettings settings)
     {
         _logger = logger;
@@ -189,14 +192,16 @@ public class PrefabComponentSerializer
         var unitySerializedJson = JsonUtility.ToJson(component);
         
         var jsonData = JObject.Parse(unitySerializedJson);
-        
+
         var unityRefs = jsonData.Properties()
             .Where(p =>
-                p.Value.Type == JTokenType.Object &&
-                p.Value["m_FileID"] != null)
+                (p.Value.Type == JTokenType.Object && p.Value["m_FileID"] != null) ||
+                p.Value.Type == JTokenType.Array)
             .ToDictionary(
                 p => p.Name,
-                p => p.Value.ToObject<JsonPrefab.UnityComponentAssetReference>()
+                p => p.Value.Type == JTokenType.Array
+                    ? new JsonPrefab.UnityComponentAssetReference { m_FileID = "ARRAY_PLACEHOLDER" }
+                    : p.Value.ToObject<JsonPrefab.UnityComponentAssetReference>()
             );
         
         var objectReferences = new Dictionary<string, JsonPrefab.ComponentAssetReference>();
@@ -247,6 +252,72 @@ public class PrefabComponentSerializer
                         identifier = guid.ToString()
                     };
                 }
+            }
+            else if (field.FieldType == typeof(Transform[]))
+            {
+                var referenced = field.GetValue(component);
+                if (referenced is not Transform[] referencedTransforms)
+                {
+                    _logger.Log(LogLevel.Debug, "Skipping serializing null Transform array field");
+                    continue;
+                }
+
+                string combined = "";
+                for (int i = 0; i < referencedTransforms.Length; i++)
+                {
+                    if (guidByGameObject.TryGetValue(referencedTransforms[i].gameObject, out var guid))
+                    {
+                        combined += guid.ToString();
+                    }
+                    else
+                    {
+                        combined += NullArrayEntry.ToString();
+                    }
+
+                    if (i < referencedTransforms.Length - 1)
+                    {
+                        combined += "::";
+                    }
+                }
+                
+                objectReferences[unityRef.Key] = new JsonPrefab.ComponentAssetReference
+                {
+                    referenceType = JsonPrefab.ComponentAssetReference.Type.TransformArray,
+                    identifier = combined
+                };
+            }
+            else if (field.FieldType == typeof(GameObject[]))
+            {
+                var referenced = field.GetValue(component);
+                if (referenced is not GameObject[] referencedGameObjects)
+                {
+                    _logger.Log(LogLevel.Debug, "Skipping serializing null GameObjects array field");
+                    continue;
+                }
+
+                string combined = "";
+                for (int i = 0; i < referencedGameObjects.Length; i++)
+                {
+                    if (guidByGameObject.TryGetValue(referencedGameObjects[i], out var guid))
+                    {
+                        combined += guid.ToString();
+                    }
+                    else
+                    {
+                        combined += NullArrayEntry.ToString();
+                    }
+
+                    if (i < referencedGameObjects.Length - 1)
+                    {
+                        combined += "::";
+                    }
+                }
+                
+                objectReferences[unityRef.Key] = new JsonPrefab.ComponentAssetReference
+                {
+                    referenceType = JsonPrefab.ComponentAssetReference.Type.GameObjectArray,
+                    identifier = combined
+                };
             }
             else if (typeof(Component).IsAssignableFrom(field.FieldType))
             {
@@ -321,7 +392,6 @@ public class PrefabComponentSerializer
                 continue;
             }
 
-            // TODO: Add support for gameobject references (needed to fix AnimateByVelocity and such)
             switch (referenceData.Value.referenceType)
             {
                 case JsonPrefab.ComponentAssetReference.Type.GameObject:
@@ -348,6 +418,51 @@ public class PrefabComponentSerializer
                     {
                         _logger.Log(LogLevel.Warning,"Failed to find Transform of ID " + transformId);
                     }
+                    break;
+                case JsonPrefab.ComponentAssetReference.Type.TransformArray:
+                    var transformGuids = referenceData.Value.identifier.Split(new[] {"::"}, StringSplitOptions.RemoveEmptyEntries);
+                    Transform[] transformArray = new Transform[transformGuids.Length];
+                    for (int i = 0; i < transformArray.Length; i++)
+                    {
+                        var guid = Guid.Parse(transformGuids[i]);
+                        if (guid == NullArrayEntry)
+                        {
+                            continue;
+                        }
+                        if (gameObjectsByGuid.TryGetValue(guid, out var referencedArrayGo))
+                        {
+                            var referencedTransform = referencedArrayGo.transform;
+                            transformArray[i] = referencedTransform;
+                            _logger.Log(LogLevel.Debug,$"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedTransform}'");
+                        }
+                        else
+                        {
+                            _logger.Log(LogLevel.Warning,"Failed to find Transform of ID " + guid);
+                        }
+                    }
+                    field.SetValue(component, transformArray);
+                    break;
+                case JsonPrefab.ComponentAssetReference.Type.GameObjectArray:
+                    var gameObjectGuids = referenceData.Value.identifier.Split(new[] {"::"}, StringSplitOptions.RemoveEmptyEntries);
+                    GameObject[] gameObjectArray = new GameObject[gameObjectGuids.Length];
+                    for (int i = 0; i < gameObjectArray.Length; i++)
+                    {
+                        var guid = Guid.Parse(gameObjectGuids[i]);
+                        if (guid == NullArrayEntry)
+                        {
+                            continue;
+                        }
+                        if (gameObjectsByGuid.TryGetValue(guid, out var referencedArrayGo))
+                        {
+                            gameObjectArray[i] = referencedArrayGo;
+                            _logger.Log(LogLevel.Debug,$"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedArrayGo}'");
+                        }
+                        else
+                        {
+                            _logger.Log(LogLevel.Warning,"Failed to find GameObject of ID " + guid);
+                        }
+                    }
+                    field.SetValue(component, gameObjectArray);
                     break;
                 case JsonPrefab.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);

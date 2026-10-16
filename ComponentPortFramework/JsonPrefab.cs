@@ -51,7 +51,9 @@ public class JsonPrefab
             LocalComponent,
             GameObject,
             Transform,
-            ExternalAsset
+            ExternalAsset,
+            TransformArray,
+            GameObjectArray
         }
     }
 }
