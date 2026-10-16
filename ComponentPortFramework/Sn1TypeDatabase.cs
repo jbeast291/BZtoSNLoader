@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using BepInEx.Logging;
 
-namespace BZPrefabReader;
+namespace ComponentPortFramework;
 
 public class Sn1TypeDatabase
 {
+    internal static Sn1TypeDatabase TypeDatabase { get; } = new();
+
     private static Dictionary<string, Type> _types = new();
     private static Dictionary<Type, string> _typeNames = new();
     
@@ -22,8 +27,22 @@ public class Sn1TypeDatabase
         "UnityEngine.VFXModule",
         "UnityEngine.AnimationModule"
     };
+
+    public static void Initialize(ILogger logger)
+    {
+        var resourceName = "ComponentPortFramework.SN1Classes";
+
+        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+        {
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string result = reader.ReadToEnd();
+                TypeDatabase.InitializeInternal(result.Split('\n'), logger);
+            }
+        }
+    }
     
-    public void Initialize(string[] types)
+    private void InitializeInternal(string[] types, ILogger logger)
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         var assemblyCSharp = assemblies.First(asm => asm.GetName().Name == "Assembly-CSharp");
@@ -36,7 +55,7 @@ public class Sn1TypeDatabase
                 type = assemblyCSharpFp.GetType(typeName);
                 if (type == null)
                 {
-                    Plugin.Logger.LogWarning("Failed to find type by name: " + typeName);
+                    logger.Log(LogLevel.Warning, "Failed to find type by name: " + typeName);
                     continue;
                 }
             }

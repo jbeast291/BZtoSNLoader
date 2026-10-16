@@ -2,14 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BepInEx.Logging;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace BZPrefabReader;
+namespace ComponentPortFramework;
 
-public static class PrefabComponentSerializer
+public class PrefabComponentSerializer
 {
-    public static JsonPrefab SavePrefabComponents(GameObject prefab)
+    private readonly ILogger _logger;
+    private readonly PrefabComponentSerializerSettings _settings;
+
+    public PrefabComponentSerializer(ILogger logger, PrefabComponentSerializerSettings settings)
+    {
+        _logger = logger;
+        _settings = settings;
+        if (settings == null)
+        {
+            _settings = new PrefabComponentSerializerSettings();
+        }
+    }
+
+    public JsonPrefab SavePrefabComponents(GameObject prefab)
     {
         var result = new JsonPrefab();
 
@@ -55,7 +69,7 @@ public static class PrefabComponentSerializer
         return result;
     }
 
-    public static void ReconstructComponentsOnGameObject(GameObject instance, JsonPrefab data)
+    public void ReconstructComponentsOnGameObject(GameObject instance, JsonPrefab data)
     {
         var allTransformsInChildren = instance.GetComponentsInChildren<Transform>(true);
         
@@ -94,7 +108,7 @@ public static class PrefabComponentSerializer
         foreach (var component in instance.GetComponentsInChildren<Component>())
         {
             if (!pickedUpInstances.Contains(component) &&
-                Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
+                Sn1TypeDatabase.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
             {
                 addedComponents.Add((component, new JsonPrefab.Component()
                 {
@@ -114,33 +128,12 @@ public static class PrefabComponentSerializer
         foreach (var addedComponent in addedComponents)
         {
             if (addedComponent.instance == null) continue;
-            if (addedComponent.instance is Behaviour behaviour) behaviour.enabled = true;
-            if (addedComponent.instance is LiveMixin lm)
-            {
-                var lmData = ScriptableObject.CreateInstance<LiveMixinData>(); 
-                lm.data = lmData;
-                lm.health = lmData.maxHealth;
-                lm.defaultHealth = lmData.maxHealth;
-            }
-
-            if (addedComponent.instance is Creature creature)
-            {
-                var liveMixin = creature.GetComponent<LiveMixin>();
-                creature.liveMixin = liveMixin;
-                // DOES THIS NEED TO BE DONE? WHY??
-                creature.traitsAnimator = null;
-                creature.traitsAnimator = creature.GetComponentInChildren<Animator>();
-                foreach (var dead in creature.GetComponentsInChildren<DeadAnimationOnEnable>(true))
-                {
-                    dead.liveMixin = liveMixin;
-                }
-            }
             
-            if (addedComponent.instance is AnimateByVelocity abv)
-            {
-                // WHY DOES THIS NEED TO BE DONE? DOES IT EVEN NEED THIS!????
-                abv.animator = abv.GetComponentInChildren<Animator>();
-            }
+            if (_settings.EnableAllComponents && addedComponent.instance is Behaviour behaviour)
+                behaviour.enabled = true;
+            
+            if (_settings.EnableCreatureFixes)
+                CreatureFixUtils.FixCreatureComponentIssues(addedComponent.instance);
         }
         return;
 
@@ -161,7 +154,7 @@ public static class PrefabComponentSerializer
 
                 if (childTransform.name != childData.name)
                 {
-                    Plugin.Logger.LogError(
+                    _logger.Log(LogLevel.Error,
                         $"Expected '{childData.name}' at sibling index {childData.transform.siblingIndex} under child " +
                         $"'{transform.name}', but instead found '{childTransform.name}'");
                     continue;
@@ -184,11 +177,11 @@ public static class PrefabComponentSerializer
         return c;
     }
 
-    private static bool TryWriteComponentToDto(Component component, out JsonPrefab.Component result, Dictionary<GameObject, Guid> guidByGameObject)
+    private bool TryWriteComponentToDto(Component component, out JsonPrefab.Component result, Dictionary<GameObject, Guid> guidByGameObject)
     {
-        if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
+        if (!Sn1TypeDatabase.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
         {
-            Plugin.Logger.LogWarning("Skipping serializing component: " + component);
+            _logger.Log(LogLevel.Debug, "Skipping serializing component: " + component);
             result = null;
             return false;
         }
@@ -214,7 +207,7 @@ public static class PrefabComponentSerializer
             var field = component.GetType().GetField(unityRef.Key, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             if (field == null)
             {
-                Plugin.Logger.LogError("Failed to find field " + unityRef.Key);
+                _logger.Log(LogLevel.Error, "Failed to find field " + unityRef.Key);
                 continue;
             }
 
@@ -223,7 +216,7 @@ public static class PrefabComponentSerializer
                 var referenced = field.GetValue(component);
                 if (referenced is not GameObject referencedGameObject)
                 {
-                    Plugin.Logger.LogInfo("Skipping serializing empty GameObject field");
+                    _logger.Log(LogLevel.Info, "Skipping serializing empty GameObject field");
                     continue;
                 }
 
@@ -242,7 +235,7 @@ public static class PrefabComponentSerializer
                 var referenced = field.GetValue(component);
                 if (referenced is not Transform referencedTransform)
                 {
-                    Plugin.Logger.LogInfo("Skipping serializing empty Transform field");
+                    _logger.Log(LogLevel.Debug, "Skipping serializing empty Transform field");
                     continue;
                 }
 
@@ -260,13 +253,13 @@ public static class PrefabComponentSerializer
                 var fieldValue = field.GetValue(component);
                 if (fieldValue == null)
                 {
-                    Plugin.Logger.LogInfo("Skipping serializing empty field");
+                    _logger.Log(LogLevel.Debug, "Skipping serializing empty field");
                     continue;
                 }
                 var referencedComponent = fieldValue as Component;
-                if (!Plugin.TypeDatabase.TryGetNameForType(fieldValue.GetType(), true, out var finalTypeName))
+                if (!Sn1TypeDatabase.TypeDatabase.TryGetNameForType(fieldValue.GetType(), true, out var finalTypeName))
                 {
-                    Plugin.Logger.LogWarning("Failed to find name for type (or substitution): " + fieldValue.GetType());
+                    _logger.Log(LogLevel.Warning, "Failed to find name for type (or substitution): " + fieldValue.GetType());
                     continue;
                 }
                 string componentRefString = $"{finalTypeName}::{guidByGameObject[referencedComponent.gameObject]}";
@@ -287,7 +280,7 @@ public static class PrefabComponentSerializer
         return true;
     }
 
-    private static Component AddComponentFromDto(GameObject obj, JsonPrefab.Component componentData)
+    private Component AddComponentFromDto(GameObject obj, JsonPrefab.Component componentData)
     {
         // TODO: Fix this bullshit resulting from RequireComponent
         if (componentData.type == "LiveMixin")
@@ -301,9 +294,9 @@ public static class PrefabComponentSerializer
             return null;
         }
         
-        if (!Plugin.TypeDatabase.TryGetTypeByName(componentData.type, false, out var componentType))
+        if (!Sn1TypeDatabase.TypeDatabase.TryGetTypeByName(componentData.type, false, out var componentType))
         {
-            Plugin.Logger.LogWarning("Failed to load component by name: " + componentData.type);
+            _logger.Log(LogLevel.Error, "Failed to load component by name: " + componentData.type);
             return null;
         }
         
@@ -314,7 +307,7 @@ public static class PrefabComponentSerializer
         return component;
     }
 
-    private static void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, JsonPrefab.Component componentData, Component component)
+    private void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, JsonPrefab.Component componentData, Component component)
     {
         if (componentData.objectReferences == null) return;
         foreach (var referenceData in componentData.objectReferences)
@@ -324,7 +317,7 @@ public static class PrefabComponentSerializer
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             if (field == null)
             {
-                Plugin.Logger.LogError($"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
+                _logger.Log(LogLevel.Error, $"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
                 continue;
             }
 
@@ -336,11 +329,11 @@ public static class PrefabComponentSerializer
                     if (gameObjectsByGuid.TryGetValue(goId, out var referencedGo))
                     {
                         field.SetValue(component, referencedGo);
-                        Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
+                        _logger.Log(LogLevel.Debug, $"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
                     }
                     else
                     {
-                        Plugin.Logger.LogWarning("Failed to find GameObject of ID " + goId);
+                        _logger.Log(LogLevel.Error,"Failed to find GameObject of ID " + goId);
                     }
                     break;
                 case JsonPrefab.ComponentAssetReference.Type.Transform:
@@ -349,25 +342,25 @@ public static class PrefabComponentSerializer
                     {
                         var referencedTransform = referencedTransformGo.transform;
                         field.SetValue(component, referencedTransform);
-                        Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedTransform}'");
+                        _logger.Log(LogLevel.Debug,$"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedTransform}'");
                     }
                     else
                     {
-                        Plugin.Logger.LogWarning("Failed to find Transform of ID " + transformId);
+                        _logger.Log(LogLevel.Warning,"Failed to find Transform of ID " + transformId);
                     }
                     break;
                 case JsonPrefab.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
-                    if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], true, out var referenceType))
+                    if (!Sn1TypeDatabase.TypeDatabase.TryGetTypeByName(rawId[0], true, out var referenceType))
                     {
-                        Plugin.Logger.LogWarning("Could not find type by name " + rawId[0]);
+                        _logger.Log(LogLevel.Warning,"Could not find type by name " + rawId[0]);
                         continue;
                     }
                     Guid containerGuid = Guid.Parse(rawId[1]);
                     var containerGameObject = gameObjectsByGuid[containerGuid];
                     Component targetComponent = containerGameObject.GetComponent(referenceType);
                     field.SetValue(component, targetComponent);
-                    Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{targetComponent}'");
+                    _logger.Log(LogLevel.Debug,$"Set field of type {field.FieldType} on component {component.GetType()} to '{targetComponent}'");
                     break;
                 default:
                     throw new ArgumentException("Unexpected reference type: " + referenceData.Value.referenceType);

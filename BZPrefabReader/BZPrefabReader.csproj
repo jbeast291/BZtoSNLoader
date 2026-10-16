@@ -29,7 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="SN1Classes" />
-      <EmbeddedResource Include="SN1Classes" />
+      <ProjectReference Include="..\ComponentPortFramework\ComponentPortFramework.csproj" />
     </ItemGroup>
 </Project>
