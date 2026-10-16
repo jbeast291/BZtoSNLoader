@@ -1,4 +1,6 @@
-﻿using System.IO;
+using System;
+using System.Data;
+using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
@@ -15,40 +17,41 @@ internal class Plugin : BaseUnityPlugin
     internal new static ManualLogSource Logger { get; private set; }
     private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
     private const string DependencyDataFileName = "assetPathToBundleDeps.json";
+
     // TODO: Only initialize these 2 upon loading the game (early load task?)
     private static BelowZeroGameData _bzGameData;
     private static ManagedBundleLoader _managedBundleLoader;
+
     public static BelowZeroAssetLoader AssetLoader { get; private set; }
-    
+
     private void Awake()
     {
         Logger = base.Logger;
         LoadDependencyData();
         _managedBundleLoader = new ManagedBundleLoader();
         AssetLoader = new BelowZeroAssetLoader(_bzGameData, _managedBundleLoader);
-        
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
     }
 
-    private static void LoadDependencyData() 
+    private static void LoadDependencyData()
     {
-        // TODO: Remove hardcoding, add platform-specific loading, move to later
-        var hardcodedBzPath = @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero";
-        string bzAddressablesFolder = Path.Combine(hardcodedBzPath,
-            "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64");
-        
+        if (!BZPathdeterminer.TryDetermineBZAddressables(out string bzAddressablesFolder))
+        {
+            throw new Exception("Manual selection fallback not implemented!");
+        }
+
         // Load bundles dependency data
         string jsonData = File.ReadAllText(GetModFolderPath(DependencyDataFileName));
         var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
 
-        _bzGameData = new BelowZeroGameData(hardcodedBzPath, bzAddressablesFolder, dependencyData);
+        _bzGameData = new BelowZeroGameData(bzAddressablesFolder, dependencyData);
 
         if (dependencyData.Version != BundleDependencyFormat.latestVersion)
         {
-            Logger.LogError($"Invalid Dependency Version! Please ensure you replaced the \"{DependencyDataFileName}\" when updating!");
+            throw new VersionNotFoundException($"Invalid Dependency Version! Please ensure you replaced the \"{DependencyDataFileName}\" when updating!");
         }
     }
-    
+
     private static string GetModFolderPath(string assetName) =>
         Path.Combine(Path.GetDirectoryName(Assembly.Location)!, assetName);
 } 
