@@ -1,13 +1,12 @@
 using System;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 namespace BZtoSNLoader;
 
 
-public static class BZPathdeterminer
+internal static class BZPathFinder
 {
-    public static bool TryDetermineBZAddressables(out string bundleFolderPath)
+    internal static bool TryDetermineBZAddressables(out string bundleFolderPath)
     {
         try 
         {
@@ -46,6 +45,7 @@ public static class BZPathdeterminer
 
     private static string OSX__GetFolder()
     {
+        //TODO: ensure kookoo can make this work
         // home/jbeast/.local/share/Steam/steamapps/common/SubnauticaZero/SubnauticaZero.app/Contents/Resources/Data/StreamingAssets/aa/StandaloneOSX/
         Plugin.Logger.LogError($"App Domain: {AppDomain.CurrentDomain.BaseDirectory}");
         string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "SubnauticaZero"));

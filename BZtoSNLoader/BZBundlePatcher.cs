@@ -10,16 +10,16 @@ using Nautilus.Utility;
 namespace BZtoSNLoader;
 
 
-public static class BZBundlePatcher
+internal static class BZBundlePatcher
 {
-    public static IEnumerator GetPatchedBundleAsync(string filePath, IOut<byte[]> bundleResult)
+    internal static IEnumerator GetPatchedBundleAsync(string filePath, IOut<byte[]> bundleResult)
     {
         Task<byte[]> t = Task.Run(() => GetPatchedBundle(filePath));
         yield return AsyncUtils.WaitUntilTaskComplete(t);
         bundleResult.Set(t.Result);
     }
 
-    public static byte[] GetPatchedBundle(string filePath)
+    private static byte[] GetPatchedBundle(string filePath)
     {
         AssetsManager manager = new();
         BundleFileInstance bundleInst = manager.LoadBundleFile(filePath);

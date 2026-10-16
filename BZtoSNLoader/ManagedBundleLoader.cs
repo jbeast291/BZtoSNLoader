@@ -9,13 +9,13 @@ namespace BZtoSNLoader;
 
 
 // This class is not safe to expose. You must request and release for users of a bundle.
-internal class ManagedBundleLoader
+internal static class ManagedBundleLoader
 {
     internal readonly record struct BundleFullPath(string location);
 
-    private readonly Dictionary<string, BundleInstance> _bundles = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly Dictionary<string, BundleInstance> _bundles = new(StringComparer.OrdinalIgnoreCase);
 
-    internal IEnumerator RequestBundleAndAddUser(BundleFullPath bundlePath, [CanBeNull] IOut<AssetBundle> result)
+    internal static IEnumerator RequestBundleAndAddUser(BundleFullPath bundlePath, [CanBeNull] IOut<AssetBundle> result)
     {
         string id = GetIdentifierFromBundlePath(bundlePath);
 
@@ -65,7 +65,7 @@ internal class ManagedBundleLoader
         bundle.State = BundleState.Loaded;
     }
 
-    internal IEnumerator RemoveBundleUser(BundleFullPath path)
+    internal static IEnumerator RemoveBundleUser(BundleFullPath path)
     {
         string id = GetIdentifierFromBundlePath(path);
 
