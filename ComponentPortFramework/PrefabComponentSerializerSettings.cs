@@ -12,7 +12,12 @@ public class PrefabComponentSerializerSettings
     /// </summary>
     public bool EnableAllComponents { get; init; } = true;
 
-    public bool SkipFmodComponents { get; init; } = false;
+    public bool SkipFmodComponents { get; init; } = true;
 
     public int RecursionDepthLimit { get; init; } = 100;
+
+    /// <summary>
+    /// If true, crashes will be attempted to be avoided by skipping deserializing problematic components.
+    /// </summary>
+    public bool TryPreventCrashes { get; init; } = true;
 }

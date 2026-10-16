@@ -38,6 +38,15 @@ public class BzPrefab
         if (prefab.TryGetComponent<LargeWorldEntity>(out var largeWorldEntity))
             cellLevel = largeWorldEntity.cellLevel;
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, cellLevel);
+        foreach (var renderer in prefab.GetComponentsInChildren<Renderer>())
+        {
+            var materials = renderer.materials;
+            foreach (var m in materials)
+            {
+                m.shader = MaterialUtils.Shaders.MarmosetUBER;
+            }
+            renderer.materials = materials;
+        }
         result.Set(prefab);
     }
 }

@@ -5,6 +5,7 @@ using System.Reflection;
 using BepInEx.Logging;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ComponentPortFramework;
 
@@ -87,7 +88,7 @@ public class PrefabComponentSerializer
         var rootData = data.gameObjects.Single(go => go.transform.parent == Guid.Empty);
 
         var rootTransform = allTransformsInChildren.Single(t => t.parent == null);
-
+        
         ReconstructAssociationsRecursive(rootData, rootTransform);
         
         // -- Add components! --
@@ -100,7 +101,7 @@ public class PrefabComponentSerializer
             foreach (var componentToAdd in goData.components)
             {
                 var added = AddComponentFromDto(go, componentToAdd);
-                if (added) addedComponents.Add((added, componentToAdd));
+                if (added != null) addedComponents.Add((added, componentToAdd));
             }
         }
 
@@ -371,6 +372,11 @@ public class PrefabComponentSerializer
             {
                 return null;
             }
+
+            if (componentData.type == "AnimatorLink")
+            {
+                return null;
+            }
         }
 
         if (_settings.SkipFmodComponents)
@@ -400,7 +406,9 @@ public class PrefabComponentSerializer
         }
         
         var component = obj.AddComponent(componentType);
-        JsonUtility.FromJsonOverwrite(componentData.serializedUnityJson, component);
+        if (!_settings.TryPreventCrashes ||
+            (componentType != typeof(SkyApplier) && componentType != typeof(VFXController)))
+            JsonUtility.FromJsonOverwrite(componentData.serializedUnityJson, component);
         return component;
     }
 
