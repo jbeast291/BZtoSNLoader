@@ -117,15 +117,23 @@ public static class PrefabComponentSerializer
             if (addedComponent.instance is Behaviour behaviour) behaviour.enabled = true;
             if (addedComponent.instance is LiveMixin lm)
             {
-                lm.data = ScriptableObject.CreateInstance<LiveMixinData>();
+                var lmData = ScriptableObject.CreateInstance<LiveMixinData>(); 
+                lm.data = lmData;
+                lm.health = lmData.maxHealth;
+                lm.defaultHealth = lmData.maxHealth;
             }
 
             if (addedComponent.instance is Creature creature)
             {
-                creature.liveMixin = creature.GetComponent<LiveMixin>();
+                var liveMixin = creature.GetComponent<LiveMixin>();
+                creature.liveMixin = liveMixin;
                 // DOES THIS NEED TO BE DONE? WHY??
                 creature.traitsAnimator = null;
                 creature.traitsAnimator = creature.GetComponentInChildren<Animator>();
+                foreach (var dead in creature.GetComponentsInChildren<DeadAnimationOnEnable>(true))
+                {
+                    dead.liveMixin = liveMixin;
+                }
             }
             
             if (addedComponent.instance is AnimateByVelocity abv)
