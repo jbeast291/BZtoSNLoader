@@ -20,6 +20,6 @@ public class Plugin : BaseUnityPlugin
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
     }
 
-    internal static string GetModFolderPath(string assetName) =>
+    internal static string GetModFolderFile(string assetName) =>
         Path.Combine(Path.GetDirectoryName(Assembly.Location)!, assetName);
 } 

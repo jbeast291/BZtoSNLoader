@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
@@ -22,6 +23,7 @@ internal static class BZBundlePatcher
     private static byte[] GetPatchedBundle(string filePath)
     {
         AssetsManager manager = new();
+        manager.LoadClassPackage(Plugin.GetModFolderFile("classdata.tpk"));
         BundleFileInstance bundleInst = manager.LoadBundleFile(filePath);
         List<string> assetNames = bundleInst.file.GetAllFileNames();
 
@@ -32,9 +34,9 @@ internal static class BZBundlePatcher
             // (Special linking between bundles?)
             if(assetNames[i].EndsWith(".resS")) continue;
 
-            AssetsFile assetFile = manager.LoadAssetsFileFromBundle(bundleInst, assetNames[i]).file;
-            StripFileMonoBehaviors(assetFile);
-            bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].SetNewData(assetFile);
+            AssetsFileInstance assetFileInst = manager.LoadAssetsFileFromBundle(bundleInst, assetNames[i]);
+            StripFileMonoBehaviors(manager, assetFileInst);
+            bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].SetNewData(assetFileInst.file);
         }
 
         using MemoryStream tempStream = new();
@@ -44,40 +46,54 @@ internal static class BZBundlePatcher
         return patchedBundleBytes;
     }
 
-    private static void StripFileMonoBehaviors(AssetsFile afile)
+    private static void StripFileMonoBehaviors(AssetsManager manager, AssetsFileInstance afileInst)
     {
-        // Remove all MonoBehaviors
-        afile.GetAssetsOfType(AssetClassID.MonoBehaviour).ForEach(m => m.SetRemoved());
-        afile.GetAssetsOfType(AssetClassID.MonoScript).ForEach(m => m.SetRemoved());
+        AssetsFile afile = afileInst.file;
+        manager.LoadClassDatabaseFromPackage("2019.4.36f1");
+
+        var pathIdsToRemove = afile
+            .GetAssetsOfType(AssetClassID.MonoBehaviour)
+            .Select(a => a.PathId)
+            .ToHashSet();
+
+        // Remove custom components from GameObjects component arrays
+        foreach (AssetFileInfo goInfo in afileInst.file.GetAssetsOfType(AssetClassID.GameObject))
+        {
+            AssetTypeValueField go = manager.GetBaseField(afileInst, goInfo);
+            AssetTypeValueField components = go["m_Component.Array"];
+            for (int i = components.Children.Count - 1; i >= 0; i--)
+            {
+                AssetTypeValueField component = components.Children[i]["component"];
+                int fileId = component["m_FileID"].AsInt;
+                long pathId = component["m_PathID"].AsLong;
+                if (fileId == 0 && pathIdsToRemove.Contains(pathId))
+                {
+                    components.Children.RemoveAt(i);
+                }
+            }
+            goInfo.SetNewData(go);
+        } 
+
+        afile.GetAssetsOfType(AssetClassID.MonoBehaviour).ForEach(a => a.SetRemoved());
+        afile.GetAssetsOfType(AssetClassID.MonoScript).ForEach(a => a.SetRemoved());
 
         // Type Tree Fixes:
         // this is some CURSED shit where we set the type of each removed mono in the
-        // type tree to be some valid UnityEngine component I found.
+        // type tree to be zeroed out. This allows unity to load it (with warnings)
         // We only need this to get around the type tree checks as these types are never actually used
-        for(ushort i = 0; i < afile.Metadata.ScriptTypes.Count; i++)
+        for(ushort i = 0; i < afileInst.file.Metadata.ScriptTypes.Count; i++)
         {
-            AssetPPtr scriptType = afile.Metadata.ScriptTypes[i];
+            AssetPPtr scriptType = afileInst.file.Metadata.ScriptTypes[i];
             scriptType.FileId = 0;
             scriptType.FilePath = string.Empty;
-            scriptType.PathId = -6140739481308358681;
+            scriptType.PathId = 0;
 
-            TypeTreeType typeTreeType = afile.Metadata.FindTypeTreeTypeByScriptIndex(i);
-            typeTreeType.TypeHash = HASH_type;
-            typeTreeType.TypeId = 114;
-            typeTreeType.ScriptIdHash = HASH_script;
+            TypeTreeType typeTreeType = afileInst.file.Metadata.FindTypeTreeTypeByScriptIndex(i);
+            typeTreeType.TypeHash = zeroHash;
+            typeTreeType.ScriptIdHash = zeroHash;
             typeTreeType.ScriptTypeIndex = 0;
         }
     }
 
-    private static readonly Hash128 HASH_type = Hash128FromString("c3d3430df9e3ea95e3e3d587961390fb");
-    private static readonly Hash128 HASH_script = Hash128FromString("7d3ac416d9b8672e11c35d89325141ca");
-    private static Hash128 Hash128FromString(string hex)
-    {
-        byte[] data = new byte[hex.Length / 2]; 
-        for (int i = 0; i < hex.Length; i += 2)
-        {
-            data[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-        }
-        return new Hash128(data);
-    }
+    private static readonly Hash128 zeroHash = new(new byte[16]);
 }

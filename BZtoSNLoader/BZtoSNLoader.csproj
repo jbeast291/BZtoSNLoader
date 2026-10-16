@@ -36,7 +36,6 @@
 
     <ItemGroup>
       <None Remove="ComponentDataExport.json" />
-      <Resource Include="ComponentDataExport.json" />
     </ItemGroup>
 
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />

@@ -21,7 +21,7 @@ internal static class BZGameData
         }
         // Load bundles dependency data
         const string DependencyDataFileName = "assetPathToBundleDeps.json";
-        string jsonData = File.ReadAllText(Plugin.GetModFolderPath(DependencyDataFileName));
+        string jsonData = File.ReadAllText(Plugin.GetModFolderFile(DependencyDataFileName));
         var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
 
         BelowZeroAddressablesFolder = bzAddressablesFolder;
