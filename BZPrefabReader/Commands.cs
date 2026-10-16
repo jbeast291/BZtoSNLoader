@@ -104,6 +104,8 @@ public static class Commands
         if (path.StartsWith("WorldEntities/Creatures")) return true;
         if (path.StartsWith("Submarine/Build")) return true;
         if (path.StartsWith("WorldEntities/Tools")) return true;
+        if (path.EndsWith("Vent_garden_standing.prefab")) return true;
+        if (path.EndsWith("VentGardenSmall.prefab")) return true;
         return false;
     }
 }
