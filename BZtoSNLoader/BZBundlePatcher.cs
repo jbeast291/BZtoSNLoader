@@ -17,8 +17,9 @@ internal static class BZBundlePatcher
     static BZBundlePatcher()
     {
         manager.LoadClassPackage(Plugin.GetModFolderFile("classdata.tpk"));
+        manager.LoadClassDatabaseFromPackage("2019.4.36f1");
     }
-    
+
     internal static IEnumerator GetPatchedBundleAsync(string filePath, IOut<byte[]> bundleResult)
     {
         Task<byte[]> t = Task.Run(() => GetPatchedBundle(filePath));
@@ -53,8 +54,6 @@ internal static class BZBundlePatcher
     private static void StripFileMonoBehaviors(AssetsFileInstance afileInst)
     {
         AssetsFile afile = afileInst.file;
-        manager.LoadClassDatabaseFromPackage("2019.4.36f1");
-
         var pathIdsToRemove = afile
             .GetAssetsOfType(AssetClassID.MonoBehaviour)
             .Select(a => a.PathId)
