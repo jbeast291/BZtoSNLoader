@@ -6,7 +6,7 @@ using UWE;
 
 namespace BZtoSNLoader;
 
-internal static class Commands
+internal static class DebugCommands
 {
     [UsedImplicitly]
     [ConsoleCommand("spawnbz")]
@@ -18,7 +18,7 @@ internal static class Commands
     private static IEnumerator SpawnAsync(string assetPath, int count, float distance)
     {
         TaskResult<GameObject> requestResult = new();
-        yield return Plugin.AssetLoader.LoadAssetAsync(new(assetPath), requestResult);
+        yield return BZAssetLoader.LoadAssetAsync(new(assetPath), requestResult);
         GameObject result = requestResult.Get();
         if (result != null)
         {

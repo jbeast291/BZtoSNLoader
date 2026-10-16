@@ -4,25 +4,19 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using Object = UnityEngine.Object;
 
 namespace BZtoSNLoader;
 
-public class BelowZeroAssetLoader
+public static class BZAssetLoader
 {
     public readonly record struct AddressablesAssetPath(string path);
 
-    private BelowZeroGameData GameData { get; }
-    private ManagedBundleLoader BundleLoader { get; }
-
-    internal BelowZeroAssetLoader(BelowZeroGameData gameData, ManagedBundleLoader bundleLoader)
+    public static IEnumerator LoadAssetAsync<T>(AddressablesAssetPath asset, IOut<T> result) where T : UnityEngine.Object
     {
-        GameData = gameData;
-        BundleLoader = bundleLoader;
-    }
-
-    public IEnumerator LoadAssetAsync<T>(AddressablesAssetPath asset, IOut<T> result) where T : Object
-    {
+        if (!BZGameData.isInitialized)
+        {
+            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
+        }
         TaskResult<AssetBundle> bundleRequest = new TaskResult<AssetBundle>();
         yield return LoadAssetWithDependencies(asset, bundleRequest);
 
@@ -47,16 +41,16 @@ public class BelowZeroAssetLoader
         result.Set((T)bundle.LoadAsset(allAssetsInBundle[index]));
     }
 
-    private IEnumerator LoadAssetWithDependencies(AddressablesAssetPath asset, IOut<AssetBundle> assetBundle)
+    private static IEnumerator LoadAssetWithDependencies(AddressablesAssetPath asset, IOut<AssetBundle> assetBundle)
     {
-        if (!GameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.path, out List<string> bundles))
+        if (!BZGameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.path, out List<string> bundles))
         {
             throw new InvalidKeyException($"Invalid BZ Addressables Path: \"{asset}\"!");
         }
 
         for (int i = bundles.Count - 1; i > 0; i--)
         {
-            string bundlePath = GameData.GetPathToBelowZeroBundle(bundles[i]);
+            string bundlePath = BZGameData.GetPathToBelowZeroBundle(bundles[i]);
             if (!File.Exists(bundlePath)) 
             {
                 throw new($"Required Dependency at: \"{bundlePath}\" not found!");
@@ -68,10 +62,10 @@ public class BelowZeroAssetLoader
                 continue;
             }
 
-            yield return BundleLoader.RequestBundleAndAddUser(new(bundlePath), null);
+            yield return ManagedBundleLoader.RequestBundleAndAddUser(new(bundlePath), null);
         }
 
-        string mainBundleWithAsset = GameData.GetPathToBelowZeroBundle(bundles[0]);
-        yield return BundleLoader.RequestBundleAndAddUser(new(mainBundleWithAsset), assetBundle);
+        string mainBundleWithAsset = BZGameData.GetPathToBelowZeroBundle(bundles[0]);
+        yield return ManagedBundleLoader.RequestBundleAndAddUser(new(mainBundleWithAsset), assetBundle);
     }
 }
