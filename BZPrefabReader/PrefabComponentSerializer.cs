@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace BZPrefabReader;
 
-public static class PrefabReaderUtils
+public static class PrefabComponentSerializer
 {
-    public static PrefabFormat ReadPrefab(GameObject prefab)
+    public static JsonPrefab SavePrefabComponents(GameObject prefab)
     {
-        var result = new PrefabFormat();
+        var result = new JsonPrefab();
 
         var allTransformsInChildren = prefab.GetComponentsInChildren<Transform>(true);
         var gameObjectById = new Dictionary<Guid, GameObject>();
@@ -26,7 +26,7 @@ public static class PrefabReaderUtils
         
         foreach (var go in gameObjectById)
         {
-            var gameObject = new PrefabFormat.GameObject();
+            var gameObject = new JsonPrefab.GameObject();
             gameObject.id = go.Key;
             gameObject.name = go.Value.name;
             Guid parentId = Guid.Empty;
@@ -34,13 +34,13 @@ public static class PrefabReaderUtils
             {
                 parentId = idByGameObject.GetOrDefault(go.Value.transform.parent.gameObject, Guid.Empty);
             }
-            gameObject.transform = new PrefabFormat.Transform
+            gameObject.transform = new JsonPrefab.Transform
             {
                 parent = parentId,
                 siblingIndex = go.Value.transform.GetSiblingIndex(),
                 depth = GetDepth(go.Value.transform)
             };
-            var components = new List<PrefabFormat.Component>();
+            var components = new List<JsonPrefab.Component>();
             foreach (var component in go.Value.GetComponents<Component>())
             {
                 if (TryWriteComponentToDto(component, out var componentResult, idByGameObject))
@@ -55,7 +55,7 @@ public static class PrefabReaderUtils
         return result;
     }
 
-    public static void ReconstructComponents(GameObject instance, PrefabFormat data)
+    public static void ReconstructComponentsOnGameObject(GameObject instance, JsonPrefab data)
     {
         var allTransformsInChildren = instance.GetComponentsInChildren<Transform>(true);
         
@@ -74,7 +74,7 @@ public static class PrefabReaderUtils
         ReconstructAssociationsRecursive(rootData, rootTransform);
 
         // -- Add components! --
-        List<(Component instance, PrefabFormat.Component data)> addedComponents = new();
+        List<(Component instance, JsonPrefab.Component data)> addedComponents = new();
         
         // add the new components
         foreach (var goData in data.gameObjects)
@@ -96,7 +96,7 @@ public static class PrefabReaderUtils
             if (!pickedUpInstances.Contains(component) &&
                 Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
             {
-                addedComponents.Add((component, new PrefabFormat.Component()
+                addedComponents.Add((component, new JsonPrefab.Component()
                 {
                     type = typeName,
                     serializedUnityJson = "{}"
@@ -137,12 +137,12 @@ public static class PrefabReaderUtils
         return;
 
         // I actually hate this
-        void ReconstructAssociationsRecursive(PrefabFormat.GameObject goData, Transform transform)
+        void ReconstructAssociationsRecursive(JsonPrefab.GameObject goData, Transform transform)
         {
             gameObjectById.Add(goData.id, transform.gameObject);
             idByGameObject.Add(transform.gameObject, goData.id);
 
-            PrefabFormat.GameObject[] children = data.gameObjects
+            JsonPrefab.GameObject[] children = data.gameObjects
                 .Where(go => go.transform.parent == goData.id)
                 .OrderBy(go => go.transform.siblingIndex)
                 .ToArray();
@@ -176,7 +176,7 @@ public static class PrefabReaderUtils
         return c;
     }
 
-    private static bool TryWriteComponentToDto(Component component, out PrefabFormat.Component result, Dictionary<GameObject, Guid> guidByGameObject)
+    private static bool TryWriteComponentToDto(Component component, out JsonPrefab.Component result, Dictionary<GameObject, Guid> guidByGameObject)
     {
         if (!Plugin.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
         {
@@ -195,10 +195,10 @@ public static class PrefabReaderUtils
                 p.Value["m_FileID"] != null)
             .ToDictionary(
                 p => p.Name,
-                p => p.Value.ToObject<PrefabFormat.UnityComponentAssetReference>()
+                p => p.Value.ToObject<JsonPrefab.UnityComponentAssetReference>()
             );
         
-        var objectReferences = new Dictionary<string, PrefabFormat.ComponentAssetReference>();
+        var objectReferences = new Dictionary<string, JsonPrefab.ComponentAssetReference>();
         foreach (var unityRef in unityRefs)
         {
             if (string.IsNullOrEmpty(unityRef.Value.m_FileID)) continue;
@@ -221,9 +221,9 @@ public static class PrefabReaderUtils
 
                 if (guidByGameObject.TryGetValue(referencedGameObject, out var guid))
                 {
-                    objectReferences[unityRef.Key] = new PrefabFormat.ComponentAssetReference
+                    objectReferences[unityRef.Key] = new JsonPrefab.ComponentAssetReference
                     {
-                        referenceType = PrefabFormat.ComponentAssetReference.Type.GameObject,
+                        referenceType = JsonPrefab.ComponentAssetReference.Type.GameObject,
                         identifier = guid.ToString()
                     };
 
@@ -244,15 +244,15 @@ public static class PrefabReaderUtils
                     continue;
                 }
                 string componentRefString = $"{finalTypeName}::{guidByGameObject[referencedComponent.gameObject]}";
-                objectReferences[unityRef.Key] = new PrefabFormat.ComponentAssetReference
+                objectReferences[unityRef.Key] = new JsonPrefab.ComponentAssetReference
                 {
-                    referenceType = PrefabFormat.ComponentAssetReference.Type.LocalComponent,
+                    referenceType = JsonPrefab.ComponentAssetReference.Type.LocalComponent,
                     identifier = componentRefString
                 };
             }
         }
         
-        result = new PrefabFormat.Component
+        result = new JsonPrefab.Component
         {
             type = typeName,
             serializedUnityJson = unitySerializedJson,
@@ -261,7 +261,7 @@ public static class PrefabReaderUtils
         return true;
     }
 
-    private static Component AddComponentFromDto(GameObject obj, PrefabFormat.Component componentData)
+    private static Component AddComponentFromDto(GameObject obj, JsonPrefab.Component componentData)
     {
         // TODO: Fix this bullshit resulting from RequireComponent
         if (componentData.type == "LiveMixin")
@@ -288,7 +288,7 @@ public static class PrefabReaderUtils
         return component;
     }
 
-    private static void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, PrefabFormat.Component componentData, Component component)
+    private static void ResolveComponentReferencesAtRuntime(Dictionary<Guid, GameObject> gameObjectsByGuid, JsonPrefab.Component componentData, Component component)
     {
         if (componentData.objectReferences == null) return;
         foreach (var referenceData in componentData.objectReferences)
@@ -305,12 +305,12 @@ public static class PrefabReaderUtils
             // TODO: Add support for gameobject references (needed to fix AnimateByVelocity and such)
             switch (referenceData.Value.referenceType)
             {
-                case PrefabFormat.ComponentAssetReference.Type.GameObject:
+                case JsonPrefab.ComponentAssetReference.Type.GameObject:
                     var referencedGo = gameObjectsByGuid[Guid.Parse(referenceData.Value.identifier)];
                     field.SetValue(component, referencedGo);
                     Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
                     break;
-                case PrefabFormat.ComponentAssetReference.Type.LocalComponent:
+                case JsonPrefab.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
                     if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], true, out var referenceType))
                     {

@@ -31,20 +31,18 @@ public static class Commands
         ErrorMessage.AddMessage("Loaded " + techType);
         
         var prefab = task.GetResult();
-        var prefabData = PrefabReaderUtils.ReadPrefab(prefab);
-        File.WriteAllText("READ-PREFAB.txt", JsonConvert.SerializeObject(prefabData));
+        var prefabData = PrefabComponentSerializer.SavePrefabComponents(prefab);
+        // File.WriteAllText("READ-PREFAB.txt", JsonConvert.SerializeObject(prefabData));
 
         var arcticPeeper = UWE.Utils.InstantiateDeactivated(prefab, Vector3.zero, Quaternion.identity);
         ComponentStripUtils.StripComponents(arcticPeeper);
         
         ErrorMessage.AddMessage("Stripped components");
         
-        PrefabReaderUtils.ReconstructComponents(arcticPeeper, prefabData);
+        PrefabComponentSerializer.ReconstructComponentsOnGameObject(arcticPeeper, prefabData);
         arcticPeeper.SetActive(true);
         arcticPeeper.transform.position = Player.main.transform.position;
         
         ErrorMessage.AddMessage("Reconstructed prefab");
-        
-        // ErrorMessage.AddMessage("Done reading prefabs...");
     }
 }

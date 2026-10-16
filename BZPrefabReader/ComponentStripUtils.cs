@@ -6,6 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace BZPrefabReader;
 
+// This is only for testing purposes; repurposed from the ModStructureHelper
 public static class ComponentStripUtils
 {
     private static readonly List<Type> WhitelistedTypes = new()

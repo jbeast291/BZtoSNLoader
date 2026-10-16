@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BZPrefabReader;
 
 [Serializable]
-public class PrefabFormat
+public class JsonPrefab
 {
     public List<GameObject> gameObjects = new();
     
@@ -32,42 +32,6 @@ public class PrefabFormat
         public string type;
         public string serializedUnityJson;
         public Dictionary<string, ComponentAssetReference> objectReferences = new();
-    }
-
-    [Serializable]
-    public struct FakeVector3
-    {
-        public float x;
-        public float y;
-        public float z;
-        
-        public FakeVector3(Vector3 vector)
-        {
-            x = vector.x;
-            y = vector.y;
-            z = vector.z;
-        }
-        
-        public Vector3 ToVector3() => new Vector3(x, y, z);
-    }
-    
-    [Serializable]
-    public struct FakeQuaternion
-    {
-        public float x;
-        public float y;
-        public float z;
-        public float w;
-
-        public FakeQuaternion(Quaternion quaternion)
-        {
-            x = quaternion.x;
-            y = quaternion.y;
-            z = quaternion.z;
-            w = quaternion.w;
-        }
-
-        public Quaternion ToQuaternion() => new Quaternion(x, y, z, w);
     }
 
     [Serializable]
