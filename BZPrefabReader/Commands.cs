@@ -1,6 +1,5 @@
 using System.Collections;
 using System.IO;
-using System.Net;
 using Nautilus.Commands;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -42,6 +41,7 @@ public static class Commands
         
         PrefabReaderUtils.ReconstructComponents(arcticPeeper, prefabData);
         arcticPeeper.SetActive(true);
+        arcticPeeper.transform.position = Player.main.transform.position;
         
         ErrorMessage.AddMessage("Reconstructed prefab");
         
