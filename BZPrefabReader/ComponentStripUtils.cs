@@ -22,7 +22,8 @@ public static class ComponentStripUtils
         typeof(Canvas),
         typeof(FMOD_CustomEmitter),
         typeof(Rigidbody),
-        typeof(Collider)
+        typeof(Collider),
+        typeof(LODGroup)
     };
 
     public static void StripComponents(GameObject obj)
