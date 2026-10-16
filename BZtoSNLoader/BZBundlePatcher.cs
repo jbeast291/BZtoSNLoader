@@ -13,6 +13,12 @@ namespace BZtoSNLoader;
 
 internal static class BZBundlePatcher
 {
+    private static readonly AssetsManager manager = new();
+    static BZBundlePatcher()
+    {
+        manager.LoadClassPackage(Plugin.GetModFolderFile("classdata.tpk"));
+    }
+    
     internal static IEnumerator GetPatchedBundleAsync(string filePath, IOut<byte[]> bundleResult)
     {
         Task<byte[]> t = Task.Run(() => GetPatchedBundle(filePath));
@@ -22,8 +28,6 @@ internal static class BZBundlePatcher
 
     private static byte[] GetPatchedBundle(string filePath)
     {
-        AssetsManager manager = new();
-        manager.LoadClassPackage(Plugin.GetModFolderFile("classdata.tpk"));
         BundleFileInstance bundleInst = manager.LoadBundleFile(filePath);
         List<string> assetNames = bundleInst.file.GetAllFileNames();
 
@@ -35,7 +39,7 @@ internal static class BZBundlePatcher
             if(assetNames[i].EndsWith(".resS")) continue;
 
             AssetsFileInstance assetFileInst = manager.LoadAssetsFileFromBundle(bundleInst, assetNames[i]);
-            StripFileMonoBehaviors(manager, assetFileInst);
+            StripFileMonoBehaviors(assetFileInst);
             bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].SetNewData(assetFileInst.file);
         }
 
@@ -46,7 +50,7 @@ internal static class BZBundlePatcher
         return patchedBundleBytes;
     }
 
-    private static void StripFileMonoBehaviors(AssetsManager manager, AssetsFileInstance afileInst)
+    private static void StripFileMonoBehaviors(AssetsFileInstance afileInst)
     {
         AssetsFile afile = afileInst.file;
         manager.LoadClassDatabaseFromPackage("2019.4.36f1");
