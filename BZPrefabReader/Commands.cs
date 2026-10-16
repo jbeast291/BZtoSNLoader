@@ -10,20 +10,26 @@ namespace BZPrefabReader;
 
 public static class Commands
 {
-    [ConsoleCommand("readallprefabs")]
-    private static void ReadPrefabs()
+    [ConsoleCommand("spawntest")]
+    private static void ReadPrefabs(string techType)
     {
-        CoroutineHost.StartCoroutine(ReadPrefabsAsync());
+        CoroutineHost.StartCoroutine(SpawnAsync(techType));
     }
 
-    private static IEnumerator ReadPrefabsAsync()
+    private static IEnumerator SpawnAsync(string prefabName)
     {
-        ErrorMessage.AddMessage("Reading prefabs...");
+        ErrorMessage.AddMessage("Reading prefab...");
 
-        var task = CraftData.GetPrefabForTechTypeAsync(TechType.ArcticRay);
+        if (!TechTypeExtensions.FromString(prefabName, out var techType, true))
+        {
+            ErrorMessage.AddMessage("Could not find TechType by name " + prefabName);
+            yield break;
+        }
+        
+        var task = CraftData.GetPrefabForTechTypeAsync(techType);
         yield return task;
 
-        ErrorMessage.AddMessage("Loaded arctic ray");
+        ErrorMessage.AddMessage("Loaded " + techType);
         
         var prefab = task.GetResult();
         var prefabData = PrefabReaderUtils.ReadPrefab(prefab);
@@ -32,12 +38,12 @@ public static class Commands
         var arcticPeeper = UWE.Utils.InstantiateDeactivated(prefab, Vector3.zero, Quaternion.identity);
         ComponentStripUtils.StripComponents(arcticPeeper);
         
-        ErrorMessage.AddMessage("Stripped components from Arctic Ray");
+        ErrorMessage.AddMessage("Stripped components");
         
         PrefabReaderUtils.ReconstructComponents(arcticPeeper, prefabData);
         arcticPeeper.SetActive(true);
         
-        ErrorMessage.AddMessage("Reconstructed Arctic Peeper");
+        ErrorMessage.AddMessage("Reconstructed prefab");
         
         // ErrorMessage.AddMessage("Done reading prefabs...");
     }

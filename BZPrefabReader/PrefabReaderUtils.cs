@@ -210,7 +210,26 @@ public static class PrefabReaderUtils
                 continue;
             }
 
-            if (typeof(Component).IsAssignableFrom(field.FieldType))
+            if (field.FieldType == typeof(GameObject))
+            {
+                var referenced = field.GetValue(component);
+                if (referenced is not GameObject referencedGameObject)
+                {
+                    Plugin.Logger.LogInfo("Skipping serializing empty GameObject field");
+                    continue;
+                }
+
+                if (guidByGameObject.TryGetValue(referencedGameObject, out var guid))
+                {
+                    objectReferences[unityRef.Key] = new PrefabFormat.ComponentAssetReference
+                    {
+                        referenceType = PrefabFormat.ComponentAssetReference.Type.GameObject,
+                        identifier = guid.ToString()
+                    };
+
+                }
+            }
+            else if (typeof(Component).IsAssignableFrom(field.FieldType))
             {
                 var fieldValue = field.GetValue(component);
                 if (fieldValue == null)
@@ -286,6 +305,11 @@ public static class PrefabReaderUtils
             // TODO: Add support for gameobject references (needed to fix AnimateByVelocity and such)
             switch (referenceData.Value.referenceType)
             {
+                case PrefabFormat.ComponentAssetReference.Type.GameObject:
+                    var referencedGo = gameObjectsByGuid[Guid.Parse(referenceData.Value.identifier)];
+                    field.SetValue(component, referencedGo);
+                    Plugin.Logger.LogInfo($"Set field of type {field.FieldType} on component {component.GetType()} to '{referencedGo}'");
+                    break;
                 case PrefabFormat.ComponentAssetReference.Type.LocalComponent:
                     var rawId = referenceData.Value.identifier.Split(new []{"::"}, StringSplitOptions.None);
                     if (!Plugin.TypeDatabase.TryGetTypeByName(rawId[0], true, out var referenceType))
