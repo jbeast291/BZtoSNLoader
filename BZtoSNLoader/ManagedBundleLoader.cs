@@ -8,7 +8,6 @@ using UnityEngine;
 namespace BZtoSNLoader;
 
 
-
 // This class is not safe to expose. You must request and release for users of a bundle.
 internal class ManagedBundleLoader
 {
@@ -54,8 +53,11 @@ internal class ManagedBundleLoader
 
         // Load bundle
         bundle.State = BundleState.Loading;
-        var request = AssetBundle.LoadFromFileAsync(bundlePath.location);
+
+        byte[] bundleBytes = BZBundlePatcher.GetPatchedBundle(bundlePath.location);
+        var request = AssetBundle.LoadFromMemoryAsync(bundleBytes);
         yield return request;
+
         result?.Set(request.assetBundle);
         bundle.LoadedBundle = request.assetBundle;
         bundle.State = BundleState.Loaded;

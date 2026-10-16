@@ -32,7 +32,7 @@ internal class Plugin : BaseUnityPlugin
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(Commands));
     }
 
-    private static void LoadDependencyData() 
+    private static void LoadDependencyData()
     {
         // TODO: Remove hardcoding, add platform-specific loading, move to later
         var hardcodedBzPath = @"Z:\home\jbeast\.local\share\Steam\steamapps\common\SubnauticaZero\";//@"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero";
