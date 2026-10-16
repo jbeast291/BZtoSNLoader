@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.IO;
 using System.Reflection;
 using BepInEx;
@@ -34,9 +35,10 @@ internal class Plugin : BaseUnityPlugin
 
     private static void LoadDependencyData()
     {
-        // TODO: Remove hardcoding, add platform-specific loading, move to later
-        var hardcodedBzPath = @"Z:\home\jbeast\.local\share\Steam\steamapps\common\SubnauticaZero\";//@"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero";
-        string bzAddressablesFolder = Path.Combine(hardcodedBzPath, "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64");
+        if (!BZPathdeterminer.TryDetermineBZAddressables(out string bzAddressablesFolder))
+        {
+            throw new Exception("Manual selection fallback not implemented!");
+        }
 
         // Load bundles dependency data
         string jsonData = File.ReadAllText(GetModFolderPath(DependencyDataFileName));

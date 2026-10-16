@@ -5,9 +5,8 @@ using System.IO;
 using System.Threading.Tasks;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
-using FMOD;
-using HarmonyLib;
 using Nautilus.Utility;
+
 namespace BZtoSNLoader;
 
 
@@ -25,7 +24,7 @@ public static class BZBundlePatcher
         AssetsManager manager = new();
         BundleFileInstance bundleInst = manager.LoadBundleFile(filePath);
         List<string> assetNames = bundleInst.file.GetAllFileNames();
-        
+
         for (int i = 0; i < assetNames.Count; i++)
         {
             // Ignore these. They aren't a problem for loading
