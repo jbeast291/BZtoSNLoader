@@ -1,15 +1,25 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using AssetsTools.NET;
 using AssetsTools.NET.Extra;
 using FMOD;
 using HarmonyLib;
+using Nautilus.Utility;
 namespace BZtoSNLoader;
 
 
 public static class BZBundlePatcher
 {
+    public static IEnumerator GetPatchedBundleAsync(string filePath, IOut<byte[]> bundleResult)
+    {
+        Task<byte[]> t = Task.Run(() => GetPatchedBundle(filePath));
+        yield return AsyncUtils.WaitUntilTaskComplete(t);
+        bundleResult.Set(t.Result);
+    }
+
     public static byte[] GetPatchedBundle(string filePath)
     {
         AssetsManager manager = new();

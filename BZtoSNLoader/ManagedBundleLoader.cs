@@ -53,9 +53,11 @@ internal class ManagedBundleLoader
 
         // Load bundle
         bundle.State = BundleState.Loading;
-
-        byte[] bundleBytes = BZBundlePatcher.GetPatchedBundle(bundlePath.location);
-        var request = AssetBundle.LoadFromMemoryAsync(bundleBytes);
+        //      Patch bundle
+        TaskResult<byte[]> patchRequest = new();
+        yield return BZBundlePatcher.GetPatchedBundleAsync(bundlePath.location, patchRequest);
+        //      Load patched bundle
+        var request = AssetBundle.LoadFromMemoryAsync(patchRequest.value);
         yield return request;
 
         result?.Set(request.assetBundle);
