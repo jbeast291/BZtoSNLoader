@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using DependencyDataFormat;
 using Nautilus.Handlers;
 using Newtonsoft.Json;
-using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 namespace BZtoSNLoader;
 

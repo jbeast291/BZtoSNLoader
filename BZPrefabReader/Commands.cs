@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ComponentPortFramework;
@@ -65,13 +67,11 @@ public static class Commands
         var outputDir = "PrefabExports";
         if (!Directory.Exists(outputDir)) Directory.CreateDirectory(outputDir);
         var files = PrefabDatabase.prefabFiles;
+        Dictionary<string, JsonPrefab> master = new Dictionary<string, JsonPrefab>();
         foreach (var file in files)
         {
             // check
             if (!ShouldSavePrefab(file.Value)) continue;
-            
-            // save
-            var prefabName = file.Value.Split('/').Last().Split('.').First();
             
             // load
             var request = PrefabDatabase.GetPrefabAsync(file.Key);
@@ -83,11 +83,20 @@ public static class Commands
             }
             
             // serialize & output
-            var prefabData = Serializer.SavePrefabComponents(prefab);
-            var outputPath = Path.Combine(outputDir, prefabName + ".json");
-            File.WriteAllText(outputPath, JsonConvert.SerializeObject(prefabData));
-            ErrorMessage.AddMessage("Saved prefab " + prefabName);
+            try
+            {
+                var prefabData = Serializer.SavePrefabComponents(prefab);
+                master.Add(file.Value, prefabData);
+            }
+            catch (Exception e)
+            {
+                ErrorMessage.AddMessage("Error while loading prefab " + file.Value);
+                Plugin.Logger.LogError(e);
+            }
         }
+        var outputPath = Path.Combine(outputDir, "ComponentDataExport" + ".json");
+        File.WriteAllText(outputPath, JsonConvert.SerializeObject(master));
+        ErrorMessage.AddMessage("Saved data to BZ game folder");
     }
 
     private static bool ShouldSavePrefab(string path)
