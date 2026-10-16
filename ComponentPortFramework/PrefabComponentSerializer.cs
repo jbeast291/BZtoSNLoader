@@ -108,7 +108,7 @@ public class PrefabComponentSerializer
         foreach (var added in addedComponents) pickedUpInstances.Add(added.instance);
         
         // get components that weren't picked up
-        foreach (var component in instance.GetComponentsInChildren<Component>())
+        foreach (var component in instance.GetComponentsInChildren<Component>(true))
         {
             if (!pickedUpInstances.Contains(component) &&
                 Sn1TypeDatabase.TypeDatabase.TryGetNameForType(component.GetType(), false, out var typeName))
@@ -141,8 +141,14 @@ public class PrefabComponentSerializer
         return;
 
         // I actually hate this
-        void ReconstructAssociationsRecursive(JsonPrefab.GameObject goData, Transform transform)
+        void ReconstructAssociationsRecursive(JsonPrefab.GameObject goData, Transform transform, int c = 0)
         {
+            c++;
+            if (c > _settings.RecursionDepthLimit)
+            {
+                _logger.Log(LogLevel.Error, "Stack overflow while reconstructing " + instance);
+                return;
+            }
             gameObjectById.Add(goData.id, transform.gameObject);
             idByGameObject.Add(transform.gameObject, goData.id);
 
@@ -163,7 +169,7 @@ public class PrefabComponentSerializer
                     continue;
                 }
 
-                ReconstructAssociationsRecursive(childData, childTransform);
+                ReconstructAssociationsRecursive(childData, childTransform, c);
             }
         }
     }
@@ -354,25 +360,45 @@ public class PrefabComponentSerializer
     private Component AddComponentFromDto(GameObject obj, JsonPrefab.Component componentData)
     {
         // TODO: Fix this bullshit resulting from RequireComponent
-        if (componentData.type == "LiveMixin")
+        if (_settings.EnableCreatureFixes)
         {
-            ErrorMessage.AddMessage("Skipping LiveMixin");
-            return null;
+            if (componentData.type == "LiveMixin")
+            {
+                return null;
+            }
+
+            if (componentData.type == "CreatureUtils")
+            {
+                return null;
+            }
         }
-        if (componentData.type == "CreatureUtils")
+
+        if (_settings.SkipFmodComponents)
         {
-            ErrorMessage.AddMessage("Skipping CreatureUtils");
-            return null;
+            if (componentData.type == "FMOD_CustomEmitter")
+            {
+                return null;
+            }
+            if (componentData.type == "FMOD_StudioEventEmitter")
+            {
+                return null;
+            }
+            if (componentData.type == "FMOD_CustomLoopingEmitterWithCallback")
+            {
+                return null;
+            }
+            if (componentData.type == "FMOD_CustomLoopingEmitter")
+            {
+                return null;
+            }
         }
-        
+
         if (!Sn1TypeDatabase.TypeDatabase.TryGetTypeByName(componentData.type, false, out var componentType))
         {
             _logger.Log(LogLevel.Error, "Failed to load component by name: " + componentData.type);
             return null;
         }
         
-        ErrorMessage.AddMessage("Reconstructing component by type: " + componentType);
-
         var component = obj.AddComponent(componentType);
         JsonUtility.FromJsonOverwrite(componentData.serializedUnityJson, component);
         return component;

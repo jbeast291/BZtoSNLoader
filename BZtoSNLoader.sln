@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZPrefabReader", "BZPrefabR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentPortFramework", "ComponentPortFramework\ComponentPortFramework.csproj", "{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BelowZeroPrefabs", "BelowZeroPrefabs\BelowZeroPrefabs.csproj", "{30E47106-ED15-44CB-9478-4BE7234EF900}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,5 +34,9 @@ Global
 		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E47106-ED15-44CB-9478-4BE7234EF900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E47106-ED15-44CB-9478-4BE7234EF900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E47106-ED15-44CB-9478-4BE7234EF900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E47106-ED15-44CB-9478-4BE7234EF900}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

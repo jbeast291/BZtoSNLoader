@@ -11,4 +11,8 @@ public class PrefabComponentSerializerSettings
     /// If true, enables all behavior components that can be toggled on/off. 
     /// </summary>
     public bool EnableAllComponents { get; init; } = true;
+
+    public bool SkipFmodComponents { get; init; } = true;
+
+    public int RecursionDepthLimit { get; init; } = 50;
 }

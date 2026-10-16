@@ -47,8 +47,9 @@ public class Sn1TypeDatabase
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         var assemblyCSharp = assemblies.First(asm => asm.GetName().Name == "Assembly-CSharp");
         var assemblyCSharpFp = assemblies.First(asm => asm.GetName().Name == "Assembly-CSharp-firstpass");
-        foreach (var typeName in types)
+        foreach (var rawTypeName in types)
         {
+            var typeName = rawTypeName.Trim();
             Type type = assemblyCSharp.GetType(typeName);
             if (type == null)
             {
@@ -59,8 +60,8 @@ public class Sn1TypeDatabase
                     continue;
                 }
             }
-            _types.Add(typeName, type);
-            _typeNames.Add(type, typeName);
+            _types[typeName] = type;
+            _typeNames[type] = typeName;
         }
 
         foreach (var assembly in assemblies)
@@ -109,14 +110,17 @@ public class Sn1TypeDatabase
             return true;
         }
 
+        /* TODO: UNCOMMENT FOR BZ
         if (TrySubstituteBaseType(type, out var substitutedType))
         {
             return TryGetNameForType(substitutedType, false, out typeName);
         }
+        */
 
         return false;
     }
-
+    
+    /* TODO: UNCOMMENT WHEN RIPPING FOR BZ
     private bool TrySubstituteBaseType(Type type, out Type substitution)
     {
         if (typeof(Creature).IsAssignableFrom(type))
@@ -134,4 +138,5 @@ public class Sn1TypeDatabase
         substitution = null;
         return false;
     }
+    */
 }
