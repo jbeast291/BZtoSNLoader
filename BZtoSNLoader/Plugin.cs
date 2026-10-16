@@ -8,7 +8,7 @@ namespace BZtoSNLoader;
 
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-internal class Plugin : BaseUnityPlugin
+public class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
     private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();

@@ -10,10 +10,10 @@ namespace BelowZeroPrefabs;
 public class BzPrefab
 {
     public PrefabInfo Info { get; }
-    private BelowZeroAssetLoader.AddressablesAssetPath AddressablePath { get; }
+    private BZAssetLoader.AddressablesAssetPath AddressablePath { get; }
     private JsonPrefab ComponentData { get; }
 
-    public BzPrefab(PrefabInfo info, BelowZeroAssetLoader.AddressablesAssetPath assetPath, JsonPrefab componentData)
+    public BzPrefab(PrefabInfo info, BZAssetLoader.AddressablesAssetPath assetPath, JsonPrefab componentData)
     {
         Info = info;
         AddressablePath = assetPath;
@@ -30,7 +30,7 @@ public class BzPrefab
     private IEnumerator GetPrefabAsync(IOut<GameObject> result)
     {
         TaskResult<GameObject> initialLoadResult = new TaskResult<GameObject>();
-        yield return BZtoSNLoader.Plugin.AssetLoader.LoadAssetAsync(AddressablePath, initialLoadResult);
+        yield return BZAssetLoader.LoadAssetAsync(AddressablePath, initialLoadResult);
         var originalPrefab = initialLoadResult.Get();
         var prefab = UWE.Utils.InstantiateDeactivated(originalPrefab);
         Plugin.ComponentSerializer.ReconstructComponentsOnGameObject(prefab, ComponentData);

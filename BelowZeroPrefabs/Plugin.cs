@@ -67,7 +67,7 @@ public class Plugin : BaseUnityPlugin
         {
             var classId = "BZ_" + asset.Key.Split('/').Last().Split('.').First();
             if (!used.Add(classId)) continue;
-            new BzPrefab(PrefabInfo.WithTechType(classId), new BelowZeroAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
+            new BzPrefab(PrefabInfo.WithTechType(classId), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
     }
 }
