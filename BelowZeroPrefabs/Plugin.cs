@@ -26,6 +26,13 @@ public class Plugin : BaseUnityPlugin
     internal static Dictionary<string, JsonPrefab> AssetPathsWithComponentData { get; private set; }
     
     private static ILogger ComponentSerializerLogger { get; } = new ComponentSerializerLogger();
+
+    private static readonly Dictionary<string, string> NameConversions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Chelicerata", "Chelicerate" },
+        { "Vent_garden_standing", "VentGarden" },
+        { "VentGardenSmall", "VentGardenJuvenile" }
+    };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
         new PrefabComponentSerializerSettings
@@ -62,12 +69,20 @@ public class Plugin : BaseUnityPlugin
     {
         LoadComponentExportData();
         yield return null;
-        HashSet<string> used = new HashSet<string>();
+        // LOAD FUNCTIONAL PREFABS
         foreach (var asset in AssetPathsWithComponentData)
         {
-            var classId = "BZ_" + asset.Key.Split('/').Last().Split('.').First();
-            if (!used.Add(classId)) continue;
-            new BzPrefab(PrefabInfo.WithTechType(classId), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
+            var classId = GetBestClassId(asset.Key);
+            new BzPrefab(PrefabInfo.WithTechType(classId)
+                .WithFolderPath("BZ/Functional"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
+    }
+
+    private static string GetBestClassId(string assetPath)
+    {
+        var fileName = assetPath.Split('/').Last().Split('.').First();
+        if (NameConversions.TryGetValue(fileName, out var converted))
+            fileName = converted;
+        return "BZ_" + fileName;
     }
 }

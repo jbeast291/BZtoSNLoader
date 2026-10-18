@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using ComponentPortFramework;
 using Nautilus.Commands;
 using Newtonsoft.Json;
@@ -71,7 +70,7 @@ public static class Commands
         foreach (var file in files)
         {
             // check
-            if (!ShouldSavePrefab(file.Value)) continue;
+            if (!PrefabInclusionList.ShouldSavePrefab(file.Value)) continue;
             
             // load
             var request = PrefabDatabase.GetPrefabAsync(file.Key);
@@ -97,15 +96,5 @@ public static class Commands
         var outputPath = Path.Combine(outputDir, "ComponentDataExport" + ".json");
         File.WriteAllText(outputPath, JsonConvert.SerializeObject(master));
         ErrorMessage.AddMessage("Saved data to BZ game folder");
-    }
-
-    private static bool ShouldSavePrefab(string path)
-    {
-        if (path.StartsWith("WorldEntities/Creatures")) return true;
-        if (path.StartsWith("Submarine/Build")) return true;
-        if (path.StartsWith("WorldEntities/Tools")) return true;
-        if (path.EndsWith("Vent_garden_standing.prefab")) return true;
-        if (path.EndsWith("VentGardenSmall.prefab")) return true;
-        return false;
     }
 }
