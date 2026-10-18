@@ -1,10 +1,11 @@
+using BepInEx.Logging;
 using UnityEngine;
 
 namespace ComponentPortFramework;
 
 public static class CreatureFixUtils
 {
-    public static void FixCreatureComponentIssues(Component component)
+    public static void FixCreatureComponentIssues(Component component, ILogger logger)
     {
         // TODO: Use proper health values
         if (component is LiveMixin lm)
@@ -37,6 +38,25 @@ public static class CreatureFixUtils
         if (component is WorldForces wf)
         {
             wf.handleGravity = true;
+        }
+
+        if (component is MeleeAttack melee)
+        {
+            var onTouch = melee.gameObject.GetComponentInChildren<OnTouch>();
+            if (onTouch != null)
+            {
+                if (onTouch.gameObject.TryGetComponent<OnTouchFixer>(out var onTouchFixer))
+                {
+                    logger.Log(LogLevel.Warning, "Trying to add multiple MeleeAttack callbacks to a single OnTouch component");
+                }
+                else
+                {
+                    onTouchFixer = onTouch.gameObject.AddComponent<OnTouchFixer>();
+                }
+
+                onTouchFixer.onTouch = onTouch;
+                onTouchFixer.melee = melee;
+            }
         }
     }
 }

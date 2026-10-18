@@ -5,7 +5,6 @@ using System.Reflection;
 using BepInEx.Logging;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace ComponentPortFramework;
 
@@ -137,7 +136,7 @@ public class PrefabComponentSerializer
                 behaviour.enabled = true;
             
             if (_settings.EnableCreatureFixes)
-                CreatureFixUtils.FixCreatureComponentIssues(addedComponent.instance);
+                CreatureFixUtils.FixCreatureComponentIssues(addedComponent.instance, _logger);
         }
         return;
 
