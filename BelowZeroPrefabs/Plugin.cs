@@ -65,6 +65,7 @@ public class Plugin : BaseUnityPlugin
         AssetPathsWithComponentData = JsonConvert.DeserializeObject<Dictionary<string, JsonPrefab>>(result);
     }
 
+    // TODO: Unload prefabs on quit to main menu?
     private IEnumerator RegisterBzPrefabs(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
