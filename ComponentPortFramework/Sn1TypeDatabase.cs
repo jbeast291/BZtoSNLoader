@@ -128,6 +128,12 @@ public class Sn1TypeDatabase
             substitution = typeof(Creature);
             return true;
         }
+        
+        if (typeof(MeleeAttack).IsAssignableFrom(type))
+        {
+            substitution = typeof(MeleeAttack);
+            return true;
+        }
 
         if (type == typeof(CreatureTool))
         {
