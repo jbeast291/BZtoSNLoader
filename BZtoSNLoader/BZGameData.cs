@@ -11,6 +11,7 @@ internal static class BZGameData
     internal static bool isInitialized;
     internal static BundleDependencyFormat BundleDependencyData;
     private static string BelowZeroAddressablesFolder;
+    internal static bool BelowZeroFound { get; private set; } 
 
     internal static void InitDependencyData()
     {
@@ -20,6 +21,7 @@ internal static class BZGameData
             throw new Exception("Manual selection fallback not implemented!");
         }
         // Load bundles dependency data
+        BelowZeroFound = true;
         const string DependencyDataFileName = "assetPathToBundleDeps.json";
         string jsonData = File.ReadAllText(Plugin.GetModFolderFile(DependencyDataFileName));
         var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);

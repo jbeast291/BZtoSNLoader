@@ -2,6 +2,7 @@ using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
 using Nautilus.Handlers;
 
 namespace BZtoSNLoader;
@@ -17,6 +18,7 @@ public class Plugin : BaseUnityPlugin
     {
         Logger = base.Logger;
         BZGameData.InitDependencyData();
+        Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
     }
 
