@@ -7,8 +7,8 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>14</LangVersion>
         <RootNamespace>BZtoSNLoader</RootNamespace>
-        <BepInExGuid>com.snmodding.BZtoSNLoader</BepInExGuid>
-        <BepInExName>Below Zero to Subnautica Loader</BepInExName>
+        <BepInExPluginGuid>com.snmodding.BZtoSNLoader</BepInExPluginGuid>
+        <BepInExPluginName>Below Zero to Subnautica Loader</BepInExPluginName>
 
         <RestoreAdditionalProjectSources>
             https://api.nuget.org/v3/index.json;
