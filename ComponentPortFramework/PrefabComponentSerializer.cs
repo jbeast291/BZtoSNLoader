@@ -515,19 +515,4 @@ public class PrefabComponentSerializer
             }
         }
     }
-
-    /*
-    // TODO: Make this use arbitrary types for testing and then later make it use a simple name and type identification system
-    // Needs to be able to reference 1) components on the same GO and 2) arbitrary assets
-    private static string EncodeAssetReference(Object asset)
-    {
-        _meshesLol.Add(asset.name, (Mesh)asset);
-        return asset.name;
-    }
-    
-    private static Mesh DecodeAssetReference(string reference)
-    {
-        return _meshesLol[reference];
-    }
-    */
 }

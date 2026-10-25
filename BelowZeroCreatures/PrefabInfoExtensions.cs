@@ -1,6 +1,6 @@
 using Nautilus.Assets;
 
-namespace BelowZeroPrefabs;
+namespace BelowZeroCreatures;
 
 public static class PrefabInfoExtensions
 {

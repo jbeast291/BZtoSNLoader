@@ -1,7 +1,7 @@
 using BepInEx.Logging;
 using ComponentPortFramework;
 
-namespace BelowZeroPrefabs;
+namespace BelowZeroCreatures;
 
 public class ComponentSerializerLogger : ILogger
 {

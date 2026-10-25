@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BZPrefabReader", "BZPrefabR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentPortFramework", "ComponentPortFramework\ComponentPortFramework.csproj", "{CD3B5D2B-71C5-41FA-9CCB-DD384962DD48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BelowZeroPrefabs", "BelowZeroPrefabs\BelowZeroPrefabs.csproj", "{30E47106-ED15-44CB-9478-4BE7234EF900}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BelowZeroCreatures", "BelowZeroCreatures\BelowZeroCreatures.csproj", "{30E47106-ED15-44CB-9478-4BE7234EF900}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

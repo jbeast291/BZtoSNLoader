@@ -5,7 +5,7 @@ using Nautilus.Assets;
 using Nautilus.Utility;
 using UnityEngine;
 
-namespace BelowZeroPrefabs;
+namespace BelowZeroCreatures;
 
 public class BzPrefab
 {
@@ -38,7 +38,8 @@ public class BzPrefab
         if (prefab.TryGetComponent<LargeWorldEntity>(out var largeWorldEntity))
             cellLevel = largeWorldEntity.cellLevel;
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, cellLevel);
-        /*foreach (var renderer in prefab.GetComponentsInChildren<Renderer>())
+        /*
+        foreach (var renderer in prefab.GetComponentsInChildren<Renderer>())
         {
             var materials = renderer.materials;
             foreach (var m in materials)

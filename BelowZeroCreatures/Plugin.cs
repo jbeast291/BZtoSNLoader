@@ -13,10 +13,11 @@ using Nautilus.Assets;
 using Nautilus.Handlers;
 using Newtonsoft.Json;
 
-namespace BelowZeroPrefabs;
+namespace BelowZeroCreatures;
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
 [BepInDependency("com.snmodding.nautilus", "1.0.0.54")]
+[BepInDependency("com.snmodding.BZtoSNLoader")]
 public class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; }
@@ -48,7 +49,7 @@ public class Plugin : BaseUnityPlugin
         
         Sn1TypeDatabase.Initialize(ComponentSerializerLogger);
 
-        WaitScreenHandler.RegisterEarlyAsyncLoadTask("BelowZeroPrefabs", RegisterBzPrefabs, "Registering Below Zero prefabs");
+        WaitScreenHandler.RegisterEarlyLoadTask("Below Zero Creatures", RegisterBzPrefabs, "Registering Below Zero creatures");
         
         // register harmony patches, if there are any
         Harmony.CreateAndPatchAll(Assembly, $"{PluginInfo.PLUGIN_GUID}");
@@ -57,7 +58,7 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadComponentExportData()
     {
-        var resourceName = "BelowZeroPrefabs.ComponentDataExport.json";
+        var resourceName = "BelowZeroCreatures.ComponentDataExport.json";
 
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
         using StreamReader reader = new StreamReader(stream);
@@ -66,17 +67,25 @@ public class Plugin : BaseUnityPlugin
     }
 
     // TODO: Unload prefabs on quit to main menu?
-    private IEnumerator RegisterBzPrefabs(WaitScreenHandler.WaitScreenTask task)
+    private void RegisterBzPrefabs(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
-        yield return null;
-        // LOAD FUNCTIONAL PREFABS
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
-            new BzPrefab(PrefabInfo.WithTechType(classId)
+            new BzPrefab(GetPrefabInfo(classId)
                 .WithFolderPath("BZ/Functional"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
+    }
+
+    private static PrefabInfo GetPrefabInfo(string classId)
+    {
+        if (classId == "RockPuncher")
+        {
+            return new PrefabInfo("RockPuncher", "RockPuncherPrefab", TechType.RockPuncher);
+        }
+
+        return PrefabInfo.WithTechType(classId);
     }
 
     private static string GetBestClassId(string assetPath)
@@ -84,6 +93,6 @@ public class Plugin : BaseUnityPlugin
         var fileName = assetPath.Split('/').Last().Split('.').First();
         if (NameConversions.TryGetValue(fileName, out var converted))
             fileName = converted;
-        return "BZ_" + fileName;
+        return fileName;
     }
 }
