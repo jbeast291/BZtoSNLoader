@@ -22,6 +22,13 @@ public class Plugin : BaseUnityPlugin
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
     }
 
-    internal static string GetModFolderFile(string assetName) =>
-        Path.Combine(Path.GetDirectoryName(Assembly.Location)!, assetName);
+    internal static string ReadFromResources(string assetName)
+    {
+        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"BtwSourceGenerators.Resources.{assetName}");
+
+        if (stream == null) throw new FileNotFoundException($"Embedded resource '{assetName}' not found!");
+
+        using TextReader tr = new StreamReader(stream);
+        return tr.ReadToEnd();
+    }
 } 
