@@ -7,10 +7,37 @@ using UnityEngine.AddressableAssets;
 
 namespace BZtoSNLoader;
 
+/// <summary>
+/// The primary API for loading Below Zero assets by their address.
+/// </summary>
 public static class BZAssetLoader
 {
-    public readonly record struct AddressablesAssetPath(string path);
+    /// <summary>
+    /// Holds a path to an Addressable asset.
+    /// </summary>
+    /// <param name="Path">The full path including the file extension.</param>
+    /// <example><c>WorldEntities/Alterra/AbandonedBases/AlterraBase2/Alterra_Base_2.prefab</c></example>
+    public readonly record struct AddressablesAssetPath(string Path);
 
+    /// <summary>
+    /// Asynchronously loads the given asset by its path and outputs the loaded asset to the given <paramref name="result"/> object.
+    /// </summary>
+    /// <remarks>
+    /// This method handles automatic loading of dependencies. However, it does not handle the unloading of assets when they become unused.
+    /// </remarks>
+    /// <param name="asset">The path of the addressable asset.</param>
+    /// <param name="result">The interface used to output the result. See <seealso cref="TaskResult{T}"/>.</param>
+    /// <typeparam name="T">The type of asset to load. Many Unity types are supported such as <c>GameObject</c>,
+    /// <c>Sprite</c>, <c>Texture2D</c>, etc.</typeparam>
+    /// <returns></returns>
+    /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
+    /// the asset does not exist in any bundle.</exception>
+    /// <example>
+    /// <code>
+    /// TaskResult&lt;GameObject&gt; result = new TaskResult&lt;GameObject&gt;();
+    /// yield return LoadAssetAsync(new AddressablesAssetPath("WorldEntities/Creatures/Expansion/ArcticPeeper.prefab"), result);
+    /// GameObject prefab = result.Get();
+    /// </code></example>
     public static IEnumerator LoadAssetAsync<T>(AddressablesAssetPath asset, IOut<T> result) where T : UnityEngine.Object
     {
         if (!BZGameData.isInitialized)
@@ -23,7 +50,7 @@ public static class BZAssetLoader
         AssetBundle bundle = bundleRequest.Get();
 
         int index = -1;
-        string assetName = Path.GetFileName(asset.path);
+        string assetName = Path.GetFileName(asset.Path);
         string[] allAssetsInBundle = bundle.GetAllAssetNames();
         for (int i = 0; i < allAssetsInBundle.Length; i++)
         {
@@ -43,7 +70,7 @@ public static class BZAssetLoader
 
     private static IEnumerator LoadAssetWithDependencies(AddressablesAssetPath asset, IOut<AssetBundle> assetBundle)
     {
-        if (!BZGameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.path, out List<string> bundles))
+        if (!BZGameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.Path, out List<string> bundles))
         {
             throw new InvalidKeyException($"Invalid BZ Addressables Path: \"{asset}\"!");
         }
