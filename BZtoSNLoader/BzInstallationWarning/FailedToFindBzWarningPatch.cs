@@ -9,7 +9,7 @@ internal static class FailedToFindBzWarningPatch
     [HarmonyPatch(typeof(uGUI_MainMenu), nameof(uGUI_MainMenu.Start))]
     private static void MainMenuStartPostfix(uGUI_MainMenu __instance)
     {
-        //if (!BZGameData.BelowZeroFound)
+        if (!BZGameData.BelowZeroFound)
             TryShowPopup(__instance);
     }
 

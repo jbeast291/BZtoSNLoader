@@ -12,7 +12,7 @@ namespace BZtoSNLoader;
 public class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
-    private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+    internal static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
     private void Awake()
     {

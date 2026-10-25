@@ -17,8 +17,13 @@ internal class BzInstallationPopupBehavior : MonoBehaviour
         Application.OpenURL(path);
     }
 
-    public void OnButtonOpenPluginsFolder()
+    public void OnButtonOpenPluginFolder()
     {
-        Application.OpenURL(BepInEx.Paths.PluginPath);
+        Application.OpenURL(Path.GetDirectoryName(Plugin.Assembly.Location));
+    }
+
+    public void OnButtonPurchaseBelowZero()
+    {
+        Application.OpenURL("https://store.steampowered.com/app/848450/Subnautica_Below_Zero/");
     }
 }
