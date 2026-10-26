@@ -24,7 +24,7 @@ internal sealed class Plugin : BaseUnityPlugin
         BZGameData.InitDependencyData();
         Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
-        Plugin.Logger.LogInfo("Finished Loading!");
+        Logger.LogInfo("Finished Loading!");
     }
 
     internal static string ReadFromResources(string assetName)

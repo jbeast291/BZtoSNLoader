@@ -20,7 +20,7 @@ public static class BZAssetLoader
     /// </summary>
     /// <param name="Path">The full path including the file extension.</param>
     /// <example><c>WorldEntities/Alterra/AbandonedBases/AlterraBase2/Alterra_Base_2.prefab</c></example>
-    public readonly record struct AddressablesAssetPath(string Path);
+    public readonly record struct AssetKey(string Path);
 
     /// <summary>
     /// Asynchronously loads the given asset by its path and outputs the loaded asset to the given <paramref name="result"/> object.
@@ -41,7 +41,7 @@ public static class BZAssetLoader
     /// yield return LoadAssetAsync(new AddressablesAssetPath("WorldEntities/Creatures/Expansion/ArcticPeeper.prefab"), result);
     /// GameObject prefab = result.Get();
     /// </code></example>
-    public static IEnumerator LoadAssetAsync<T>(AddressablesAssetPath asset, IOut<T> result) where T : UnityEngine.Object
+    public static IEnumerator LoadAssetAsync<T>(AssetKey asset, IOut<T> result) where T : UnityEngine.Object
     {
         if (!BZGameData.BelowZeroFound)
         {
@@ -78,7 +78,7 @@ public static class BZAssetLoader
         result.Set((T)bundle.LoadAsset(allAssetsInBundle[index]));
     }
 
-    private static IEnumerator LoadAssetWithDependencies(AddressablesAssetPath asset, IOut<AssetBundle> assetBundle)
+    private static IEnumerator LoadAssetWithDependencies(AssetKey asset, IOut<AssetBundle> assetBundle)
     {
         if (!BZGameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.Path, out List<string> bundles))
         {
