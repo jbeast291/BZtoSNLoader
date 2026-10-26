@@ -73,6 +73,11 @@ public class Plugin : BaseUnityPlugin
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
+            
+            // Skip Snow Stalkers because they seriously break the game
+            if (classId.ToLower().Contains("snowstalker"))
+                continue;
+            
             new BzPrefab(GetPrefabInfo(classId)
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
