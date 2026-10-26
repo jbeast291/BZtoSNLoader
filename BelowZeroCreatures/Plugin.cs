@@ -74,7 +74,7 @@ public class Plugin : BaseUnityPlugin
         {
             var classId = GetBestClassId(asset.Key);
             new BzPrefab(GetPrefabInfo(classId)
-                .WithFolderPath("BZ/Functional"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
+                .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
     }
 
