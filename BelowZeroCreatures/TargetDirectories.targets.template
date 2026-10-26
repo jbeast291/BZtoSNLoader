@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<!--Copy TargetDirectories.targets.template and rename it to TargetDirectories.targets-->
+		<!--When trying to build this project, please make sure the correct directory to your Subnautica folder is listed below-->
+		<ModDir>C:\Program Files (x86)\Steam\steamapps\common\Subnautica\BepInEx\plugins\$(AssemblyName)</ModDir>
+	</PropertyGroup>
+</Project>

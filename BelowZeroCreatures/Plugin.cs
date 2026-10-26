@@ -49,6 +49,7 @@ public class Plugin : BaseUnityPlugin
         Logger = base.Logger;
         
         Sn1TypeDatabase.Initialize(ComponentSerializerLogger);
+        LanguageHandler.RegisterLocalizationFolder();
 
         WaitScreenHandler.RegisterEarlyLoadTask("Below Zero Creatures", LoadMod, "Registering Below Zero creatures");
         
