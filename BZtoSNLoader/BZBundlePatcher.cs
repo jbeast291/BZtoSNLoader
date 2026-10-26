@@ -16,7 +16,7 @@ internal static class BZBundlePatcher
     private static readonly AssetsManager manager = new();
     static BZBundlePatcher()
     {
-        manager.LoadClassPackage(Plugin.Assembly.GetManifestResourceStream("classdata.tpk"));
+        manager.LoadClassPackage(Plugin.Assembly.GetManifestResourceStream("BZtoSNLoader.Resources.classdata.tpk"));
         manager.LoadClassDatabaseFromPackage("2019.4.36f1");
     }
 

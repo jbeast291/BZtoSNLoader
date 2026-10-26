@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using BepInEx;
 using UnityEngine;
 namespace BZtoSNLoader;
 
@@ -8,58 +9,56 @@ internal static class BZPathFinder
 {
     internal static bool TryDetermineBZAddressables(out string bundleFolderPath)
     {
-        try 
+        if (CheckConfigPath(out bundleFolderPath)) return true;
+        if (TryDetermineAutomaticBZPath(out bundleFolderPath)) return true;
+
+        Plugin.Logger.LogError($"Failed to determine Subnautica: Below Zero folder!");
+        bundleFolderPath = string.Empty;
+        return false;
+    }
+
+    private static bool TryDetermineAutomaticBZPath(out string bundleFolderPath)
+    {
+        string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "SubnauticaZero"));
+        bundleFolderPath = CreateBundleFolderPathFromRoot(BZDirectory);
+        return ValidateBundleFolder(bundleFolderPath);
+    }
+
+    private static bool CheckConfigPath(out string bundleFolderPath)
+    {
+        if (Plugin.bzRootPath.Value == null)
         {
-            bundleFolderPath = Application.platform switch
-            {
-                RuntimePlatform.WindowsPlayer => Windows__GetFolder(),
-                RuntimePlatform.OSXPlayer => OSX__GetFolder(),
-                _ => throw new Exception("Unsupported platform detected!")
-            };
-            return true;
-        } 
-        catch (InvalidGamePathException e) 
-        {
-            Plugin.Logger.LogError($"Failed to determine Subnautica: Below Zero folder automatically! {e.Message}");
             bundleFolderPath = string.Empty;
             return false;
         }
+        bundleFolderPath = CreateBundleFolderPathFromRoot(Plugin.bzRootPath.Value);
+        return ValidateBundleFolder(bundleFolderPath);
     }
 
     private const string ShadowLeviathanBundle = "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle";
 
-    private static string Windows__GetFolder()
+    private static string CreateBundleFolderPathFromRoot(string gameRootFolder)
     {
-        string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "SubnauticaZero"));
-
-        if (!Directory.Exists(BZDirectory)) throw new InvalidGamePathException($"BZDirectory does not exist at: \"{BZDirectory}\"");
-        if (!File.Exists(Path.Combine(BZDirectory, "SubnauticaZero.exe"))) throw new InvalidGamePathException($"BZDirectory: \"{BZDirectory}\" is invalid! Missing SubnauticaZero.exe");
-
-        string bundleFolderPath = Path.Combine(BZDirectory, "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64");
-
-        if (!Directory.Exists(bundleFolderPath)) throw new InvalidGamePathException($"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"");
-        if (!File.Exists(Path.Combine(bundleFolderPath, ShadowLeviathanBundle))) throw new InvalidGamePathException($"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles");
-
-        return bundleFolderPath;
+        return Application.platform switch
+        {
+            RuntimePlatform.WindowsPlayer => Path.Combine(gameRootFolder, "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64"),
+            RuntimePlatform.OSXPlayer => Path.Combine(gameRootFolder, "SubnauticaZero.app", "Contents", "Resources", "Data", "StreamingAssets", "aa", "StandaloneOSX"),
+            _ => throw new Exception("Unsupported platform detected!")
+        };
     }
 
-    private static string OSX__GetFolder()
+    private static bool ValidateBundleFolder(string bundleFolderPath)
     {
-        //TODO: ensure kookoo can make this work
-        // home/jbeast/.local/share/Steam/steamapps/common/SubnauticaZero/SubnauticaZero.app/Contents/Resources/Data/StreamingAssets/aa/StandaloneOSX/
-        Plugin.Logger.LogError($"App Domain: {AppDomain.CurrentDomain.BaseDirectory}");
-        string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "SubnauticaZero"));
-        Plugin.Logger.LogError($"BZDirectory: {BZDirectory}");
-        if (!Directory.Exists(BZDirectory)) throw new InvalidGamePathException($"BZDirectory does not exist at: \"{BZDirectory}\"");
-        if (!File.Exists(Path.Combine(BZDirectory, "SubnauticaZero.exe"))) throw new InvalidGamePathException($"BZDirectory: \"{BZDirectory}\" is invalid! Missing SubnauticaZero.exe");
-
-        string bundleFolderPath = Path.Combine(BZDirectory, "SubnauticaZero.app", "Contents", "Resources", "Data", "StreamingAssets", "aa", "StandaloneOSX");
-        Plugin.Logger.LogError(bundleFolderPath);
-        if (!Directory.Exists(bundleFolderPath)) throw new InvalidGamePathException($"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"");
-        if (!File.Exists(Path.Combine(bundleFolderPath, ShadowLeviathanBundle))) throw new InvalidGamePathException($"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles");
-
-        return bundleFolderPath;
+        if (!Directory.Exists(bundleFolderPath))
+        {
+            Plugin.Logger.LogError($"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"");
+            return false;
+        }
+        if (!File.Exists(Path.Combine(bundleFolderPath, ShadowLeviathanBundle)))
+        {
+            Plugin.Logger.LogError($"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles");
+            return false;
+        }
+        return true;
     }
-
-    private class InvalidGamePathException(string message) : Exception(message);
 }

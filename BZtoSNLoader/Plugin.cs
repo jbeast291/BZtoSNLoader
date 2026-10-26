@@ -1,6 +1,7 @@
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using Nautilus.Handlers;
@@ -14,17 +15,28 @@ public class Plugin : BaseUnityPlugin
     internal new static ManualLogSource Logger { get; private set; }
     internal static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
+    internal static ConfigEntry<string> bzRootPath;
+
     private void Awake()
     {
         Logger = base.Logger;
+        SetupPathConfig();
         BZGameData.InitDependencyData();
         Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
     }
 
+    private void SetupPathConfig()
+    {
+        bzRootPath = Config.Bind("BelowZero",
+            "PathToBZFolder",
+            @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero",
+            "Path to your Subnautica: Below Zero folder. This should point to the folder containing the game's .exe on windows (Or .app on macos)");
+    }
+
     internal static string ReadFromResources(string assetName)
     {
-        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"BtwSourceGenerators.Resources.{assetName}");
+        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"BZtoSNLoader.Resources.{assetName}");
 
         if (stream == null) throw new FileNotFoundException($"Embedded resource '{assetName}' not found!");
 

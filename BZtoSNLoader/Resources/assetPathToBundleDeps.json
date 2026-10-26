@@ -1,5 +1,4 @@
 {
-  "Version": 1,
   "assetPathToBundleDeps": {
     "Assets/AddressableResources/Atlases/Backgrounds.spriteatlas": [
       "atlases_1bb3f2049945bd4742384fe4c0855ca3.bundle",

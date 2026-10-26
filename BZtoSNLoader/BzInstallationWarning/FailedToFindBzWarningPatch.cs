@@ -9,8 +9,7 @@ internal static class FailedToFindBzWarningPatch
     [HarmonyPatch(typeof(uGUI_MainMenu), nameof(uGUI_MainMenu.Start))]
     private static void MainMenuStartPostfix(uGUI_MainMenu __instance)
     {
-        if (!BZGameData.BelowZeroFound)
-            TryShowPopup(__instance);
+        if (!BZGameData.BelowZeroFound) TryShowPopup(__instance);
     }
 
     private static void TryShowPopup(uGUI_MainMenu mainMenu)
@@ -20,12 +19,9 @@ internal static class FailedToFindBzWarningPatch
             Plugin.Logger.LogError("Main menu not found while trying to show missing BZ installation popup");
         }
 
-        try
-        {
+        try {
             BzWarningPopupBuilder.CreateMissingBzWarningPopup(mainMenu);
-        }
-        catch
-        {
+        } catch {
             Plugin.Logger.LogError("Failed to create missing BZ warning popup! Exception thrown");
             throw;
         }
