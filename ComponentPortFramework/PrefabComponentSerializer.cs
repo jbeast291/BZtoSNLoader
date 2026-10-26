@@ -396,6 +396,10 @@ public class PrefabComponentSerializer
             {
                 return null;
             }
+            if (componentData.type == "SoundOnDamage")
+            {
+                return null;
+            }
         }
 
         if (!Sn1TypeDatabase.TypeDatabase.TryGetTypeByName(componentData.type, false, out var componentType))

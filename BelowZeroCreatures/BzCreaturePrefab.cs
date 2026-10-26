@@ -64,6 +64,12 @@ public class BzCreaturePrefab
             yield return CreatureRespawnerUtils.GetCreatureRespawnerPrefab(respawnerPrefabResult);
             creatureDeath.respawnerPrefab = respawnerPrefabResult.Get();
         }
+
+        // A valid sound is needed so we just remove this entirely
+        foreach (var soundOnDamage in creatureDeath.GetComponentsInChildren<SoundOnDamage>())
+        {
+            Object.DestroyImmediate(soundOnDamage);
+        }
         
         HardcodedCreatureFixes.ApplyFixesByCreature(prefab, Info.ClassID);
         
