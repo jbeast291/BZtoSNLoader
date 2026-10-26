@@ -1,4 +1,5 @@
 using System.Collections;
+using BelowZeroCreatures.Fixes;
 using BZtoSNLoader;
 using ComponentPortFramework;
 using Nautilus.Assets;
@@ -12,7 +13,7 @@ public class BzPrefab
     public PrefabInfo Info { get; }
     private BZAssetLoader.AddressablesAssetPath AddressablePath { get; }
     private JsonPrefab ComponentData { get; }
-
+    
     public BzPrefab(PrefabInfo info, BZAssetLoader.AddressablesAssetPath assetPath, JsonPrefab componentData)
     {
         Info = info;
@@ -29,25 +30,60 @@ public class BzPrefab
 
     private IEnumerator GetPrefabAsync(IOut<GameObject> result)
     {
+        // Load assets
         TaskResult<GameObject> initialLoadResult = new TaskResult<GameObject>();
         yield return BZAssetLoader.LoadAssetAsync(AddressablePath, initialLoadResult);
         var originalPrefab = initialLoadResult.Get();
         var prefab = UWE.Utils.InstantiateDeactivated(originalPrefab);
+        
+        // Reconstruct components
         Plugin.ComponentSerializer.ReconstructComponentsOnGameObject(prefab, ComponentData);
+        
+        // Cell level
         LargeWorldEntity.CellLevel cellLevel = LargeWorldEntity.CellLevel.Far;
+        
+        if (prefab.GetComponent<Pickupable>() != null)
+            cellLevel = LargeWorldEntity.CellLevel.Medium;
+        
         if (prefab.TryGetComponent<LargeWorldEntity>(out var largeWorldEntity))
             cellLevel = largeWorldEntity.cellLevel;
+        else
+            Plugin.Logger.LogWarning($"Couldn't find correct CellLevel for {prefab}");
+        
+        // Essentials
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, cellLevel);
-        /*
+        ApplyMaterials(prefab);
+        
+        // -- Various creature-related fixes --
+        // Fix creature death
+        var creatureDeath = prefab.GetComponent<CreatureDeath>();
+        if (creatureDeath != null)
+        {
+            // The creature respawner WILL be a 'stale' reference and must be fixed to point to the right one
+            TaskResult<GameObject> respawnerPrefabResult = new TaskResult<GameObject>();
+            yield return CreatureRespawnerUtils.GetCreatureRespawnerPrefab(respawnerPrefabResult);
+            creatureDeath.respawnerPrefab = respawnerPrefabResult.Get();
+        }
+        
+        HardcodedCreatureFixes.ApplyFixesByCreature(prefab, Info.ClassID);
+        
+        result.Set(prefab);
+    }
+
+    private static void ApplyMaterials(GameObject prefab)
+    {
         foreach (var renderer in prefab.GetComponentsInChildren<Renderer>())
         {
             var materials = renderer.materials;
             foreach (var m in materials)
             {
+                if (m == null) continue;
+                if (!m.shader.name.Contains("MarmosetUBER")) continue;
+                if (m.GetInt("_ZWrite") == 0) continue; // Skip transparent materials
                 m.shader = MaterialUtils.Shaders.MarmosetUBER;
             }
             renderer.materials = materials;
-        }*/
-        result.Set(prefab);
+        }
     }
+    
 }

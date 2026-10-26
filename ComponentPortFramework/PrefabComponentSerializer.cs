@@ -421,7 +421,7 @@ public class PrefabComponentSerializer
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
             if (field == null)
             {
-                _logger.Log(LogLevel.Error, $"Failed to find field by name '{fieldName}' on '{component.GetType()}'");
+                _logger.Log(LogLevel.Debug, $"Could not find field by name '{fieldName}' on '{component.GetType()}'");
                 continue;
             }
 
