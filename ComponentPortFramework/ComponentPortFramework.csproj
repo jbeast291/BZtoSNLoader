@@ -31,4 +31,5 @@
         <EmbeddedResource Include="SN1Classes" />
     </ItemGroup>
 
+    <Import Project="./PostBuild.targets"/>
 </Project>
