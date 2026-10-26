@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Condition="Exists('TargetDirectories.targets')" Project="TargetDirectories.targets"/>
+    <Import Condition="Exists('..\TargetDirectories.targets')" Project="..\TargetDirectories.targets"/>
     
     <ItemGroup>
         <CopyToBuildFiles Include="CopyToBuild/*"/>
     </ItemGroup>
     
-    <Target Condition="Exists('.\TargetDirectories.targets')" Name="CopyAssemblyToBelowZeroCreaturesMod" AfterTargets="Build">
-        <MakeDir Directories="$(ModDir)/BelowZeroCreatures"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)/BelowZeroCreatures"/>
+    <Target Condition="Exists('.\..\TargetDirectories.targets')" Name="CopyAssemblyToBelowZeroCreaturesMod" AfterTargets="Build">
+        <MakeDir Directories="$(BepInPluginsDir)/BelowZeroCreatures"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInPluginsDir)/BelowZeroCreatures"/>
     </Target>
 </Project>
