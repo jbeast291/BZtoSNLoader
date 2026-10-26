@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace BelowZeroCreatures;
 
-public class BzPrefab
+public class BzCreaturePrefab
 {
     public PrefabInfo Info { get; }
     private BZAssetLoader.AssetKey Key { get; }
     private JsonPrefab ComponentData { get; }
     
-    public BzPrefab(PrefabInfo info, BZAssetLoader.AssetKey assetKey, JsonPrefab componentData)
+    public BzCreaturePrefab(PrefabInfo info, BZAssetLoader.AssetKey assetKey, JsonPrefab componentData)
     {
         Info = info;
         Key = assetKey;

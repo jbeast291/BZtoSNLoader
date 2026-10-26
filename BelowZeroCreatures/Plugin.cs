@@ -80,7 +80,7 @@ public class Plugin : BaseUnityPlugin
             if (classId.ToLower().Contains("snowstalker"))
                 continue;
             
-            new BzPrefab(GetPrefabInfo(classId)
+            new BzCreaturePrefab(GetPrefabInfo(classId)
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
         }
         
