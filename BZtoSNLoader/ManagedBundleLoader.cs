@@ -46,7 +46,7 @@ internal static class ManagedBundleLoader
             result?.Set(bundle.LoadedBundle);
             if (bundle.LoadedBundle == null)
             {
-                Plugin.Logger.LogError("Bundle was designated as loaded while it doesn't exist");
+                Plugin.Logger.LogError($"Bundle {bundlePath.location} was designated as loaded while it doesn't exist");
             }
             yield break;
         }
