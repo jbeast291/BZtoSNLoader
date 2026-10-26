@@ -10,7 +10,7 @@ namespace BZtoSNLoader;
 
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-public class Plugin : BaseUnityPlugin
+internal sealed class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
     internal static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
@@ -26,6 +26,7 @@ public class Plugin : BaseUnityPlugin
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
     }
 
+    //TODO: migrate into BZPathFinder
     private void SetupPathConfig()
     {
         bzRootPath = Config.Bind("BelowZero",

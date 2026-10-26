@@ -11,7 +11,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 namespace BZtoSNLoader;
 
 /// <summary>
-/// The primary API for loading Below Zero assets by their address.
+/// The primary API for loading Below Zero assets by their addressable paths.
 /// </summary>
 public static class BZAssetLoader
 {
@@ -54,7 +54,9 @@ public static class BZAssetLoader
         if (bundle == null)
         {
             result.Set(null);
-            Plugin.Logger.LogError($"{asset} already loaded externally! The base game has this asset already loaded, there is no reason to pull it from BZ!");
+            Plugin.Logger.LogError($"{asset} already loaded externally! " +
+                                   $"The base game has this asset already loaded, " +
+                                   $"there is no reason to pull it from BZ!");
             yield break;
         }
         int index = -1;

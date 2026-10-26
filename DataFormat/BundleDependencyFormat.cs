@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DependencyDataFormat;
 
-public class BundleDependencyFormat
+internal class BundleDependencyFormat
 {
-    public Dictionary<string, List<string>> assetPathToBundleDeps { get; set; } = new();
+    [JsonProperty] internal Dictionary<string, List<string>> assetPathToBundleDeps { get; set; } = new();
 }

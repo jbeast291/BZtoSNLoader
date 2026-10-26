@@ -7,6 +7,7 @@ namespace BZtoSNLoader;
 
 internal static class BZPathFinder
 {
+    //TODO: improve error handling/logging. Shouldn't log error when config is invalid for example
     internal static bool TryDetermineBZAddressables(out string bundleFolderPath)
     {
         if (CheckConfigPath(out bundleFolderPath)) return true;
@@ -34,9 +35,7 @@ internal static class BZPathFinder
         bundleFolderPath = CreateBundleFolderPathFromRoot(Plugin.bzRootPath.Value);
         return ValidateBundleFolder(bundleFolderPath);
     }
-
-    private const string ShadowLeviathanBundle = "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle";
-
+    
     private static string CreateBundleFolderPathFromRoot(string gameRootFolder)
     {
         return Application.platform switch
@@ -54,6 +53,7 @@ internal static class BZPathFinder
             Plugin.Logger.LogError($"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"");
             return false;
         }
+        const string ShadowLeviathanBundle = "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle";
         if (!File.Exists(Path.Combine(bundleFolderPath, ShadowLeviathanBundle)))
         {
             Plugin.Logger.LogError($"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles");
