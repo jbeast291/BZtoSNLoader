@@ -94,10 +94,11 @@ internal static class DebugCommands
 
         foreach (string prefabPath in BZGameData.BundleDependencyData.assetPathToBundleDeps.Keys)
         {
-            Plugin.Logger.LogInfo($"Loading... {current}/{total} (not all in total are loaded)");
             current++;
             if(!prefabPath.EndsWith(".prefab")) continue;
             if(!filter.IsNullOrWhiteSpace() && !prefabPath.Contains(filter)) continue;
+
+            Plugin.Logger.LogInfo($"Loading... {current}/{total} (not all in total are loaded)");
 
             TaskResult<GameObject> requestResult = new();
             yield return BZAssetLoader.LoadAssetAsync(new(prefabPath), requestResult);

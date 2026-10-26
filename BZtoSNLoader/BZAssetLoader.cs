@@ -35,8 +35,7 @@ public static class BZAssetLoader
     /// <returns></returns>
     /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
     /// the asset does not exist in any bundle.</exception>
-    /// <example>
-    /// <code>
+    /// <example><code>
     /// TaskResult&lt;GameObject&gt; result = new TaskResult&lt;GameObject&gt;();
     /// yield return LoadAssetAsync(new AddressablesAssetPath("WorldEntities/Creatures/Expansion/ArcticPeeper.prefab"), result);
     /// GameObject prefab = result.Get();
