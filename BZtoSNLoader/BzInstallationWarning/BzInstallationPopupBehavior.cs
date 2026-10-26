@@ -5,8 +5,8 @@ namespace BZtoSNLoader.BzInstallationWarning;
 
 internal class BzInstallationPopupBehavior : MonoBehaviour
 {
-    public void OnButtonQuit() => Application.Quit();
-    public void OnButtonEditPath()
+    internal void OnButtonQuit() => Application.Quit();
+    internal void OnButtonEditPath()
     {
         var path = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_GUID}.cfg");
         if (!File.Exists(path))
@@ -17,12 +17,12 @@ internal class BzInstallationPopupBehavior : MonoBehaviour
         Application.OpenURL(path);
     }
 
-    public void OnButtonOpenPluginFolder()
+    internal void OnButtonOpenPluginFolder()
     {
         Application.OpenURL(Path.GetDirectoryName(Plugin.Assembly.Location));
     }
 
-    public void OnButtonPurchaseBelowZero()
+    internal void OnButtonPurchaseBelowZero()
     {
         Application.OpenURL("https://store.steampowered.com/app/848450/Subnautica_Below_Zero/");
     }

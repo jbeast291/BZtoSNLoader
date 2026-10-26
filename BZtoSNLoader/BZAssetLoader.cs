@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Nautilus.Utility;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace BZtoSNLoader;
 
@@ -44,11 +47,16 @@ public static class BZAssetLoader
         {
             throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
         }
-        TaskResult<AssetBundle> bundleRequest = new TaskResult<AssetBundle>();
+        TaskResult<AssetBundle> bundleRequest = new();
         yield return LoadAssetWithDependencies(asset, bundleRequest);
 
         AssetBundle bundle = bundleRequest.Get();
-
+        if (bundle == null)
+        {
+            result.Set(null);
+            Plugin.Logger.LogError($"{asset} already loaded externally! The base game has this asset already loaded, there is no reason to pull it from BZ!");
+            yield break;
+        }
         int index = -1;
         string assetName = Path.GetFileName(asset.Path);
         string[] allAssetsInBundle = bundle.GetAllAssetNames();

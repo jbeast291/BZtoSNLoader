@@ -36,7 +36,7 @@ internal static class ManagedBundleLoader
             case BundleState.Loading: yield return new WaitUntil(() => bundle.State == BundleState.Loaded); goto case BundleState.Loaded;
             // Do nothing
             case BundleState.Loaded: wasAlreadyLoaded = true; break;
-            
+
             default: throw new ArgumentOutOfRangeException(nameof(bundle.State), bundle.State, null);
         }
 
