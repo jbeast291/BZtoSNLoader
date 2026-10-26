@@ -39,4 +39,8 @@
       <ProjectReference Include="..\BZtoSNLoader\BZtoSNLoader.csproj" />
       <ProjectReference Include="..\ComponentPortFramework\ComponentPortFramework.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Structures\" />
+    </ItemGroup>
 </Project>

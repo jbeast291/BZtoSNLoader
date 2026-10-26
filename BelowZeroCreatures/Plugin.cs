@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BelowZeroCreatures.StructureLoading;
 using BepInEx;
 using BepInEx.Logging;
 using BZtoSNLoader;
@@ -49,7 +50,7 @@ public class Plugin : BaseUnityPlugin
         
         Sn1TypeDatabase.Initialize(ComponentSerializerLogger);
 
-        WaitScreenHandler.RegisterEarlyLoadTask("Below Zero Creatures", RegisterBzPrefabs, "Registering Below Zero creatures");
+        WaitScreenHandler.RegisterEarlyLoadTask("Below Zero Creatures", LoadMod, "Registering Below Zero creatures");
         
         // register harmony patches, if there are any
         Harmony.CreateAndPatchAll(Assembly, $"{PluginInfo.PLUGIN_GUID}");
@@ -67,7 +68,7 @@ public class Plugin : BaseUnityPlugin
     }
 
     // TODO: Unload prefabs on quit to main menu?
-    private void RegisterBzPrefabs(WaitScreenHandler.WaitScreenTask task)
+    private void LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
         foreach (var asset in AssetPathsWithComponentData)
@@ -81,6 +82,8 @@ public class Plugin : BaseUnityPlugin
             new BzPrefab(GetPrefabInfo(classId)
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
         }
+        
+        StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
     }
 
     private static PrefabInfo GetPrefabInfo(string classId)
