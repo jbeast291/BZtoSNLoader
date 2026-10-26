@@ -11,13 +11,13 @@ namespace BelowZeroCreatures;
 public class BzPrefab
 {
     public PrefabInfo Info { get; }
-    private BZAssetLoader.AddressablesAssetPath AddressablePath { get; }
+    private BZAssetLoader.AssetKey Key { get; }
     private JsonPrefab ComponentData { get; }
     
-    public BzPrefab(PrefabInfo info, BZAssetLoader.AddressablesAssetPath assetPath, JsonPrefab componentData)
+    public BzPrefab(PrefabInfo info, BZAssetLoader.AssetKey assetKey, JsonPrefab componentData)
     {
         Info = info;
-        AddressablePath = assetPath;
+        Key = assetKey;
         ComponentData = componentData;
     }
 
@@ -32,7 +32,7 @@ public class BzPrefab
     {
         // Load assets
         TaskResult<GameObject> initialLoadResult = new TaskResult<GameObject>();
-        yield return BZAssetLoader.LoadAssetAsync(AddressablePath, initialLoadResult);
+        yield return BZAssetLoader.LoadAssetAsync(Key, initialLoadResult);
         var originalPrefab = initialLoadResult.Get();
         var prefab = UWE.Utils.InstantiateDeactivated(originalPrefab);
         

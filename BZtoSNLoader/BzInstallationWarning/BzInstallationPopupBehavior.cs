@@ -3,27 +3,18 @@ using UnityEngine;
 
 namespace BZtoSNLoader.BzInstallationWarning;
 
-internal class BzInstallationPopupBehavior : MonoBehaviour
+internal static class BzInstallationPopupBehavior
 {
-    internal void OnButtonQuit() => Application.Quit();
-    internal void OnButtonEditPath()
+    internal static void OnButtonQuit() => Application.Quit();
+    internal static void OnButtonEditPath()
     {
-        var path = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_GUID}.cfg");
-        if (!File.Exists(path))
-        {
-            ErrorMessage.AddMessage("<color=#FF0000>No config file found</color>");
-            return;
-        }
+        string path = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_GUID}.cfg");
         Application.OpenURL(path);
     }
 
-    internal void OnButtonOpenPluginFolder()
-    {
-        Application.OpenURL(Path.GetDirectoryName(Plugin.Assembly.Location));
-    }
+    internal static void OnButtonOpenPluginFolder() 
+        => Application.OpenURL(Path.GetDirectoryName(Plugin.Assembly.Location));
 
-    internal void OnButtonPurchaseBelowZero()
-    {
-        Application.OpenURL("https://store.steampowered.com/app/848450/Subnautica_Below_Zero/");
-    }
+    internal static void OnButtonPurchaseBelowZero() 
+        => Application.OpenURL("https://store.steampowered.com/app/848450/Subnautica_Below_Zero/");
 }

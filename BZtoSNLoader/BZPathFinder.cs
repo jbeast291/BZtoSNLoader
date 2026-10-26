@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using BepInEx;
+using BepInEx.Configuration;
 using UnityEngine;
 namespace BZtoSNLoader;
 
@@ -9,33 +10,44 @@ internal static class BZPathFinder
 {
     internal static bool TryDetermineBZAddressables(out string bundleFolderPath)
     {
-        if (CheckConfigPath(out bundleFolderPath)) return true;
-        if (TryDetermineAutomaticBZPath(out bundleFolderPath)) return true;
+        if (CheckConfigPath(out bundleFolderPath, out string configErrorMsg)) return true;
+        if (TryDetermineAutomaticBZPath(out bundleFolderPath, out string automaticErrorMsg)) return true;
 
-        Plugin.Logger.LogError($"Failed to determine Subnautica: Below Zero folder!");
+        Plugin.Logger.LogError($"Failed to determine Subnautica: Below Zero folder!" +
+                               $"\nConfig failed: {configErrorMsg}" +
+                               $"\nAutomatic failed: {automaticErrorMsg}");
         bundleFolderPath = string.Empty;
         return false;
     }
 
-    private static bool TryDetermineAutomaticBZPath(out string bundleFolderPath)
+    private static ConfigEntry<string> bzRootPath;
+
+    internal static void SetupBepInConfig()
+    {
+        bzRootPath = Plugin.Config.Bind("BelowZero",
+            "PathToBZFolder",
+            @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero",
+            "Path to your Subnautica: Below Zero folder. This should point to the folder containing the game's .exe on windows (Or .app on macos)");
+    }
+
+    private static bool CheckConfigPath(out string bundleFolderPath, out string errorMsg)
+    {
+        if (bzRootPath.Value == null)
+        {
+            bundleFolderPath = string.Empty;
+            errorMsg = "Config Value Null!";
+            return false;
+        }
+        bundleFolderPath = CreateBundleFolderPathFromRoot(bzRootPath.Value);
+        return ValidateBundleFolder(bundleFolderPath, out errorMsg);
+    }
+
+    private static bool TryDetermineAutomaticBZPath(out string bundleFolderPath, out string errorMsg)
     {
         string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "SubnauticaZero"));
         bundleFolderPath = CreateBundleFolderPathFromRoot(BZDirectory);
-        return ValidateBundleFolder(bundleFolderPath);
+        return ValidateBundleFolder(bundleFolderPath, out errorMsg);
     }
-
-    private static bool CheckConfigPath(out string bundleFolderPath)
-    {
-        if (Plugin.bzRootPath.Value == null)
-        {
-            bundleFolderPath = string.Empty;
-            return false;
-        }
-        bundleFolderPath = CreateBundleFolderPathFromRoot(Plugin.bzRootPath.Value);
-        return ValidateBundleFolder(bundleFolderPath);
-    }
-
-    private const string ShadowLeviathanBundle = "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle";
 
     private static string CreateBundleFolderPathFromRoot(string gameRootFolder)
     {
@@ -47,18 +59,20 @@ internal static class BZPathFinder
         };
     }
 
-    private static bool ValidateBundleFolder(string bundleFolderPath)
+    private static bool ValidateBundleFolder(string bundleFolderPath, out string errorMsg)
     {
         if (!Directory.Exists(bundleFolderPath))
         {
-            Plugin.Logger.LogError($"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"");
+            errorMsg = $"Addressables bundle folder does not exist at: \"{bundleFolderPath}\"";
             return false;
         }
+        const string ShadowLeviathanBundle = "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle";
         if (!File.Exists(Path.Combine(bundleFolderPath, ShadowLeviathanBundle)))
         {
-            Plugin.Logger.LogError($"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles");
+            errorMsg = $"Addressables bundle folder: \"{bundleFolderPath}\" is missing bundles";
             return false;
         }
+        errorMsg = string.Empty;
         return true;
     }
 }

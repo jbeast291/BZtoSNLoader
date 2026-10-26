@@ -123,9 +123,9 @@ internal static class ManagedBundleLoader
 
     private class BundleInstance
     {
-        public AssetBundle LoadedBundle { get; set; }
-        public int Users { get; set; }
-        public BundleState State { get; set; }
+        internal AssetBundle LoadedBundle { get; set; }
+        internal int Users { get; set; }
+        internal BundleState State { get; set; }
     }
 
     private enum BundleState : byte

@@ -1,9 +1,9 @@
-using System;
 using System.Collections;
-using JetBrains.Annotations;
+using System.Collections.Generic;
+using BepInEx;
 using Nautilus.Commands;
+using Nautilus.Utility;
 using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
 using UWE;
 using Object = UnityEngine.Object;
 
@@ -11,7 +11,6 @@ namespace BZtoSNLoader;
 
 internal static class DebugCommands
 {
-    [UsedImplicitly]
     [ConsoleCommand("spawnbz")]
     private static void SpawnBzAsset(string prefabName, int count = 1, float distance = 12) 
         => CoroutineHost.StartCoroutine(SpawnAsync(prefabName, count, distance));
@@ -34,33 +33,72 @@ internal static class DebugCommands
             ErrorMessage.AddDebug("Could not find prefab by name: " + assetPath);
         }
     }
-    
-    [UsedImplicitly]
-    [ConsoleCommand("spawnallbz")]
-    private static void SpawnBzAsset() => CoroutineHost.StartCoroutine(SpawnAllAsync());
 
-    private static IEnumerator SpawnAllAsync()
+    private static readonly List<GalleryAsset> spawnedGalObjects = new();
+    private static Coroutine activeSpawnLoop;
+
+    [ConsoleCommand("bzgal")]
+    private static void SpawnBzAsset(string subCommand = "", string filter = "")
     {
-        float rowX = 12;
+        switch (subCommand)
+        {
+            case "all":
+                ResetActiveGallery();
+                activeSpawnLoop = CoroutineHost.StartCoroutine(SpawnAllAsync(filter));
+                ErrorMessage.AddDebug("Spawning every BZ asset (this will take a LONG time, the chain will be long)");
+                break;
+            case "reset": 
+                ErrorMessage.AddDebug("Reset gallery");
+                ResetActiveGallery();
+                break;
+            case "help":
+                ErrorMessage.AddDebug(
+                    "BtW's Assets Gallery Command Usage:" +
+                    "\n<color=yellow>bzgal help</color> Shows this message." +
+                    "\n<color=yellow>bzgal reset</color> Clears all spawned assets" +
+                    "\n<color=yellow>bzgal all (filter)</color> Spawns all BZ assets (this will take a LONG time)"
+                );
+                break;
+            default: 
+                goto case "help";
+        }
+    }
+
+    private static void ResetActiveGallery()
+    {
+        spawnedGalObjects.ForEach(p => Object.Destroy(p.gameObject));
+        spawnedGalObjects.Clear();
+        if(activeSpawnLoop != null)
+        {
+            CoroutineHost.StopCoroutine(activeSpawnLoop);
+            activeSpawnLoop = null;
+        }
+    }
+
+    private static IEnumerator SpawnAllAsync(string filter)
+    {
+        float nextX = 12;
 
         Vector3 startPosition = Player.main.transform.position;
         int total = BZGameData.BundleDependencyData.assetPathToBundleDeps.Keys.Count;
         int current = 0;
 
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.SetActive(true);
-        cube.transform.localScale = Vector3.one * 5;
+        GameObject cubeSpawner = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cubeSpawner.name = "BZCubeSpawner";
+        Object.DestroyImmediate(cubeSpawner.GetComponent<BoxCollider>());
+        cubeSpawner.GetComponent<MeshRenderer>().material = MaterialUtils.StasisFieldMaterial;
+        GalleryAsset cubeGalAsset = cubeSpawner.AddComponent<GalleryAsset>();
+        spawnedGalObjects.Add(cubeGalAsset);
+        cubeSpawner.SetActive(true);
+        cubeSpawner.transform.localScale = Vector3.one * 5;
 
         foreach (string prefabPath in BZGameData.BundleDependencyData.assetPathToBundleDeps.Keys)
         {
             current++;
-            if(!prefabPath.EndsWith(".prefab") && 
-               !prefabPath.EndsWith(".FBX") && 
-               !prefabPath.EndsWith(".fbx")
-            ) {
-                continue;
-            }
-            Plugin.Logger.LogError($"Loading: {current}/{total}");
+            if(!prefabPath.EndsWith(".prefab")) continue;
+            if(!filter.IsNullOrWhiteSpace() && !prefabPath.Contains(filter)) continue;
+
+            Plugin.Logger.LogInfo($"Loading... {current}/{total} (not all in total are loaded)");
 
             TaskResult<GameObject> requestResult = new();
             yield return BZAssetLoader.LoadAssetAsync(new(prefabPath), requestResult);
@@ -68,25 +106,33 @@ internal static class DebugCommands
             GameObject prefab = requestResult.Get();
             if(prefab == null) continue;
 
-            GameObject gameObject = Object.Instantiate(prefab, startPosition + new Vector3(rowX, 0, 0), Quaternion.identity);
-            gameObject.SetActive(true);
+            GameObject bzPrefab = Object.Instantiate(prefab, startPosition + new Vector3(nextX, 0, 0), Quaternion.identity);
+            bzPrefab.SetActive(true);
+            GalleryAsset galAsset = bzPrefab.AddComponent<GalleryAsset>();
+            galAsset.AddressablePath = prefabPath;
+            spawnedGalObjects.Add(galAsset);
 
-            Renderer[] renderers = prefab.GetAllComponentsInChildren<Renderer>();
-            Bounds bounds;
-            if (renderers.Length > 0) {
-                bounds = renderers[0].bounds;
-                foreach (Renderer renderer in renderers)
-                {
-                    bounds.Encapsulate(renderer.bounds);
+            float maxSize;
+            {
+                Bounds bounds;
+                Renderer[] renderers = prefab.GetAllComponentsInChildren<Renderer>();
+                if (renderers.Length > 0) {
+                    bounds = renderers[0].bounds;
+                    foreach (Renderer renderer in renderers)
+                    {
+                        bounds.Encapsulate(renderer.bounds);
+                    }
                 }
+                else bounds = new(Vector3.zero, Vector3.zero);
+
+                maxSize = bounds.size.x;
+                maxSize = maxSize.Clamp(0, 50);
             }
-            else bounds = new(Vector3.zero, Vector3.zero);
 
-            float maxSize = bounds.size.x;
-            maxSize = maxSize.Clamp(0, 50);
-
-            rowX += maxSize;
-            cube.transform.position = startPosition + new Vector3(rowX, 0, 0);
+            nextX += maxSize;
+            cubeSpawner.transform.position = startPosition + new Vector3(nextX, 0, 0);
         }
     }
+
+    private class GalleryAsset() : MonoBehaviour { internal string AddressablePath; }
 }

@@ -81,7 +81,7 @@ public class Plugin : BaseUnityPlugin
                 continue;
             
             new BzPrefab(GetPrefabInfo(classId)
-                .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AddressablesAssetPath(asset.Key), asset.Value).Register();
+                .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
         }
         
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
