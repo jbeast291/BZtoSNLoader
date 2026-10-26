@@ -43,7 +43,7 @@ internal static class BzWarningPopupBuilder
         // Add 'open plugins folder' button
         var pluginsButton = menuPanel.transform.Find(rightButtonName).gameObject;
         Object.DestroyImmediate(pluginsButton.GetComponentInChildren<TranslationLiveUpdate>());
-        pluginsButton.GetComponentInChildren<TextMeshProUGUI>().text = "Open plugin folder";
+        pluginsButton.GetComponentInChildren<TextMeshProUGUI>().text = "Open Plugin Folder";
         var pluginsButtonComponent = pluginsButton.GetComponent<Button>();
         pluginsButtonComponent.onClick.RemoveAllListeners();
         pluginsButtonComponent.onClick.AddListener(menuBehaviour.OnButtonOpenPluginFolder);
@@ -51,7 +51,7 @@ internal static class BzWarningPopupBuilder
         // Add 'edit path' button
         var editPathButton = menuPanel.transform.Find(leftButtonName).gameObject;
         Object.DestroyImmediate(editPathButton.GetComponentInChildren<TranslationLiveUpdate>());
-        editPathButton.GetComponentInChildren<TextMeshProUGUI>().text = "Edit path";
+        editPathButton.GetComponentInChildren<TextMeshProUGUI>().text = "Edit BZ Path";
         var editPathButtonComponent = editPathButton.GetComponent<Button>();
         editPathButtonComponent.onClick.RemoveAllListeners();
         editPathButtonComponent.onClick.AddListener(menuBehaviour.OnButtonEditPath);
@@ -59,7 +59,7 @@ internal static class BzWarningPopupBuilder
         // Add 'open plugins folder' button
         var quitButton = Object.Instantiate(editPathButton.gameObject, editPathButton.transform.parent);
         Object.DestroyImmediate(quitButton.GetComponentInChildren<TranslationLiveUpdate>());
-        quitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Quit game";
+        quitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Quit Game";
         var quitButtonComponent = quitButton.GetComponent<Button>();
         quitButtonComponent.onClick.RemoveAllListeners();
         quitButtonComponent.onClick.AddListener(menuBehaviour.OnButtonQuit);
@@ -117,7 +117,7 @@ internal static class BzWarningPopupBuilder
 
         AddText("FixText", parent, 28,
             "Make sure Subnautica: Below Zero is installed on your PC. If you don't own the game, you must purchase and\n" +
-            "install it. If you do own the game, you may need to manually edit the path to point to your installation.");
+            "install it. You may need to manually edit the path to point to your installation. Do so by pressing \"Edit BZ Path\"");
 
         AddText("UninstallText", parent, 28,
             "If you are unable to purchase the game, it is recommended that you locate the plugin folder, " +
