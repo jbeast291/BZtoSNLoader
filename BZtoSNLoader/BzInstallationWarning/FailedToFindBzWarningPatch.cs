@@ -14,16 +14,14 @@ internal static class FailedToFindBzWarningPatch
 
     private static void TryShowPopup(uGUI_MainMenu mainMenu)
     {
-        if (mainMenu == null)
-        {
+        if (mainMenu == null) {
             Plugin.Logger.LogError("Main menu not found while trying to show missing BZ installation popup");
         }
 
         try {
             BzWarningPopupBuilder.CreateMissingBzWarningPopup(mainMenu);
         } catch {
-            Plugin.Logger.LogError("Failed to create missing BZ warning popup! Exception thrown");
-            throw;
+            throw new("Failed to create missing BZ warning popup! Exception thrown");
         }
     }
 }

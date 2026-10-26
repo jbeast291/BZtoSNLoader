@@ -21,6 +21,7 @@ internal static class BZGameData
 
         BelowZeroAddressablesFolder = bzAddressablesFolder;
         BundleDependencyData = dependencyData;
+        Plugin.Logger.LogInfo("Loaded Dependency Data!");
     }
 
     internal static string GetPathToBelowZeroBundle(string bundleName) => Path.Combine(BelowZeroAddressablesFolder, bundleName);

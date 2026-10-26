@@ -13,26 +13,18 @@ namespace BZtoSNLoader;
 internal sealed class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
+    internal new static ConfigFile Config { get; private set; }
     internal static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
-
-    internal static ConfigEntry<string> bzRootPath;
 
     private void Awake()
     {
         Logger = base.Logger;
-        SetupPathConfig();
+        Config = base.Config;
+        BZPathFinder.SetupBepInConfig();
         BZGameData.InitDependencyData();
         Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
-    }
-
-    //TODO: migrate into BZPathFinder
-    private void SetupPathConfig()
-    {
-        bzRootPath = Config.Bind("BelowZero",
-            "PathToBZFolder",
-            @"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero",
-            "Path to your Subnautica: Below Zero folder. This should point to the folder containing the game's .exe on windows (Or .app on macos)");
+        Plugin.Logger.LogInfo("Finished Loading!");
     }
 
     internal static string ReadFromResources(string assetName)

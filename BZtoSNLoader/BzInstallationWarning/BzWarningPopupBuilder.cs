@@ -17,7 +17,6 @@ internal static class BzWarningPopupBuilder
         var menuPanel =
             Object.Instantiate(optionsWindowReference.gameObject, optionsWindowReference.parent, true);
         menuPanel.name = "BzMissingWindow";
-        var menuBehaviour = menuPanel.AddComponent<BzInstallationPopupBehavior>();
         menuPanel.SetActive(false);
         var optionsPanel = menuPanel.GetComponentInChildren<uGUI_OptionsPanel>();
         Object.DestroyImmediate(optionsPanel);
@@ -46,7 +45,7 @@ internal static class BzWarningPopupBuilder
         pluginsButton.GetComponentInChildren<TextMeshProUGUI>().text = "Open Plugin Folder";
         var pluginsButtonComponent = pluginsButton.GetComponent<Button>();
         pluginsButtonComponent.onClick.RemoveAllListeners();
-        pluginsButtonComponent.onClick.AddListener(menuBehaviour.OnButtonOpenPluginFolder);
+        pluginsButtonComponent.onClick.AddListener(BzInstallationPopupBehavior.OnButtonOpenPluginFolder);
 
         // Add 'edit path' button
         var editPathButton = menuPanel.transform.Find(leftButtonName).gameObject;
@@ -54,7 +53,7 @@ internal static class BzWarningPopupBuilder
         editPathButton.GetComponentInChildren<TextMeshProUGUI>().text = "Edit BZ Path";
         var editPathButtonComponent = editPathButton.GetComponent<Button>();
         editPathButtonComponent.onClick.RemoveAllListeners();
-        editPathButtonComponent.onClick.AddListener(menuBehaviour.OnButtonEditPath);
+        editPathButtonComponent.onClick.AddListener(BzInstallationPopupBehavior.OnButtonEditPath);
  
         // Add 'open plugins folder' button
         var quitButton = Object.Instantiate(editPathButton.gameObject, editPathButton.transform.parent);
@@ -62,11 +61,11 @@ internal static class BzWarningPopupBuilder
         quitButton.GetComponentInChildren<TextMeshProUGUI>().text = "Quit Game";
         var quitButtonComponent = quitButton.GetComponent<Button>();
         quitButtonComponent.onClick.RemoveAllListeners();
-        quitButtonComponent.onClick.AddListener(menuBehaviour.OnButtonQuit);
+        quitButtonComponent.onClick.AddListener(BzInstallationPopupBehavior.OnButtonQuit);
 
         // Create main body
         var mainPaneContent = mainPaneTransform.Find("Viewport/Content").GetComponent<RectTransform>();
-        AddTextContents(mainPaneContent, editPathButton.gameObject, menuBehaviour);
+        AddTextContents(mainPaneContent, editPathButton.gameObject);
         mainPaneContent.GetComponent<VerticalLayoutGroup>().spacing = 45;
 
         // Reactivate menu panel
@@ -91,8 +90,7 @@ internal static class BzWarningPopupBuilder
         image.color = new Color(0.05f, 0.05f, 0.05f, 0.5f);
     }
 
-    private static void AddTextContents(RectTransform parent, GameObject buttonReference,
-        BzInstallationPopupBehavior behavior)
+    private static void AddTextContents(RectTransform parent, GameObject buttonReference)
     {
         AddText("TopText", parent, 32,
             "The <b><color=#fbaa1a>BZtoSNLoader modding library</color></b> failed to load!\n\n" +
@@ -108,7 +106,7 @@ internal static class BzWarningPopupBuilder
         purchaseText.fontSize = 50;
         var purchaseButtonComponent = purchaseButton.GetComponent<Button>();
         purchaseButtonComponent.onClick.RemoveAllListeners();
-        purchaseButtonComponent.onClick.AddListener(behavior.OnButtonPurchaseBelowZero);
+        purchaseButtonComponent.onClick.AddListener(BzInstallationPopupBehavior.OnButtonPurchaseBelowZero);
         var purchaseRect = purchaseButtonComponent.GetComponent<RectTransform>();
         purchaseRect.localPosition = Vector3.zero;
         purchaseRect.localRotation = Quaternion.identity;
