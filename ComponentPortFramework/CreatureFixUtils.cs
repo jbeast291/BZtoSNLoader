@@ -42,20 +42,23 @@ public static class CreatureFixUtils
 
         if (component is MeleeAttack melee)
         {
-            var onTouch = melee.gameObject.GetComponentInChildren<OnTouch>();
-            if (onTouch != null)
+            var onTouches = melee.gameObject.GetComponentsInChildren<OnTouch>(true);
+            if (onTouches != null)
             {
-                if (onTouch.gameObject.TryGetComponent<OnTouchFixer>(out var onTouchFixer))
+                foreach (var onTouch in onTouches)
                 {
-                    logger.Log(LogLevel.Warning, "Trying to add multiple MeleeAttack callbacks to a single OnTouch component");
-                }
-                else
-                {
-                    onTouchFixer = onTouch.gameObject.AddComponent<OnTouchFixer>();
-                }
+                    if (onTouch.gameObject.TryGetComponent<OnTouchFixer>(out var onTouchFixer))
+                    {
+                        logger.Log(LogLevel.Warning, "Trying to add multiple MeleeAttack callbacks to a single OnTouch component");
+                    }
+                    else
+                    {
+                        onTouchFixer = onTouch.gameObject.AddComponent<OnTouchFixer>();
+                    }
 
-                onTouchFixer.onTouch = onTouch;
-                onTouchFixer.melee = melee;
+                    onTouchFixer.onTouch = onTouch;
+                    onTouchFixer.melee = melee;
+                }
             }
         }
     }
