@@ -74,6 +74,7 @@ public class Plugin : BaseUnityPlugin
     private void LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
+        HashSet<TechType> techTypes = new HashSet<TechType>();
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
@@ -81,9 +82,16 @@ public class Plugin : BaseUnityPlugin
             // Skip Snow Stalkers because they seriously break the game
             if (ShouldSkipClassId(classId))
                 continue;
-            
-            new BzCreaturePrefab(GetPrefabInfo(classId)
+
+            var info = GetPrefabInfo(classId);
+            new BzCreaturePrefab(info
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
+            techTypes.Add(info.TechType);
+        }
+
+        foreach (var techType in techTypes)
+        {
+            // set up tech data (item size), localization, icons, and tool state?
         }
         
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
