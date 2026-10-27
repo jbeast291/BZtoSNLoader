@@ -24,6 +24,9 @@ internal static class HardcodedCreatureFixes
             case "SquidShark_LilyPads":
                 ApplySquidsharkFixes(prefab);
                 break;
+            case "SmallVentGarden":
+                ApplyVentGardenJuvenileFixes(prefab);
+                break;
         }
     }
 
@@ -102,5 +105,11 @@ internal static class HardcodedCreatureFixes
             // replace or remove electrical damage trigger fixer
             Object.DestroyImmediate(onTouchFixer);
         }
+    }
+
+    private static void ApplyVentGardenJuvenileFixes(GameObject prefab)
+    {
+        var motion = prefab.AddComponent<SmallVentGardenMotion>();
+        motion.swimBehaviour = prefab.GetComponent<SwimBehaviour>();
     }
 }

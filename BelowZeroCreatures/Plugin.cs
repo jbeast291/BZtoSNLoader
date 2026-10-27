@@ -35,8 +35,8 @@ public class Plugin : BaseUnityPlugin
     private static readonly Dictionary<string, string> NameConversions = new(StringComparer.OrdinalIgnoreCase)
     {
         { "Chelicerata", "Chelicerate" },
-        { "Vent_garden_standing", "VentGarden" },
-        { "VentGardenSmall", "VentGardenJuvenile" }
+        { "Vent_garden_standing", "LargeVentGarden" },
+        { "VentGardenSmall", "SmallVentGarden" }
     };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
