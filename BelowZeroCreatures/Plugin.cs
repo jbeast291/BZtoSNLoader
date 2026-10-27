@@ -29,6 +29,9 @@ public class Plugin : BaseUnityPlugin
     
     private static ILogger ComponentSerializerLogger { get; } = new ComponentSerializerLogger();
 
+    private static TechType JellyfishTechType { get; } = EnumHandler.AddEntry<TechType>("Jellyfish");
+    private static TechType SquidSharkTechType { get; } = EnumHandler.AddEntry<TechType>("SquidShark");
+
     private static readonly Dictionary<string, string> NameConversions = new(StringComparer.OrdinalIgnoreCase)
     {
         { "Chelicerata", "Chelicerate" },
@@ -77,7 +80,7 @@ public class Plugin : BaseUnityPlugin
             var classId = GetBestClassId(asset.Key);
             
             // Skip Snow Stalkers because they seriously break the game
-            if (classId.ToLower().Contains("snowstalker"))
+            if (ShouldSkipClassId(classId))
                 continue;
             
             new BzCreaturePrefab(GetPrefabInfo(classId)
@@ -87,11 +90,27 @@ public class Plugin : BaseUnityPlugin
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
     }
 
+    private static bool ShouldSkipClassId(string classId)
+    {
+        string toLower = classId.ToLower();
+        return toLower.Contains("snowstalker");
+    }
+
     private static PrefabInfo GetPrefabInfo(string classId)
     {
         if (classId == "RockPuncher")
         {
             return new PrefabInfo("RockPuncher", "RockPuncherPrefab", TechType.RockPuncher);
+        }
+        
+        if (classId.Contains("SquidShark"))
+        {
+            return new PrefabInfo(classId, classId + "Prefab", SquidSharkTechType);
+        }
+        
+        if (classId == "JellyFish")
+        {
+            return new PrefabInfo(classId, classId + "Prefab", JellyfishTechType);
         }
 
         return PrefabInfo.WithTechType(classId);
