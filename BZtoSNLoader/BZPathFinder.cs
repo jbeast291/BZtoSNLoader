@@ -8,16 +8,35 @@ namespace BZtoSNLoader;
 
 internal static class BZPathFinder
 {
-    internal static bool TryDetermineBZAddressables(out string bundleFolderPath)
+    internal static bool TryDetermineBZAddressables(out LocatedPaths locatedPaths)
     {
-        if (CheckConfigPath(out bundleFolderPath, out string configErrorMsg)) return true;
-        if (TryDetermineAutomaticBZPath(out bundleFolderPath, out string automaticErrorMsg)) return true;
+        string bundleFolderPath;
+        if (CheckConfigPath(out bundleFolderPath, out string configErrorMsg))
+        {
+            locatedPaths = GetPathsFromBundleFolder(bundleFolderPath);
+            return true;
+        }
+
+        if (TryDetermineAutomaticBZPath(out bundleFolderPath, out string automaticErrorMsg))
+        {
+            locatedPaths = GetPathsFromBundleFolder(bundleFolderPath);
+            return true;
+        }
 
         Plugin.Logger.LogError($"Failed to determine Subnautica: Below Zero folder!" +
                                $"\nConfig failed: {configErrorMsg}" +
                                $"\nAutomatic failed: {automaticErrorMsg}");
-        bundleFolderPath = string.Empty;
+        locatedPaths = null;
         return false;
+    }
+
+    private static LocatedPaths GetPathsFromBundleFolder(string bundleFolderPath)
+    {
+        return new LocatedPaths
+        {
+            AddressablesFolder = bundleFolderPath,
+            LocalizationFolder = GetLocalizationFolderPathFromBundleFolder(bundleFolderPath),
+        };
     }
 
     private static ConfigEntry<string> bzRootPath;
@@ -38,23 +57,39 @@ internal static class BZPathFinder
             errorMsg = "Config Value Null!";
             return false;
         }
-        bundleFolderPath = CreateBundleFolderPathFromRoot(bzRootPath.Value);
+        bundleFolderPath = GetBundleFolderPath(bzRootPath.Value);
         return ValidateBundleFolder(bundleFolderPath, out errorMsg);
     }
 
     private static bool TryDetermineAutomaticBZPath(out string bundleFolderPath, out string errorMsg)
     {
         string BZDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "SubnauticaZero"));
-        bundleFolderPath = CreateBundleFolderPathFromRoot(BZDirectory);
+        bundleFolderPath = GetBundleFolderPath(BZDirectory);
         return ValidateBundleFolder(bundleFolderPath, out errorMsg);
     }
 
-    private static string CreateBundleFolderPathFromRoot(string gameRootFolder)
+    private static string GetLocalizationFolderPathFromBundleFolder(string bundleFolder)
+    {
+        return Path.GetFullPath(Path.Combine(bundleFolder, "..", "..", "SNUnmanagedData", "LanguageFiles"));
+    }
+    
+    private static string GetBundleFolderPath(string gameRootFolder)
+    {
+        var dataPath = GetDataFolderPath(gameRootFolder);
+        return Application.platform switch
+        {
+            RuntimePlatform.WindowsPlayer => Path.Combine(dataPath, "StreamingAssets", "aa", "StandaloneWindows64"),
+            RuntimePlatform.OSXPlayer => Path.Combine(dataPath, "StreamingAssets", "aa", "StandaloneOSX"),
+            _ => throw new Exception("Unsupported platform detected!")
+        };
+    }
+    
+    private static string GetDataFolderPath(string gameRootFolder)
     {
         return Application.platform switch
         {
-            RuntimePlatform.WindowsPlayer => Path.Combine(gameRootFolder, "SubnauticaZero_Data", "StreamingAssets", "aa", "StandaloneWindows64"),
-            RuntimePlatform.OSXPlayer => Path.Combine(gameRootFolder, "SubnauticaZero.app", "Contents", "Resources", "Data", "StreamingAssets", "aa", "StandaloneOSX"),
+            RuntimePlatform.WindowsPlayer => Path.Combine(gameRootFolder, "SubnauticaZero_Data"),
+            RuntimePlatform.OSXPlayer => Path.Combine(gameRootFolder, "SubnauticaZero.app", "Contents", "Resources", "Data"),
             _ => throw new Exception("Unsupported platform detected!")
         };
     }
@@ -74,5 +109,11 @@ internal static class BZPathFinder
         }
         errorMsg = string.Empty;
         return true;
+    }
+
+    internal class LocatedPaths
+    {
+        public string AddressablesFolder { get; init; }
+        public string LocalizationFolder { get; init; }
     }
 }
