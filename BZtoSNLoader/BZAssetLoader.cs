@@ -101,7 +101,12 @@ public static class BZAssetLoader
                 continue;
             }
 
-            yield return ManagedBundleLoader.RequestBundleAndAddUser(new(bundlePath), null);
+            TaskResult<AssetBundle> dependencyRequest = new();
+            yield return ManagedBundleLoader.RequestBundleAndAddUser(new(bundlePath), dependencyRequest);
+            if (dependencyRequest.value == null)
+            {
+                Plugin.Logger.LogError($"Dependency {bundlePath} returned null!");
+            }
         }
 
         string mainBundleWithAsset = BZGameData.GetPathToBelowZeroBundle(bundles[0]);
