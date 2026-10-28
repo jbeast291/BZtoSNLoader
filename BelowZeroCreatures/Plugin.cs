@@ -111,7 +111,7 @@ public class Plugin : BaseUnityPlugin
         {
             string techTypeName = techType.ToString();
             PDAHandler.AddCustomScannerEntry(techType, 3, false, techTypeName);
-            PDAHandler.AddEncyclopediaEntry(techTypeName, "Lifeforms/Fauna/BelowZero");
+            PDAHandler.AddEncyclopediaEntry(GetDatabankName(techTypeName), "Lifeforms/Fauna/BelowZero");
         }
         
         // TODO: set up tech data (item size), localization, icons, and tool state?
@@ -128,8 +128,9 @@ public class Plugin : BaseUnityPlugin
             var techTypeName = techType.ToString();
             techTypesToRequest.Add(techTypeName);
             techTypesToRequest.Add("Tooltip_" + techTypeName);
-            techTypesToRequest.Add("Ency_" + techTypeName);
-            techTypesToRequest.Add("EncyDesc_" + techTypeName);
+            string databankName = GetDatabankName(techTypeName);
+            techTypesToRequest.Add("Ency_" + databankName);
+            techTypesToRequest.Add("EncyDesc_" + databankName);
         }
 
         techTypesToRequest.AddRange(MiscLocalizationToRequest);
@@ -169,6 +170,17 @@ public class Plugin : BaseUnityPlugin
         }
 
         return PrefabInfo.WithTechType(classId);
+    }
+
+    private static string GetDatabankName(string techTypeString)
+    {
+        return techTypeString switch
+        {
+            "TrivalveBlue" => "TrivalveB",
+            "TrivalveYellow" => "TrivalveA",
+            "LargeVentGarden" => "VentGarden",
+            _ => techTypeString
+        };
     }
 
     private static string GetBestClassId(string assetPath)
