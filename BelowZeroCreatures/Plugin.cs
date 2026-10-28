@@ -105,6 +105,15 @@ public class Plugin : BaseUnityPlugin
         TechType[] techTypesArray = techTypes.ToArray();
         RegisterAllLocalization(techTypesArray);
         
+        // Register PDA entries
+        LanguageHandler.SetLanguageLine("EncyPath_Lifeforms/Fauna/BelowZero", "Sector Zero");
+        foreach (var techType in techTypesArray)
+        {
+            string techTypeName = techType.ToString();
+            PDAHandler.AddCustomScannerEntry(techType, 3, false, techTypeName);
+            PDAHandler.AddEncyclopediaEntry(techTypeName, "Lifeforms/Fauna/BelowZero");
+        }
+        
         // TODO: set up tech data (item size), localization, icons, and tool state?
         
         // Register structures
@@ -119,6 +128,8 @@ public class Plugin : BaseUnityPlugin
             var techTypeName = techType.ToString();
             techTypesToRequest.Add(techTypeName);
             techTypesToRequest.Add("Tooltip_" + techTypeName);
+            techTypesToRequest.Add("Ency_" + techTypeName);
+            techTypesToRequest.Add("EncyDesc_" + techTypeName);
         }
 
         techTypesToRequest.AddRange(MiscLocalizationToRequest);
