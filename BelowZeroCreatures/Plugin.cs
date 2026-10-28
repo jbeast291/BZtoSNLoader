@@ -110,8 +110,9 @@ public class Plugin : BaseUnityPlugin
         foreach (var techType in techTypesArray)
         {
             string techTypeName = techType.ToString();
-            PDAHandler.AddCustomScannerEntry(techType, 3, false, techTypeName);
-            PDAHandler.AddEncyclopediaEntry(GetDatabankName(techTypeName), "Lifeforms/Fauna/BelowZero");
+            string databankName = GetDatabankName(techTypeName);
+            PDAHandler.AddCustomScannerEntry(techType, 3, false, databankName);
+            PDAHandler.AddEncyclopediaEntry(databankName, "Lifeforms/Fauna/BelowZero");
         }
         
         // TODO: set up tech data (item size), localization, icons, and tool state?
