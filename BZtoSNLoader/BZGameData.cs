@@ -27,4 +27,7 @@ internal static class BZGameData
     }
 
     internal static string GetPathToBelowZeroBundle(string bundleName) => Path.Combine(BelowZeroAddressablesFolder, bundleName);
+
+    internal static string GetLocalizationFilePath(string fileNameWithExtension) =>
+        Path.Combine(BelowZeroLocalizationFolder, fileNameWithExtension);
 }
