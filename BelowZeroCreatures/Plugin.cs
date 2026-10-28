@@ -87,9 +87,13 @@ public class Plugin : BaseUnityPlugin
             var info = GetPrefabInfo(classId);
             new BzCreaturePrefab(info
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
-            techTypes.Add(info.TechType);
+            
+            // IGNORE schools of fish in TechTypes list
+            if (!classId.EndsWith("School"))
+                techTypes.Add(info.TechType);
         }
-
+        
+        // Register Tech Type specific data
         TechType[] techTypesArray = techTypes.ToArray();
         string[] techTypeLanguageKeys = new string[techTypesArray.Length];
         for (int i = 0; i < techTypesArray.Length; i++)
