@@ -36,7 +36,13 @@ public class Plugin : BaseUnityPlugin
     {
         { "Chelicerata", "Chelicerate" },
         { "Vent_garden_standing", "LargeVentGarden" },
-        { "VentGardenSmall", "SmallVentGarden" }
+        { "VentGardenSmall", "SmallVentGarden" },
+        { "TitanHoleFish", "TitanHolefish" }
+    };
+
+    private static readonly string[] MiscLocalizationToRequest =
+    {
+        "TitanHolefishOxygenUse"
     };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
@@ -74,6 +80,8 @@ public class Plugin : BaseUnityPlugin
     private void LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
+        
+        // Register prefabs
         HashSet<TechType> techTypes = new HashSet<TechType>();
         foreach (var asset in AssetPathsWithComponentData)
         {
@@ -86,15 +94,55 @@ public class Plugin : BaseUnityPlugin
             var info = GetPrefabInfo(classId);
             new BzCreaturePrefab(info
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
-            techTypes.Add(info.TechType);
-        }
-
-        foreach (var techType in techTypes)
-        {
-            // set up tech data (item size), localization, icons, and tool state?
+            
+            // IGNORE schools of fish in TechTypes list
+            if (!classId.EndsWith("School"))
+                techTypes.Add(info.TechType);
         }
         
+        // Register TechType specific data
+        
+        TechType[] techTypesArray = techTypes.ToArray();
+        RegisterAllLocalization(techTypesArray);
+        
+        // Register PDA entries
+        LanguageHandler.SetLanguageLine("EncyPath_Lifeforms/Fauna/BelowZero", "Sector Zero");
+        foreach (var techType in techTypesArray)
+        {
+            string techTypeName = techType.ToString();
+            PDAHandler.AddCustomScannerEntry(techType, 3, false, techTypeName);
+            PDAHandler.AddEncyclopediaEntry(techTypeName, "Lifeforms/Fauna/BelowZero");
+        }
+        
+        // TODO: set up tech data (item size), localization, icons, and tool state?
+        
+        // Register structures
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
+    }
+
+    private static void RegisterAllLocalization(TechType[] techTypesArray)
+    {
+        List<string> techTypesToRequest = new List<string>();
+        foreach (var techType in techTypesArray)
+        {
+            var techTypeName = techType.ToString();
+            techTypesToRequest.Add(techTypeName);
+            techTypesToRequest.Add("Tooltip_" + techTypeName);
+            techTypesToRequest.Add("Ency_" + techTypeName);
+            techTypesToRequest.Add("EncyDesc_" + techTypeName);
+        }
+
+        techTypesToRequest.AddRange(MiscLocalizationToRequest);
+        string[] allStringKeys = techTypesToRequest.ToArray();
+        string[] allTranslations = new string[allStringKeys.Length];
+        
+        BZLocalizationLoader.GetLocalization(allStringKeys, allTranslations, true);
+        
+        for (int i = 0; i < allStringKeys.Length; i++)
+        {
+            if (!string.Equals(allStringKeys[i], allTranslations[i]))
+                LanguageHandler.SetLanguageLine(allStringKeys[i], allTranslations[i]);
+        }
     }
 
     private static bool ShouldSkipClassId(string classId)
@@ -115,7 +163,7 @@ public class Plugin : BaseUnityPlugin
             return new PrefabInfo(classId, classId + "Prefab", SquidSharkTechType);
         }
         
-        if (classId == "JellyFish")
+        if (classId.Contains("JellyFish"))
         {
             return new PrefabInfo(classId, classId + "Prefab", JellyfishTechType);
         }

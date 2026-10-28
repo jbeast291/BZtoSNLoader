@@ -66,7 +66,7 @@ public class BzCreaturePrefab
         }
 
         // A valid sound is needed so we just remove this entirely
-        foreach (var soundOnDamage in prefab.GetComponentsInChildren<SoundOnDamage>())
+        foreach (var soundOnDamage in prefab.GetComponentsInChildren<SoundOnDamage>(true))
         {
             Object.DestroyImmediate(soundOnDamage);
         }
@@ -87,6 +87,7 @@ public class BzCreaturePrefab
                 if (!m.shader.name.Contains("MarmosetUBER")) continue;
                 if (m.GetInt("_ZWrite") == 0) continue; // Skip transparent materials
                 m.shader = MaterialUtils.Shaders.MarmosetUBER;
+                m.SetFloat("_SpecInt", m.GetFloat("_SpecInt") * 2);
             }
             renderer.materials = materials;
         }

@@ -83,7 +83,7 @@ public class PrefabComponentSerializer
         gameObjectById.Clear();
         idByGameObject.Clear();
 
-        var dataById = data.gameObjects.ToDictionary(go => go.id);
+        // var dataById = data.gameObjects.ToDictionary(go => go.id);
         var rootData = data.gameObjects.Single(go => go.transform.parent == Guid.Empty);
 
         var rootTransform = allTransformsInChildren.Single(t => t.parent == null);
@@ -103,7 +103,7 @@ public class PrefabComponentSerializer
                 if (added != null) addedComponents.Add((added, componentToAdd));
             }
         }
-
+        
         HashSet<Component> pickedUpInstances = new HashSet<Component>();
         foreach (var added in addedComponents) pickedUpInstances.Add(added.instance);
         

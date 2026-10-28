@@ -1,4 +1,5 @@
 using ComponentPortFramework;
+using Nautilus.Utility;
 using UnityEngine;
 
 namespace BelowZeroCreatures.Fixes;
@@ -26,6 +27,9 @@ internal static class HardcodedCreatureFixes
                 break;
             case "SmallVentGarden":
                 ApplyVentGardenJuvenileFixes(prefab);
+                break;
+            case "TitanHolefish":
+                ApplyTitanHolefishFixes(prefab);
                 break;
         }
     }
@@ -111,5 +115,19 @@ internal static class HardcodedCreatureFixes
     {
         var motion = prefab.AddComponent<SmallVentGardenMotion>();
         motion.swimBehaviour = prefab.GetComponent<SwimBehaviour>();
+    }
+    
+    private static void ApplyTitanHolefishFixes(GameObject prefab)
+    {
+        // I think these avoid their own BODIES, so I change this value
+        var avoid = prefab.GetComponent<AvoidObstacles>();
+        avoid.avoidTerrainOnly = true;
+        avoid.avoidanceDistance = 12;
+        avoid.scanDistance = 12;
+        // add oxygen provider
+        var air = prefab.transform.Find("Collisions/AirSack");
+        var target = air.gameObject.AddComponent<TitanHolefishOxygenHandTarget>();
+        target.liveMixin = prefab.GetComponent<LiveMixin>();
+        target.sound = AudioUtils.GetFmodAsset("event:/env/bubble_pop_player");
     }
 }
