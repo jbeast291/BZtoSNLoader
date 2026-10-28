@@ -92,15 +92,6 @@ public static class BZAssetLoader
                 throw new($"Required Dependency at: \"{bundlePath}\" not found!");
             }
 
-            // TODO: More robust system needed for duplicate bundles between games
-            //  The name of the bundle is not the only thing that causes the bundles to load the same
-            //  Something in the bundle metadata will cause it to not load if another bundle with the same data is present
-            //  Could be the GAP ID?
-            if (bundles[i].Equals("e2e7857c51c8a8834e02aa4476c8baae_unitybuiltinshaders_44438d49f8b579f24000ed6aa7ed75f6.bundle")) 
-            {
-                continue;
-            }
-
             TaskResult<AssetBundle> dependencyRequest = new();
             yield return ManagedBundleLoader.RequestBundleAndAddUser(new(bundlePath), dependencyRequest);
             if (dependencyRequest.value == null)

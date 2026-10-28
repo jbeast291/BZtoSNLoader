@@ -14,6 +14,8 @@ namespace BZtoSNLoader;
 internal static class BZBundlePatcher
 {
     private static readonly AssetsManager manager = new();
+    private static readonly Dictionary<string, string> oldToNewCabId = new();
+    
     static BZBundlePatcher()
     {
         manager.LoadClassPackage(Plugin.Assembly.GetManifestResourceStream("BZtoSNLoader.Resources.classdata.tpk"));
@@ -34,14 +36,24 @@ internal static class BZBundlePatcher
 
         for (int i = 0; i < assetNames.Count; i++)
         {
-            // Ignore these. They aren't a problem for loading
-            // Trying to modify them seems to cause issues anyway :/
-            // (Special linking between bundles?)
-            if(assetNames[i].EndsWith(".resS")) continue;
+            string[] name = assetNames[i].Split(['.'], 2);
+            string oldCabID = name[0];
+            string extension;
+            if (name.Length > 1) extension = "." + name[1];
+            else extension = string.Empty;
 
-            AssetsFileInstance assetFileInst = manager.LoadAssetsFileFromBundle(bundleInst, assetNames[i]);
+            string newCabID = GetNewCabId(oldCabID);
+
+            bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].Name = newCabID + extension;
+
+            if (extension.EndsWith(".resS")) continue;
+
+            AssetsFileInstance assetFileInst = manager.LoadAssetsFileFromBundle(bundleInst, newCabID + extension);
             StripFileMonoBehaviors(assetFileInst);
-            bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].SetNewData(assetFileInst.file);
+            UpdateAssetBundleNameAndDeps(assetFileInst);
+            ChangeInternalAssetPaths(assetFileInst, oldCabID, newCabID);
+            UpdateBundleExternals(assetFileInst);
+            bundleInst.file.BlockAndDirInfo.DirectoryInfos[i].Replacer = new ContentReplacerFromAssets(assetFileInst);
         }
 
         using MemoryStream tempStream = new();
@@ -49,6 +61,16 @@ internal static class BZBundlePatcher
         bundleInst.file.Write(memoryWriter);
         byte[] patchedBundleBytes = tempStream.ToArray();
         return patchedBundleBytes;
+    }
+
+    private static string GetNewCabId(string oldCabID)
+    {
+        if (oldToNewCabId.TryGetValue(oldCabID, out string? value)) {
+            return value;
+        }
+        string newCabID = "CAB-" + Guid.NewGuid();
+        oldToNewCabId.Add(oldCabID, newCabID);
+        return newCabID;
     }
 
     private static void StripFileMonoBehaviors(AssetsFileInstance afileInst)
@@ -75,15 +97,14 @@ internal static class BZBundlePatcher
                 }
             }
             goInfo.SetNewData(go);
-        } 
+        }
 
         afile.GetAssetsOfType(AssetClassID.MonoBehaviour).ForEach(a => a.SetRemoved());
         afile.GetAssetsOfType(AssetClassID.MonoScript).ForEach(a => a.SetRemoved());
 
         // Type Tree Fixes:
-        // this is some CURSED shit where we set the type of each removed mono in the
-        // type tree to be zeroed out. This allows unity to load it (with warnings)
         // We only need this to get around the type tree checks as these types are never actually used
+        // Zeroed out is fine as nothing references them
         for(ushort i = 0; i < afileInst.file.Metadata.ScriptTypes.Count; i++)
         {
             AssetPPtr scriptType = afileInst.file.Metadata.ScriptTypes[i];
@@ -95,6 +116,67 @@ internal static class BZBundlePatcher
             typeTreeType.TypeHash = zeroHash;
             typeTreeType.ScriptIdHash = zeroHash;
             typeTreeType.ScriptTypeIndex = 0;
+        }
+    }
+
+    private static void UpdateAssetBundleNameAndDeps(AssetsFileInstance afileInst)
+    {
+        foreach (AssetFileInfo goInfo in afileInst.file.GetAssetsOfType(AssetClassID.AssetBundle))
+        {
+            AssetTypeValueField rootField = manager.GetBaseField(afileInst, goInfo);
+            string newBundleName = Guid.NewGuid() + ".bundle";
+            AssetTypeValueField m_AssetBundleName = rootField["m_AssetBundleName"];
+            m_AssetBundleName.AsString = newBundleName;
+            AssetTypeValueField m_Name = rootField["m_Name"];
+            m_Name.AsString = newBundleName;
+
+            UpdateM_DependenciesField(rootField);
+            goInfo.SetNewData(rootField);
+        }
+    }
+    
+    private static void ChangeInternalAssetPaths(AssetsFileInstance afileInst, string oldCabID, string cabID)
+    {
+        handleType(AssetClassID.Texture2D);
+        handleType(AssetClassID.Mesh);
+
+        foreach (AssetFileInfo textureInfo in afileInst.file.GetAssetsOfType(AssetClassID.PreloadData))
+        {
+            AssetTypeValueField rootField = manager.GetBaseField(afileInst, textureInfo);
+            UpdateM_DependenciesField(rootField);
+            textureInfo.SetNewData(rootField);
+        }
+
+        void handleType(AssetClassID typeId)
+        {
+            foreach (AssetFileInfo textureInfo in afileInst.file.GetAssetsOfType(typeId))
+            {
+                AssetTypeValueField rootField = manager.GetBaseField(afileInst, textureInfo);
+                AssetTypeValueField streamData_path = rootField["m_StreamData.path"];
+                streamData_path.AsString = streamData_path.AsString.Replace(oldCabID, cabID);
+                textureInfo.SetNewData(rootField);
+            }
+        }
+    }
+    
+    private static void UpdateM_DependenciesField(AssetTypeValueField rootField)
+    {
+        AssetTypeValueField dependencies = rootField["m_Dependencies.Array"];
+        for (int i = dependencies.Children.Count - 1; i >= 0; i--)
+        {
+            AssetTypeValueField dependencyCAB = dependencies.Children[i];
+            dependencyCAB.AsString = GetNewCabId(dependencyCAB.AsString);
+        }
+    }
+
+    private static void UpdateBundleExternals(AssetsFileInstance afileInst)
+    {
+        foreach (var external in afileInst.file.Metadata.Externals)
+        {
+            if (!external.PathName.StartsWith("archive:/")) continue;
+            string[] parts = external.PathName.Split('/');
+            string oldDependencyCabID = parts[1];
+            external.PathName = external.PathName.Replace(oldDependencyCabID, GetNewCabId(oldDependencyCabID));
         }
     }
 
