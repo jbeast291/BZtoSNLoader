@@ -1,4 +1,5 @@
 using ComponentPortFramework;
+using Nautilus.Utility;
 using UnityEngine;
 
 namespace BelowZeroCreatures.Fixes;
@@ -123,5 +124,10 @@ internal static class HardcodedCreatureFixes
         avoid.avoidTerrainOnly = true;
         avoid.avoidanceDistance = 12;
         avoid.scanDistance = 12;
+        // add oxygen provider
+        var air = prefab.transform.Find("Collisions/AirSack");
+        var target = air.gameObject.AddComponent<TitanHolefishOxygenHandTarget>();
+        target.liveMixin = prefab.GetComponent<LiveMixin>();
+        target.sound = AudioUtils.GetFmodAsset("event:/env/bubble_pop_player");
     }
 }

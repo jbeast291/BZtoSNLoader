@@ -39,6 +39,11 @@ public class Plugin : BaseUnityPlugin
         { "VentGardenSmall", "SmallVentGarden" },
         { "TitanHoleFish", "TitanHolefish" }
     };
+
+    private static readonly string[] MiscLocalizationToRequest =
+    {
+        "TitanHolefishOxygenUse"
+    };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
         new PrefabComponentSerializerSettings
@@ -75,6 +80,8 @@ public class Plugin : BaseUnityPlugin
     private void LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
+        
+        // Register prefabs
         HashSet<TechType> techTypes = new HashSet<TechType>();
         foreach (var asset in AssetPathsWithComponentData)
         {
@@ -106,31 +113,24 @@ public class Plugin : BaseUnityPlugin
 
     private static void RegisterAllLocalization(TechType[] techTypesArray)
     {
-        string[] techTypeLanguageKeys = new string[techTypesArray.Length];
-        for (int i = 0; i < techTypesArray.Length; i++)
+        List<string> techTypesToRequest = new List<string>();
+        foreach (var techType in techTypesArray)
         {
-            techTypeLanguageKeys[i] = techTypesArray[i].ToString();
+            var techTypeName = techType.ToString();
+            techTypesToRequest.Add(techTypeName);
+            techTypesToRequest.Add("Tooltip_" + techTypeName);
         }
-        string[] techTypeTooltipLanguageKeys = new string[techTypesArray.Length];
-        for (int i = 0; i < techTypesArray.Length; i++)
-        {
-            techTypeTooltipLanguageKeys[i] = "Tooltip_" + techTypesArray[i];
-        }
+
+        techTypesToRequest.AddRange(MiscLocalizationToRequest);
+        string[] allStringKeys = techTypesToRequest.ToArray();
+        string[] allTranslations = new string[allStringKeys.Length];
         
-        // TechType names
-        string[] techTypeNameTranslations = new string[techTypeLanguageKeys.Length];
-        BZLocalizationLoader.GetLocalization(techTypeLanguageKeys, techTypeNameTranslations, true);
-        for (int i = 0; i < techTypeLanguageKeys.Length; i++)
-        {
-            LanguageHandler.SetLanguageLine(techTypeLanguageKeys[i], techTypeNameTranslations[i]);
-        }
+        BZLocalizationLoader.GetLocalization(allStringKeys, allTranslations, true);
         
-        // Tooltips
-        string[] tooltipTranslations = new string[techTypeTooltipLanguageKeys.Length];
-        BZLocalizationLoader.GetLocalization(techTypeTooltipLanguageKeys, tooltipTranslations, false);
-        for (int i = 0; i < techTypeTooltipLanguageKeys.Length; i++)
+        for (int i = 0; i < allStringKeys.Length; i++)
         {
-            LanguageHandler.SetLanguageLine(techTypeTooltipLanguageKeys[i], tooltipTranslations[i]);
+            if (!string.Equals(allStringKeys[i], allTranslations[i]))
+                LanguageHandler.SetLanguageLine(allStringKeys[i], allTranslations[i]);
         }
     }
 
