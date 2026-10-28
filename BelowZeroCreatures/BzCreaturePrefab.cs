@@ -66,7 +66,7 @@ public class BzCreaturePrefab
         }
 
         // A valid sound is needed so we just remove this entirely
-        foreach (var soundOnDamage in prefab.GetComponentsInChildren<SoundOnDamage>())
+        foreach (var soundOnDamage in prefab.GetComponentsInChildren<SoundOnDamage>(true))
         {
             Object.DestroyImmediate(soundOnDamage);
         }
