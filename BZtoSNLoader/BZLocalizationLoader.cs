@@ -112,7 +112,7 @@ public static class BZLocalizationLoader
 
     private static void OnLoadingScreenEnd(WaitScreenHandler.WaitScreenTask task)
     {
-        LoadedLocalization.Clear();
+        LoadedLocalization?.Clear();
         LoadedLocalization = null;
         CurrentlyCachedLanguageName = null;
     }
