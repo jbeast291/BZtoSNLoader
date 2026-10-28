@@ -1011,6 +1011,50 @@
       },
       "cellLevel": 0,
       "priority": 0
+    },
+    {
+      "classId": "TitanHolefish",
+      "id": "772286f3-27f1-469f-b2f6-e1dedeebf9d0",
+      "position": {
+        "x": -79.75816,
+        "y": -11.0156517,
+        "z": -438.455719
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.995475352,
+        "y": 0.995475352,
+        "z": 0.995475352
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "TitanHolefish",
+      "id": "b333d463-69ab-4f5d-9089-3dc46e08cfb2",
+      "position": {
+        "x": -84.86834,
+        "y": -12.79665,
+        "z": -450.37207
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.960575044,
+        "y": 0.960575044,
+        "z": 0.960575044
+      },
+      "cellLevel": 1,
+      "priority": 0
     }
   ],
   "Metadata": {
