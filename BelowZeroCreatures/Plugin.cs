@@ -93,25 +93,45 @@ public class Plugin : BaseUnityPlugin
                 techTypes.Add(info.TechType);
         }
         
-        // Register Tech Type specific data
+        // Register TechType specific data
+        
         TechType[] techTypesArray = techTypes.ToArray();
+        RegisterAllLocalization(techTypesArray);
+        
+        // TODO: set up tech data (item size), localization, icons, and tool state?
+        
+        // Register structures
+        StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
+    }
+
+    private static void RegisterAllLocalization(TechType[] techTypesArray)
+    {
         string[] techTypeLanguageKeys = new string[techTypesArray.Length];
         for (int i = 0; i < techTypesArray.Length; i++)
         {
             techTypeLanguageKeys[i] = techTypesArray[i].ToString();
-            // TODO: set up tech data (item size), localization, icons, and tool state?
         }
-        
-        // Register translations
-        string[] techTypeTranslations = new string[techTypeLanguageKeys.Length];
-        BZLocalizationLoader.GetLocalization(techTypeLanguageKeys, techTypeTranslations);
-        for (int i= 0; i < techTypeLanguageKeys.Length; i++)
+        string[] techTypeTooltipLanguageKeys = new string[techTypesArray.Length];
+        for (int i = 0; i < techTypesArray.Length; i++)
         {
-            LanguageHandler.SetLanguageLine(techTypeLanguageKeys[i], techTypeTranslations[i]);
+            techTypeTooltipLanguageKeys[i] = "Tooltip_" + techTypesArray[i];
         }
         
-        // Register structures
-        StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
+        // TechType names
+        string[] techTypeNameTranslations = new string[techTypeLanguageKeys.Length];
+        BZLocalizationLoader.GetLocalization(techTypeLanguageKeys, techTypeNameTranslations, true);
+        for (int i = 0; i < techTypeLanguageKeys.Length; i++)
+        {
+            LanguageHandler.SetLanguageLine(techTypeLanguageKeys[i], techTypeNameTranslations[i]);
+        }
+        
+        // Tooltips
+        string[] tooltipTranslations = new string[techTypeTooltipLanguageKeys.Length];
+        BZLocalizationLoader.GetLocalization(techTypeTooltipLanguageKeys, tooltipTranslations, false);
+        for (int i = 0; i < techTypeTooltipLanguageKeys.Length; i++)
+        {
+            LanguageHandler.SetLanguageLine(techTypeTooltipLanguageKeys[i], tooltipTranslations[i]);
+        }
     }
 
     private static bool ShouldSkipClassId(string classId)

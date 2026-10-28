@@ -26,11 +26,12 @@ public static class BZLocalizationLoader
     /// </summary>
     /// <param name="requestedKeys">An array containing every localization key to translate.</param>
     /// <param name="results">The array that will be populated with the results. Its size must be the same as the size of <paramref name="requestedKeys"/>.</param>
+    /// <param name="warnMissing">If true, log warnings will be displayed when any key could not be found.</param>
     /// <param name="languageOverride">If a value is not provided, the current language will be used. Example value: "English"</param>
     /// <exception cref="Exception">An exception will be thrown if this method is called while not in the Wait Screen.</exception>
     /// <exception cref="ArgumentException">An exception is thrown when the size of the arrays does not match.</exception>
     /// <exception cref="FileNotFoundException">An exception is thrown if the designated language file, AND the default fallback of English.json, could not be found.</exception>
-    public static void GetLocalization(string[] requestedKeys, string[] results, string languageOverride = null)
+    public static void GetLocalization(string[] requestedKeys, string[] results, bool warnMissing, string languageOverride = null)
     {
         if (!WaitScreen.IsWaiting)
             throw new Exception("Below Zero localization cannot be accessed outside of the WaitScreen.");
@@ -65,7 +66,8 @@ public static class BZLocalizationLoader
             }
             else
             {
-                Plugin.Logger.LogWarning($"Translation not found for key '{requestedKeys[i]}'");
+                if (warnMissing)
+                    Plugin.Logger.LogWarning($"Translation not found for key '{requestedKeys[i]}'");
                 results[i] = requestedKeys[i];
             }
         }
