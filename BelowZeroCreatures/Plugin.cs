@@ -102,6 +102,7 @@ public class Plugin : BaseUnityPlugin
             // TODO: set up tech data (item size), localization, icons, and tool state?
         }
         
+        // Register translations
         string[] techTypeTranslations = new string[techTypeLanguageKeys.Length];
         BZLocalizationLoader.GetLocalization(techTypeLanguageKeys, techTypeTranslations);
         for (int i= 0; i < techTypeLanguageKeys.Length; i++)
@@ -109,6 +110,7 @@ public class Plugin : BaseUnityPlugin
             LanguageHandler.SetLanguageLine(techTypeLanguageKeys[i], techTypeTranslations[i]);
         }
         
+        // Register structures
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
     }
 
