@@ -36,7 +36,8 @@ public class Plugin : BaseUnityPlugin
     {
         { "Chelicerata", "Chelicerate" },
         { "Vent_garden_standing", "LargeVentGarden" },
-        { "VentGardenSmall", "SmallVentGarden" }
+        { "VentGardenSmall", "SmallVentGarden" },
+        { "TitanHoleFish", "TitanHolefish" }
     };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
@@ -89,9 +90,19 @@ public class Plugin : BaseUnityPlugin
             techTypes.Add(info.TechType);
         }
 
-        foreach (var techType in techTypes)
+        TechType[] techTypesArray = techTypes.ToArray();
+        string[] techTypeLanguageKeys = new string[techTypesArray.Length];
+        for (int i = 0; i < techTypesArray.Length; i++)
         {
-            // set up tech data (item size), localization, icons, and tool state?
+            techTypeLanguageKeys[i] = techTypesArray[i].ToString();
+            // TODO: set up tech data (item size), localization, icons, and tool state?
+        }
+        
+        string[] techTypeTranslations = new string[techTypeLanguageKeys.Length];
+        BZLocalizationLoader.GetLocalization(techTypeLanguageKeys, techTypeTranslations);
+        for (int i= 0; i < techTypeLanguageKeys.Length; i++)
+        {
+            LanguageHandler.SetLanguageLine(techTypeLanguageKeys[i], techTypeTranslations[i]);
         }
         
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
@@ -115,7 +126,7 @@ public class Plugin : BaseUnityPlugin
             return new PrefabInfo(classId, classId + "Prefab", SquidSharkTechType);
         }
         
-        if (classId == "JellyFish")
+        if (classId.Contains("JellyFish"))
         {
             return new PrefabInfo(classId, classId + "Prefab", JellyfishTechType);
         }
