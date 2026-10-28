@@ -132,6 +132,12 @@ public class Plugin : BaseUnityPlugin
             if (sprite != null)
                 SpriteHandler.RegisterSprite(techType, sprite);
         }
+        
+        // Set equipment type
+        foreach (var techType in techTypes)
+        {
+            CraftDataHandler.SetEquipmentType(techType, EquipmentType.Hand);
+        }
     }
 
     private static void RegisterAllLocalization(TechType[] techTypesArray)

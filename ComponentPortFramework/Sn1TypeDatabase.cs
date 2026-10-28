@@ -95,6 +95,12 @@ public class Sn1TypeDatabase
             if (_unityTypes.TryGetValue(name, out type))
                 return true;
         }
+        // TODO: this is just terrible
+        if (name == "DropTool")
+        {
+            type = typeof(LazyDropToolFix);
+            return true;
+        }
         return _types.TryGetValue(name, out type);
     }
 
