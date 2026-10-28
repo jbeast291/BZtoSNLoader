@@ -98,7 +98,7 @@ internal static class DebugCommands
             if(!prefabPath.EndsWith(".prefab")) continue;
             if(!filter.IsNullOrWhiteSpace() && !prefabPath.Contains(filter)) continue;
 
-            Plugin.Logger.LogInfo($"Loading... {current}/{total} (not all in total are loaded)");
+            Plugin.Logger.LogInfo($"Loading... {current}/{total} | {prefabPath}");
 
             TaskResult<GameObject> requestResult = new();
             yield return BZAssetLoader.LoadAssetAsync(new(prefabPath), requestResult);
