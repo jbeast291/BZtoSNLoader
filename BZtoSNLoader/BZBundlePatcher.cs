@@ -10,7 +10,24 @@ using Nautilus.Utility;
 
 namespace BZtoSNLoader;
 
-
+/// <summary>
+/// Warning reader, this class is not for the faint of heart.
+/// Here we patch bundles in memory with this AMAZING library AssetTools.NET :3
+/// Information on how this works online is VERY limited, these tools were used in research:
+/// https://github.com/nesrak1/AssetsTools.NET/tree/main
+/// https://github.com/nesrak1/UABEANext
+/// By looking at their source code and outputs.
+/// </summary>
+/// <remarks>
+/// Stuff I figured out I WISH was documented somewhere:
+/// Type tree must not contain unknown types
+/// CAB id is the unique identifier for a bundle (seems to be hash based?)
+/// .resS is a binary resource folder essentially. It stores mesh and texture data outside the main content
+/// Most ptrs within to the asset are within Metadata.Externals based on index
+/// Meshes and Textures store references separately to the .resS
+/// Still not sure what a "MonoScript" is exactly :/.
+///     Doesn't help tho that UABEANext doesn't seem to support script serialization to view inside?
+/// </remarks>
 internal static class BZBundlePatcher
 {
     private static readonly AssetsManager manager = new();
@@ -18,6 +35,7 @@ internal static class BZBundlePatcher
     
     static BZBundlePatcher()
     {
+        // data on how to decode unity classes
         manager.LoadClassPackage(Plugin.Assembly.GetManifestResourceStream("BZtoSNLoader.Resources.classdata.tpk"));
         manager.LoadClassDatabaseFromPackage("2019.4.36f1");
     }
