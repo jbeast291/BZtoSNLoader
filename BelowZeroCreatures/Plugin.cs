@@ -44,7 +44,8 @@ public class Plugin : BaseUnityPlugin
 
     private static readonly string[] MiscLocalizationToRequest =
     {
-        "TitanHolefishOxygenUse"
+        "TitanHolefishOxygenUse",
+        "WhaleInteract"
     };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
