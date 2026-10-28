@@ -13,6 +13,8 @@ using HarmonyLib;
 using Nautilus.Assets;
 using Nautilus.Handlers;
 using Newtonsoft.Json;
+using UnityEngine.U2D;
+using ILogger = ComponentPortFramework.ILogger;
 
 namespace BelowZeroCreatures;
 
@@ -51,7 +53,7 @@ public class Plugin : BaseUnityPlugin
             EnableCreatureFixes = true,
             EnableAllComponents = true
         });
-
+    
     private void Awake()
     {
         // set project-scoped logger instance
@@ -59,7 +61,7 @@ public class Plugin : BaseUnityPlugin
         
         Sn1TypeDatabase.Initialize(ComponentSerializerLogger);
 
-        WaitScreenHandler.RegisterEarlyLoadTask("Below Zero Creatures", LoadMod, "Registering Below Zero creatures");
+        WaitScreenHandler.RegisterEarlyAsyncLoadTask("Below Zero Creatures", LoadMod, "Registering Below Zero creatures");
         
         // register harmony patches, if there are any
         Harmony.CreateAndPatchAll(Assembly, $"{PluginInfo.PLUGIN_GUID}");
@@ -77,7 +79,7 @@ public class Plugin : BaseUnityPlugin
     }
 
     // TODO: Unload prefabs on quit to main menu?
-    private void LoadMod(WaitScreenHandler.WaitScreenTask task)
+    private IEnumerator LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
         
@@ -115,10 +117,21 @@ public class Plugin : BaseUnityPlugin
             PDAHandler.AddEncyclopediaEntry(databankName, "Lifeforms/Fauna/BelowZero");
         }
         
-        // TODO: set up tech data (item size), localization, icons, and tool state?
-        
         // Register structures
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
+
+        // Load creature icons
+        TaskResult<SpriteAtlas> atlasResult = new TaskResult<SpriteAtlas>();
+        yield return BZAssetLoader.LoadAssetAsync(
+            new BZAssetLoader.AssetKey("Assets/AddressableResources/Atlases/Items.spriteatlas"), atlasResult);
+        var atlas = atlasResult.Get();
+        foreach (var techType in techTypes)
+        {
+            string spriteName = techType.ToString().ToLower();
+            var sprite = atlas.GetSprite(spriteName);
+            if (sprite != null)
+                SpriteHandler.RegisterSprite(techType, sprite);
+        }
     }
 
     private static void RegisterAllLocalization(TechType[] techTypesArray)
