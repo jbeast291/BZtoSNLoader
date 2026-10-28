@@ -22,6 +22,7 @@ internal sealed class Plugin : BaseUnityPlugin
         Config = base.Config;
         BZPathFinder.SetupBepInConfig();
         BZGameData.InitDependencyData();
+        BZLocalizationLoader.Register();
         Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
         Logger.LogInfo("Finished Loading!");
