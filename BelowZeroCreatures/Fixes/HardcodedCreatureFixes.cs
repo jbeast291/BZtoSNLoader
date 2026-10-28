@@ -27,6 +27,9 @@ internal static class HardcodedCreatureFixes
             case "SmallVentGarden":
                 ApplyVentGardenJuvenileFixes(prefab);
                 break;
+            case "TitanHolefish":
+                ApplyTitanHolefishFixes(prefab);
+                break;
         }
     }
 
@@ -111,5 +114,14 @@ internal static class HardcodedCreatureFixes
     {
         var motion = prefab.AddComponent<SmallVentGardenMotion>();
         motion.swimBehaviour = prefab.GetComponent<SwimBehaviour>();
+    }
+    
+    private static void ApplyTitanHolefishFixes(GameObject prefab)
+    {
+        // I think these avoid their own BODIES, so I change this value
+        var avoid = prefab.GetComponent<AvoidObstacles>();
+        avoid.avoidTerrainOnly = true;
+        avoid.avoidanceDistance = 12;
+        avoid.scanDistance = 12;
     }
 }
