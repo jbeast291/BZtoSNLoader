@@ -65,10 +65,11 @@ internal static class BZBundlePatcher
 
     private static string GetNewCabId(string oldCabID)
     {
-        if (oldToNewCabId.TryGetValue(oldCabID, out string? value)) {
+        oldCabID = oldCabID.Replace("cab-", "CAB-"); // Make uppercase CAB
+        if (oldToNewCabId.TryGetValue(oldCabID, out string value)) {
             return value;
         }
-        string newCabID = "CAB-" + Guid.NewGuid();
+        string newCabID = "CAB-BZ-" + Guid.NewGuid().ToString().Replace("-", "");
         oldToNewCabId.Add(oldCabID, newCabID);
         return newCabID;
     }
