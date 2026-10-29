@@ -28,7 +28,7 @@ public class Plugin : BaseUnityPlugin
     private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
     internal static Dictionary<string, JsonPrefab> AssetPathsWithComponentData { get; private set; }
-    
+
     private static ILogger ComponentSerializerLogger { get; } = new ComponentSerializerLogger();
 
     private static TechType JellyfishTechType { get; } = EnumHandler.AddEntry<TechType>("Jellyfish");
@@ -47,6 +47,11 @@ public class Plugin : BaseUnityPlugin
         "TitanHolefishOxygenUse",
         "WhaleInteract"
     };
+
+    private static readonly HashSet<string> HoldableCreatures = new()
+    {
+        "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish", "Triops"
+    };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
         new PrefabComponentSerializerSettings
@@ -54,16 +59,17 @@ public class Plugin : BaseUnityPlugin
             EnableCreatureFixes = true,
             EnableAllComponents = true
         });
-    
+
     private void Awake()
     {
         // set project-scoped logger instance
         Logger = base.Logger;
-        
+
         Sn1TypeDatabase.Initialize(ComponentSerializerLogger);
 
-        WaitScreenHandler.RegisterEarlyAsyncLoadTask("Below Zero Creatures", LoadMod, "Registering Below Zero creatures");
-        
+        WaitScreenHandler.RegisterEarlyAsyncLoadTask("Below Zero Creatures", LoadMod,
+            "Registering Below Zero creatures");
+
         // register harmony patches, if there are any
         Harmony.CreateAndPatchAll(Assembly, $"{PluginInfo.PLUGIN_GUID}");
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
@@ -83,13 +89,13 @@ public class Plugin : BaseUnityPlugin
     private IEnumerator LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
         LoadComponentExportData();
-        
+
         // Register prefabs
         HashSet<TechType> techTypes = new HashSet<TechType>();
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
-            
+
             // Skip Snow Stalkers because they seriously break the game
             if (ShouldSkipClassId(classId))
                 continue;
@@ -97,17 +103,17 @@ public class Plugin : BaseUnityPlugin
             var info = GetPrefabInfo(classId);
             new BzCreaturePrefab(info
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
-            
+
             // IGNORE schools of fish in TechTypes list
             if (!classId.EndsWith("School"))
                 techTypes.Add(info.TechType);
         }
-        
+
         // Register TechType specific data
-        
+
         TechType[] techTypesArray = techTypes.ToArray();
         RegisterAllLocalization(techTypesArray);
-        
+
         // Register PDA entries
         LanguageHandler.SetLanguageLine("EncyPath_Lifeforms/Fauna/BelowZero", "Sector Zero");
         foreach (var techType in techTypesArray)
@@ -117,7 +123,7 @@ public class Plugin : BaseUnityPlugin
             PDAHandler.AddCustomScannerEntry(techType, 3, false, databankName);
             PDAHandler.AddEncyclopediaEntry(databankName, "Lifeforms/Fauna/BelowZero");
         }
-        
+
         // Register structures
         StructureRegistrationUtils.RegisterStructures(StructureRegistrationUtils.GetStructuresFolderPath(Assembly));
 
@@ -133,11 +139,12 @@ public class Plugin : BaseUnityPlugin
             if (sprite != null)
                 SpriteHandler.RegisterSprite(techType, sprite);
         }
-        
+
         // Set equipment type
         foreach (var techType in techTypes)
         {
-            CraftDataHandler.SetEquipmentType(techType, EquipmentType.Hand);
+            if (HoldableCreatures.Contains(techType.ToString()))
+                CraftDataHandler.SetEquipmentType(techType, EquipmentType.Hand);
         }
     }
 
@@ -157,9 +164,9 @@ public class Plugin : BaseUnityPlugin
         techTypesToRequest.AddRange(MiscLocalizationToRequest);
         string[] allStringKeys = techTypesToRequest.ToArray();
         string[] allTranslations = new string[allStringKeys.Length];
-        
+
         BZLocalizationLoader.GetLocalization(allStringKeys, allTranslations, true);
-        
+
         for (int i = 0; i < allStringKeys.Length; i++)
         {
             if (!string.Equals(allStringKeys[i], allTranslations[i]))
@@ -179,12 +186,12 @@ public class Plugin : BaseUnityPlugin
         {
             return new PrefabInfo("RockPuncher", "RockPuncherPrefab", TechType.RockPuncher);
         }
-        
+
         if (classId.Contains("SquidShark"))
         {
             return new PrefabInfo(classId, classId + "Prefab", SquidSharkTechType);
         }
-        
+
         if (classId.Contains("JellyFish"))
         {
             return new PrefabInfo(classId, classId + "Prefab", JellyfishTechType);
