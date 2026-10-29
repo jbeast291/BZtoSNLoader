@@ -50,7 +50,8 @@ public class Plugin : BaseUnityPlugin
 
     private static readonly HashSet<string> HoldableCreatures = new()
     {
-        "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish", "Triops"
+        "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish",
+        "Triops", "PenguinBaby", "SeaMonkeyBaby", "Symbiote"
     };
     
     internal static PrefabComponentSerializer ComponentSerializer { get; } = new(ComponentSerializerLogger,
