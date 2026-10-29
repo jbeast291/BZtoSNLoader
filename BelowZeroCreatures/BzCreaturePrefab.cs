@@ -40,15 +40,7 @@ public class BzCreaturePrefab
         Plugin.ComponentSerializer.ReconstructComponentsOnGameObject(prefab, ComponentData);
         
         // Cell level
-        LargeWorldEntity.CellLevel cellLevel = LargeWorldEntity.CellLevel.Far;
-        
-        if (prefab.GetComponent<Pickupable>() != null)
-            cellLevel = LargeWorldEntity.CellLevel.Medium;
-        
-        if (prefab.TryGetComponent<LargeWorldEntity>(out var largeWorldEntity))
-            cellLevel = largeWorldEntity.cellLevel;
-        else
-            Plugin.Logger.LogWarning($"Couldn't find correct CellLevel for {prefab}");
+        var cellLevel = GetCellLevel(prefab);
         
         // Essentials
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, cellLevel);
@@ -75,6 +67,23 @@ public class BzCreaturePrefab
         
         result.Set(prefab);
     }
+
+    private LargeWorldEntity.CellLevel GetCellLevel(GameObject prefab)
+    {
+        LargeWorldEntity.CellLevel cellLevel = LargeWorldEntity.CellLevel.Far;
+        
+        if (prefab.GetComponent<Pickupable>() != null)
+            cellLevel = LargeWorldEntity.CellLevel.Medium;
+        
+        if (prefab.TryGetComponent<LargeWorldEntity>(out var largeWorldEntity))
+            cellLevel = largeWorldEntity.cellLevel;
+        else
+            Plugin.Logger.LogWarning($"Couldn't find correct CellLevel for {prefab}");
+
+        if (Info.ClassID == "Pinnacarid") cellLevel = LargeWorldEntity.CellLevel.Near; // so they don't fall through terrain
+        
+        return cellLevel;
+    }   
 
     private static void ApplyMaterials(GameObject prefab)
     {
