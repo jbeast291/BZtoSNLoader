@@ -1,0 +1,120 @@
+{
+  "Entities": [
+    {
+      "classId": "SquidShark_LilyPads",
+      "id": "e45fd868-66a2-4bf9-951e-65d685d9f7f8",
+      "position": {
+        "x": -611.5772,
+        "y": -386.6424,
+        "z": 1114.783
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.954296649,
+        "y": 0.954296649,
+        "z": 0.954296649
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "SquidShark",
+      "id": "8cb77a77-fbf6-45f0-b062-0ad2e1461ee0",
+      "position": {
+        "x": -646.4012,
+        "y": -460.883331,
+        "z": 1201.77979
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.9555106,
+        "y": 0.9555106,
+        "z": 0.9555106
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "SquidShark_LilyPads",
+      "id": "f555254a-e9ac-4e84-977a-58d26c8f69fb",
+      "position": {
+        "x": -302.223663,
+        "y": -465.95932,
+        "z": 1310.71265
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.9532126,
+        "y": 0.9532126,
+        "z": 0.9532126
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "SquidShark",
+      "id": "f5c88d9d-ea55-4569-ac5b-26319e77edca",
+      "position": {
+        "x": -555.1078,
+        "y": -469.638031,
+        "z": 1497.17249
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.8685057,
+        "y": 0.8685057,
+        "z": 0.8685057
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "SquidShark",
+      "id": "4b4d8eab-aaf5-4924-9498-fc4b4aa07e81",
+      "position": {
+        "x": -877.9964,
+        "y": -434.619629,
+        "z": 1281.39526
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 0.9128146,
+        "y": 0.9128146,
+        "z": 0.9128146
+      },
+      "cellLevel": 1,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "Entities": [
+    {
+      "classId": "TrivalveBlue",
+      "id": "1ffffcd7-2ef6-4bbc-ae31-94e9aa465278",
+      "position": {
+        "x": -455.991425,
+        "y": -324.31546,
+        "z": -853.7029
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "TrivalveYellow",
+      "id": "60664f5a-d264-41a2-a48a-69a4509e6b40",
+      "position": {
+        "x": -294.3309,
+        "y": -340.7866,
+        "z": -1086.8916
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "TrivalveBlue",
+      "id": "7d1fff22-ab67-4823-9665-5a33545b66f2",
+      "position": {
+        "x": -585.0274,
+        "y": -275.245453,
+        "z": -957.8543
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "TrivalveYellow",
+      "id": "2a4e9349-65a5-4c86-9624-1536017b91a5",
+      "position": {
+        "x": -1024.852,
+        "y": -279.8001,
+        "z": -1060.6936
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 1,
+      "priority": 0
+    },
+    {
+      "classId": "TrivalveBlue",
+      "id": "292474aa-e677-4920-9354-dbfd9833ee2a",
+      "position": {
+        "x": -1268.2572,
+        "y": -323.5116,
+        "z": -946.8774
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 1,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}

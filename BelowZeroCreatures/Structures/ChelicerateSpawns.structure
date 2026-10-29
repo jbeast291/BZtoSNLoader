@@ -1,0 +1,98 @@
+{
+  "Entities": [
+    {
+      "classId": "Chelicerate",
+      "id": "077ab292-adf6-40b2-98d2-f8d915a5c568",
+      "position": {
+        "x": 750.478149,
+        "y": -307.4199,
+        "z": 1229.61292
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "Chelicerate",
+      "id": "1b8fe9bf-769e-4240-9388-6ecc91e09732",
+      "position": {
+        "x": 879.835938,
+        "y": -308.65152,
+        "z": 1617.26868
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "Chelicerate",
+      "id": "e761c3fd-59f5-45dc-8ec0-1b950def94b9",
+      "position": {
+        "x": 1178.28662,
+        "y": -324.934845,
+        "z": 1368.78845
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "Chelicerate",
+      "id": "00f970ba-6f6f-4b11-a2de-5d935b9755b3",
+      "position": {
+        "x": 1139.25,
+        "y": -308.600159,
+        "z": 1078.78418
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}
