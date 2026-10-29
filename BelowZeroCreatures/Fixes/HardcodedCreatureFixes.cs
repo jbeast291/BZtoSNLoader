@@ -66,6 +66,7 @@ internal static class HardcodedCreatureFixes
         var animations = prefab.AddComponent<PinnacaridAnimations>();
         animations.animator = animator;
         animations.tracker = prefab.GetComponent<OnSurfaceTracker>();
+        prefab.AddComponent<FreezeRigidbodyWhenFar>().freezeDist = 43;
     }
     
     private static void ApplyRockPuncherFixes(GameObject prefab)
