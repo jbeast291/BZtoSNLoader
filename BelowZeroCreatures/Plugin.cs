@@ -25,12 +25,12 @@ public class Plugin : BaseUnityPlugin
 {
     public new static ManualLogSource Logger { get; private set; }
 
-    private static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+    internal static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
-    internal static Dictionary<string, JsonPrefab> AssetPathsWithComponentData { get; private set; }
-
+    private static Dictionary<string, JsonPrefab> AssetPathsWithComponentData { get; set; }
     private static ILogger ComponentSerializerLogger { get; } = new ComponentSerializerLogger();
-
+    private static bool _waitScreenTaskExecuted;
+    
     private static TechType JellyfishTechType { get; } = EnumHandler.AddEntry<TechType>("Jellyfish");
     private static TechType SquidSharkTechType { get; } = EnumHandler.AddEntry<TechType>("SquidShark");
 
@@ -89,6 +89,11 @@ public class Plugin : BaseUnityPlugin
     // TODO: Unload prefabs on quit to main menu?
     private IEnumerator LoadMod(WaitScreenHandler.WaitScreenTask task)
     {
+        if (_waitScreenTaskExecuted)
+            yield break;
+
+        _waitScreenTaskExecuted = true;
+        
         LoadComponentExportData();
 
         // Register prefabs
