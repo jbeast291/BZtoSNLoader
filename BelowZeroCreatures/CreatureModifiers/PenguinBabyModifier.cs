@@ -6,7 +6,7 @@ namespace BelowZeroCreatures.CreatureModifiers;
 public class PenguinBabyModifier : BzCreatureModifier
 {
     public override string[] ClassIds => new[] { "PenguinBaby" };
-    protected override string HoldAnimationParam => "maproomcamera";
+    protected override string HoldAnimationParam => "beacon";
 
     protected override void ModifyPrefab(GameObject prefab)
     {
