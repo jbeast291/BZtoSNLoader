@@ -61,5 +61,16 @@ public static class CreatureFixUtils
                 }
             }
         }
+
+        if (component is LazyDropToolFix dropTool)
+        {
+            dropTool.drawSound = null;
+            dropTool.drawSoundUnderwater = null;
+            dropTool.hitBleederSound = null;
+            dropTool.holsterSoundAboveWater = null;
+            dropTool.holsterSoundUnderwater = null;
+            dropTool.bashAnimationSound = null;
+            dropTool.reloadSound = null;
+        }
     }
 }
