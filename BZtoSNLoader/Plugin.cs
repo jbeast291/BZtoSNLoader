@@ -20,7 +20,6 @@ internal sealed class Plugin : BaseUnityPlugin
     {
         Logger = base.Logger;
         Config = base.Config;
-        BZPathFinder.SetupBepInConfig();
         BZGameData.InitDependencyData();
         BZLocalizationLoader.Register();
         Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);

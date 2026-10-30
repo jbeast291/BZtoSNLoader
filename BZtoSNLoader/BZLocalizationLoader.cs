@@ -16,10 +16,7 @@ public static class BZLocalizationLoader
     private static Dictionary<string, string> LoadedLocalization { get; set; }
     private static string CurrentlyCachedLanguageName { get; set; }
 
-    internal static void Register()
-    {
-        WaitScreenHandler.RegisterLateLoadTask(PluginInfo.PLUGIN_NAME, OnLoadingScreenEnd);
-    }
+    internal static void Register() => WaitScreenHandler.RegisterLateLoadTask(PluginInfo.PLUGIN_NAME, OnLoadingScreenEnd);
 
     /// <summary>
     /// Translates all requested keys and fills the results array with the translated strings. 
@@ -35,14 +32,14 @@ public static class BZLocalizationLoader
     {
         if (!WaitScreen.IsWaiting)
             throw new Exception("Below Zero localization cannot be accessed outside of the WaitScreen.");
-        
+
         if (results.Length != requestedKeys.Length)
             throw new ArgumentException($"Results array size ({results.Length}) did not match requested keys size ({requestedKeys.Length})");
 
         string currentLanguage = !string.IsNullOrEmpty(languageOverride)
             ? languageOverride
             : Language.main.GetCurrentLanguage();
-        
+
         var languageFilePath = BZGameData.GetLocalizationFilePath($"{currentLanguage}.json");
 
         if (!File.Exists(languageFilePath))
@@ -56,8 +53,8 @@ public static class BZLocalizationLoader
             }
         }
 
-        LoadLocalization(languageFilePath, currentLanguage);
-        
+        EnsureLocalizationLoaded(languageFilePath, currentLanguage);
+
         for (int i = 0; i < requestedKeys.Length; i++)
         {
             if (LoadedLocalization.TryGetValue(requestedKeys[i], out var translation))
@@ -73,7 +70,7 @@ public static class BZLocalizationLoader
         }
     }
 
-    private static void LoadLocalization(string filePath, string languageName)
+    private static void EnsureLocalizationLoaded(string filePath, string languageName)
     {
         if (LoadedLocalization is { Count: > 0 })
         {
@@ -84,29 +81,24 @@ public static class BZLocalizationLoader
             }
         }
         CurrentlyCachedLanguageName = languageName;
-        
+
         JsonData jsonData;
-        using (StreamReader reader = new StreamReader(filePath))
-        {
-            try
-            {
-                jsonData = JsonMapper.ToObject(reader);
-            }
-            catch
-            {
-                Plugin.Logger.LogError($"Exception thrown while loading localization for language '{languageName}'.");
-                throw; // rethrow
-            }
+        using StreamReader reader = new(filePath); 
+        try {
+            jsonData = JsonMapper.ToObject(reader);
+        } catch {
+            Plugin.Logger.LogError($"Exception thrown while loading localization for language '{languageName}'.");
+            throw;
         }
 
         LoadedLocalization?.Clear();
         LoadedLocalization = new Dictionary<string, string>();
-        
+
         foreach (string key in jsonData.Keys)
         {
             LoadedLocalization[key] = (string)jsonData[key];
         }
-        
+
         Plugin.Logger.LogInfo($"Loaded {jsonData.Count} entries from Below Zero localization.");
     }
 

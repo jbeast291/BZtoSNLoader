@@ -80,7 +80,7 @@ internal static class DebugCommands
         float nextX = 12;
 
         Vector3 startPosition = Player.main.transform.position;
-        int total = BZGameData.BundleDependencyData.assetPathToBundleDeps.Keys.Count;
+        int total = BZGameData.bundleDependencyData.assetPathToBundleDeps.Keys.Count;
         int current = 0;
 
         GameObject cubeSpawner = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -92,7 +92,7 @@ internal static class DebugCommands
         cubeSpawner.SetActive(true);
         cubeSpawner.transform.localScale = Vector3.one * 5;
 
-        foreach (string prefabPath in BZGameData.BundleDependencyData.assetPathToBundleDeps.Keys)
+        foreach (string prefabPath in BZGameData.bundleDependencyData.assetPathToBundleDeps.Keys)
         {
             current++;
             if(!prefabPath.EndsWith(".prefab")) continue;

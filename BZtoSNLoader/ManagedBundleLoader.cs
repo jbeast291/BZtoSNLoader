@@ -33,7 +33,9 @@ internal static class ManagedBundleLoader
             // Load the bundle
             case BundleState.Unloaded: wasAlreadyLoaded = false; break;
             // Wait for the bundle to finish loading
-            case BundleState.Loading: yield return new WaitUntil(() => bundle.State == BundleState.Loaded); goto case BundleState.Loaded;
+            case BundleState.Loading: 
+                yield return new WaitUntil(() => bundle.State == BundleState.Loaded); 
+                goto case BundleState.Loaded;
             // Do nothing
             case BundleState.Loaded: wasAlreadyLoaded = true; break;
 
