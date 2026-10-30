@@ -13,34 +13,34 @@ namespace BZtoSNLoader;
 /// </summary>
 public static class BZLocalizationLoader
 {
-    private static Dictionary<string, string> LoadedLocalization { get; set; }
+    private static Dictionary<string, string> CachedLocalization { get; set; }
     private static string CurrentlyCachedLanguageName { get; set; }
 
     internal static void Register() => WaitScreenHandler.RegisterLateLoadTask(PluginInfo.PLUGIN_NAME, OnLoadingScreenEnd);
 
     /// <summary>
-    /// Translates all requested keys and fills the results array with the translated strings. 
+    /// Translates all requested keys and fills the results array with the translated strings.
+    /// This method is only valid to be called during the wait screen (Nautilus: <see cref="WaitScreenHandler"/>)
     /// </summary>
     /// <param name="requestedKeys">An array containing every localization key to translate.</param>
-    /// <param name="results">The array that will be populated with the results. Its size must be the same as the size of <paramref name="requestedKeys"/>.</param>
     /// <param name="warnMissing">If true, log warnings will be displayed when any key could not be found.</param>
     /// <param name="languageOverride">If a value is not provided, the current language will be used. Example value: "English"</param>
     /// <exception cref="Exception">An exception will be thrown if this method is called while not in the Wait Screen.</exception>
-    /// <exception cref="ArgumentException">An exception is thrown when the size of the arrays does not match.</exception>
     /// <exception cref="FileNotFoundException">An exception is thrown if the designated language file, AND the default fallback of English.json, could not be found.</exception>
-    public static void GetLocalization(string[] requestedKeys, string[] results, bool warnMissing, string languageOverride = null)
+    public static string[] GetLocalization(string[] requestedKeys, bool warnMissing, string languageOverride = null)
     {
-        if (!WaitScreen.IsWaiting)
+        if (!BZGameData.BelowZeroFound) {
+            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
+        }
+        if (!WaitScreen.IsWaiting) {
             throw new Exception("Below Zero localization cannot be accessed outside of the WaitScreen.");
-
-        if (results.Length != requestedKeys.Length)
-            throw new ArgumentException($"Results array size ({results.Length}) did not match requested keys size ({requestedKeys.Length})");
+        }
 
         string currentLanguage = !string.IsNullOrEmpty(languageOverride)
             ? languageOverride
             : Language.main.GetCurrentLanguage();
 
-        var languageFilePath = BZGameData.GetLocalizationFilePath($"{currentLanguage}.json");
+        string languageFilePath = BZGameData.GetLocalizationFilePath($"{currentLanguage}.json");
 
         if (!File.Exists(languageFilePath))
         {
@@ -53,33 +53,32 @@ public static class BZLocalizationLoader
             }
         }
 
-        EnsureLocalizationLoaded(languageFilePath, currentLanguage);
+        CacheLocalizationLanguage(languageFilePath, currentLanguage);
 
+        string[] translations = new string[requestedKeys.Length];
         for (int i = 0; i < requestedKeys.Length; i++)
         {
-            if (LoadedLocalization.TryGetValue(requestedKeys[i], out var translation))
-            {
-                results[i] = translation;
+            if (CachedLocalization.TryGetValue(requestedKeys[i], out var translation)) {
+                translations[i] = translation;
+                continue;
             }
-            else
-            {
-                if (warnMissing)
-                    Plugin.Logger.LogWarning($"Translation not found for key '{requestedKeys[i]}'");
-                results[i] = requestedKeys[i];
+
+            if (warnMissing) {
+                Plugin.Logger.LogWarning($"Translation not found for key '{requestedKeys[i]}'");
             }
+            translations[i] = requestedKeys[i];
         }
+        return translations;
     }
 
-    private static void EnsureLocalizationLoaded(string filePath, string languageName)
+    private static void CacheLocalizationLanguage(string filePath, string languageName)
     {
-        if (LoadedLocalization is { Count: > 0 })
-        {
-            if (languageName.Equals(CurrentlyCachedLanguageName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                // No new load is needed because this language is already cached
-                return;
-            }
+        if (CachedLocalization is { Count: > 0 } &&
+            languageName.Equals(CurrentlyCachedLanguageName, StringComparison.InvariantCultureIgnoreCase)
+        ) {
+            return; // No new load is needed because this language is already cached
         }
+
         CurrentlyCachedLanguageName = languageName;
 
         JsonData jsonData;
@@ -91,12 +90,12 @@ public static class BZLocalizationLoader
             throw;
         }
 
-        LoadedLocalization?.Clear();
-        LoadedLocalization = new Dictionary<string, string>();
+        CachedLocalization?.Clear();
+        CachedLocalization = new Dictionary<string, string>();
 
         foreach (string key in jsonData.Keys)
         {
-            LoadedLocalization[key] = (string)jsonData[key];
+            CachedLocalization[key] = (string)jsonData[key];
         }
 
         Plugin.Logger.LogInfo($"Loaded {jsonData.Count} entries from Below Zero localization.");
@@ -104,8 +103,8 @@ public static class BZLocalizationLoader
 
     private static void OnLoadingScreenEnd(WaitScreenHandler.WaitScreenTask task)
     {
-        LoadedLocalization?.Clear();
-        LoadedLocalization = null;
+        CachedLocalization?.Clear();
+        CachedLocalization = null;
         CurrentlyCachedLanguageName = null;
     }
 }

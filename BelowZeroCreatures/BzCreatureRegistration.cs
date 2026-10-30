@@ -117,9 +117,8 @@ public static class BzCreatureRegistration
 
         techTypesToRequest.AddRange(ModData.MiscLocalizationToRequest);
         string[] allStringKeys = techTypesToRequest.ToArray();
-        string[] allTranslations = new string[allStringKeys.Length];
 
-        BZLocalizationLoader.GetLocalization(allStringKeys, allTranslations, true);
+        string[] allTranslations =  BZLocalizationLoader.GetLocalization(allStringKeys, true);
 
         for (int i = 0; i < allStringKeys.Length; i++)
         {
