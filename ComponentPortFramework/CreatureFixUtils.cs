@@ -69,7 +69,6 @@ public static class CreatureFixUtils
             dropTool.hitBleederSound = null;
             dropTool.holsterSoundAboveWater = null;
             dropTool.holsterSoundUnderwater = null;
-            dropTool.bashAnimationSound = null;
             dropTool.reloadSound = null;
         }
     }
