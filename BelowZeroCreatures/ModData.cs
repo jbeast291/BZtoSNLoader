@@ -27,7 +27,7 @@ internal static class ModData
     public static readonly HashSet<string> HoldableCreatures = new()
     {
         "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish",
-        "Triops", "PenguinBaby", "SeaMonkeyBaby", "Symbiote"
+        "Triops", "PenguinBaby", "SeaMonkeyBaby", "Symbiote", "PenguinBaby"
     };
 
     public static readonly HashSet<string> CookableCreatures = new()
