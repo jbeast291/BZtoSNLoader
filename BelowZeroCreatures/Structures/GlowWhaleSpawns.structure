@@ -1,0 +1,384 @@
+{
+  "Entities": [
+    {
+      "classId": "GlowWhale",
+      "id": "faf803e3-44fe-4a89-a779-33ee0afd9be9",
+      "position": {
+        "x": -723.165344,
+        "y": -228.0967,
+        "z": 1058.5094
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "e008486f-ae6f-4367-89e3-3037c29387a5",
+      "position": {
+        "x": -860.8612,
+        "y": -258.2201,
+        "z": 1455.72766
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "5fa4d099-7378-4eab-8dab-93249d9b3635",
+      "position": {
+        "x": -682.102,
+        "y": -352.946228,
+        "z": 1591.69385
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "5003d3fb-794b-4f46-8950-e89344052fb0",
+      "position": {
+        "x": -182.940735,
+        "y": -253.768234,
+        "z": 1364.58008
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "43abe607-5229-465d-babf-41d05647dc79",
+      "position": {
+        "x": -273.658173,
+        "y": -323.418457,
+        "z": 1327.55115
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "5754323c-74cb-4835-b403-c9910c2b7861",
+      "position": {
+        "x": -386.5253,
+        "y": -355.9588,
+        "z": 1205.86768
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "f9460fcf-e784-415d-80a4-7fc7660f343a",
+      "position": {
+        "x": -706.3,
+        "y": -326.345154,
+        "z": 1312.70972
+      },
+      "rotation": {
+        "x": 0.00102805742,
+        "y": 0.289067239,
+        "z": -0.00172925019,
+        "w": 0.9573067
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "710435ca-912d-4bba-a411-40a4716d1c1a",
+      "position": {
+        "x": -571.739746,
+        "y": -395.49118,
+        "z": 1475.31738
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "2897a620-9266-487d-b8e8-08f00bcfdac9",
+      "position": {
+        "x": -765.6701,
+        "y": -202.254044,
+        "z": 932.549
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "d5e2bce8-f327-4257-8401-b30928458c4e",
+      "position": {
+        "x": 997.9058,
+        "y": -168.220673,
+        "z": 760.4822
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "263e79ba-9bcc-4115-b53a-a36f964996ec",
+      "position": {
+        "x": 1230.05615,
+        "y": -155.234818,
+        "z": 569.469
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "ed24f14e-c669-4149-ac09-4a039678fc74",
+      "position": {
+        "x": 1105.45679,
+        "y": -174.932571,
+        "z": 544.494446
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "287b0f14-da22-40d2-bdd3-efc2d76b8716",
+      "position": {
+        "x": 1107.80835,
+        "y": -179.941467,
+        "z": 568.2672
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "32305bb0-462f-46f9-a511-f411c1e40a2a",
+      "position": {
+        "x": 962.440247,
+        "y": -149.9534,
+        "z": 520.9212
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "1e9298d9-64ab-477f-89c9-3606e71db227",
+      "position": {
+        "x": 868.945068,
+        "y": -182.947922,
+        "z": 594.8287
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "2d3a5c57-3d73-4f18-ac13-89aa7c4d2dbf",
+      "position": {
+        "x": 767.52594,
+        "y": -140.574509,
+        "z": 694.403748
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": -0.37697646,
+        "z": 0.0,
+        "w": 0.926222861
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    },
+    {
+      "classId": "GlowWhale",
+      "id": "fdef8ed8-c183-487a-9cf1-fc86d5b169db",
+      "position": {
+        "x": 756.0044,
+        "y": -144.192154,
+        "z": 671.49646
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.7997908,
+        "z": 0.0,
+        "w": 0.6002789
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 2,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}

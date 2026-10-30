@@ -1,0 +1,186 @@
+{
+  "Entities": [
+    {
+      "classId": "SmallVentGarden",
+      "id": "84423b01-3a35-4e18-8e64-e0505ab86e16",
+      "position": {
+        "x": 1036.51611,
+        "y": -201.632553,
+        "z": 685.76886
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "15a747e0-a7c1-4792-bbcd-16423dacc97e",
+      "position": {
+        "x": 914.062744,
+        "y": -129.661835,
+        "z": 821.9164
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "196d2957-6a22-4b8b-9052-88e246b0ca6b",
+      "position": {
+        "x": 950.395752,
+        "y": -160.496445,
+        "z": 909.0429
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "7825895d-eda4-410f-bf08-7110fe4d0904",
+      "position": {
+        "x": 1073.6687,
+        "y": -123.676056,
+        "z": 572.329651
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "517bb763-b17c-48f9-8e71-c28d9fd9163b",
+      "position": {
+        "x": 895.5725,
+        "y": -158.939438,
+        "z": 593.9419
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "bd5a36f2-e20b-4900-a038-11f28fc8588d",
+      "position": {
+        "x": 689.4909,
+        "y": -55.5618,
+        "z": 743.494141
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "8690287f-f8bf-4cb9-8159-a865ee9e1e7a",
+      "position": {
+        "x": 922.8885,
+        "y": -150.707291,
+        "z": 438.89093
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    },
+    {
+      "classId": "SmallVentGarden",
+      "id": "3a4db251-a525-4031-8eb1-b04860e90dc1",
+      "position": {
+        "x": 1094.81177,
+        "y": -117.9387,
+        "z": 861.7703
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}
