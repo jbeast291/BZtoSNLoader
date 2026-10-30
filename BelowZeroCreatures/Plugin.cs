@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BelowZeroCreatures.CreatureModifiers.System;
 using BelowZeroCreatures.StructureLoading;
 using BepInEx;
 using BepInEx.Logging;
@@ -95,9 +96,11 @@ public class Plugin : BaseUnityPlugin
         _waitScreenTaskExecuted = true;
         
         LoadComponentExportData();
+        CreatureModifiersManager.RegisterCreatureEdits();
 
         // Register prefabs
         HashSet<TechType> techTypes = new HashSet<TechType>();
+        HashSet<string> classIds = new HashSet<string>();
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
@@ -113,7 +116,10 @@ public class Plugin : BaseUnityPlugin
             // IGNORE schools of fish in TechTypes list
             if (!classId.EndsWith("School"))
                 techTypes.Add(info.TechType);
+            classIds.Add(classId);
         }
+        
+        CreatureModifiersManager.CheckForInvalidModifiers(classIds);
 
         // Register TechType specific data
 

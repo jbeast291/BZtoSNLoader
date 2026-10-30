@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace BelowZeroCreatures.Fixes;
+namespace BelowZeroCreatures;
 
 internal static class CreatureRespawnerUtils
 {

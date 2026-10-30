@@ -1,5 +1,5 @@
 using System.Collections;
-using BelowZeroCreatures.Fixes;
+using BelowZeroCreatures.CreatureModifiers.System;
 using BZtoSNLoader;
 using ComponentPortFramework;
 using Nautilus.Assets;
@@ -62,8 +62,12 @@ public class BzCreaturePrefab
         {
             Object.DestroyImmediate(soundOnDamage);
         }
-        
-        HardcodedCreatureFixes.ApplyFixesByCreature(prefab, Info.ClassID);
+
+        // Apply creature-specific modifications
+        if (CreatureModifiersManager.TryGetCreatureEdit(Info.ClassID, out var modifier))
+        {
+            modifier.ApplyModifications(prefab);
+        }
         
         result.Set(prefab);
     }

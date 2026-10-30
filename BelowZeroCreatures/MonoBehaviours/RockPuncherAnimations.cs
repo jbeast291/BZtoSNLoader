@@ -1,11 +1,10 @@
 using UnityEngine;
 
-namespace BelowZeroCreatures.Fixes;
+namespace BelowZeroCreatures.MonoBehaviours;
 
-public class PinnacaridAnimations : MonoBehaviour, IManagedUpdateBehaviour
+public class RockPuncherAnimations : MonoBehaviour, IManagedUpdateBehaviour
 {
     private static readonly int OnSurface = Animator.StringToHash("on_surface");
-    private static readonly int InWater = Animator.StringToHash("in_water");
     public Animator animator;
     public OnSurfaceTracker tracker;
 
@@ -13,14 +12,12 @@ public class PinnacaridAnimations : MonoBehaviour, IManagedUpdateBehaviour
 
     public string GetProfileTag()
     {
-        return "BelowZeroCreatures.Fixes:PinnacaridAnimations";
+        return "BelowZeroCreatures.Fixes:RockPuncherAnimations";
     }
 
     public void ManagedUpdate()
     {
-        bool onSurface = tracker.onSurface;
-        animator.SetBool(OnSurface, onSurface);
-        animator.SetBool(InWater, !onSurface);
+        animator.SetBool(OnSurface, tracker._onSurface);
     }
 
     private void OnEnable()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BelowZeroCreatures.Fixes;
+namespace BelowZeroCreatures.MonoBehaviours;
 
 public class PlayRandomTriggerAnimations : MonoBehaviour, IScheduledUpdateBehaviour
 {
