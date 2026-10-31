@@ -140,7 +140,12 @@ internal static class ModData
             { "TitanHolefish", BehaviourType.Whale },
             { "Jellyfish", BehaviourType.Whale },
             { "Chelicerate", BehaviourType.Leviathan },
-            { "ShadowLeviathan", BehaviourType.Leviathan }
+            { "ShadowLeviathan", BehaviourType.Leviathan },
+            { "ArrowRay_School", BehaviourType.MediumFish },
+            { "FeatherFishRed_School", BehaviourType.MediumFish },
+            { "FeatherFish_School", BehaviourType.MediumFish },
+            { "SmallVentGarden", BehaviourType.Leviathan },
+            { "LargeVentGarden", BehaviourType.Leviathan }
         };
 
     public static readonly Dictionary<string, LargeWorldEntity.CellLevel> CellLevels =
@@ -175,6 +180,11 @@ internal static class ModData
             { "TrivalveYellow", LargeWorldEntity.CellLevel.Medium },
             { "TitanHolefish", LargeWorldEntity.CellLevel.Medium },
             { "Jellyfish", LargeWorldEntity.CellLevel.Medium },
-            { "Chelicerate", LargeWorldEntity.CellLevel.VeryFar }
+            { "Chelicerate", LargeWorldEntity.CellLevel.VeryFar },
+            { "ArrowRay_School", LargeWorldEntity.CellLevel.Medium },
+            { "FeatherFishRed_School", LargeWorldEntity.CellLevel.Medium },
+            { "FeatherFish_School", LargeWorldEntity.CellLevel.Medium },
+            { "SmallVentGarden", LargeWorldEntity.CellLevel.VeryFar },
+            { "LargeVentGarden", LargeWorldEntity.CellLevel.VeryFar },
         };
 }
