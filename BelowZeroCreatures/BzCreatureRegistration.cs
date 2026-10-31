@@ -7,6 +7,7 @@ using BelowZeroCreatures.CreatureModifiers.System;
 using BelowZeroCreatures.StructureLoading;
 using BZtoSNLoader;
 using ComponentPortFramework;
+using Nautilus.Assets;
 using Nautilus.Handlers;
 using Newtonsoft.Json;
 using UnityEngine.U2D;
@@ -30,8 +31,9 @@ public static class BzCreatureRegistration
         CreatureModifiersManager.RegisterCreatureEdits();
 
         // Register prefabs
-        HashSet<TechType> techTypes = new HashSet<TechType>();
+        List<TechType> techTypes = new List<TechType>();
         HashSet<string> classIds = new HashSet<string>();
+        List<PrefabInfo> infos = new List<PrefabInfo>();
         foreach (var asset in AssetPathsWithComponentData)
         {
             var classId = GetBestClassId(asset.Key);
@@ -41,6 +43,7 @@ public static class BzCreatureRegistration
                 continue;
 
             var info = ModData.GetPrefabInfo(classId);
+            infos.Add(info);
             new BzCreaturePrefab(info
                 .WithFolderPath("Below Zero Creatures"), new BZAssetLoader.AssetKey(asset.Key), asset.Value).Register();
 
@@ -51,6 +54,7 @@ public static class BzCreatureRegistration
         }
 
         CreatureModifiersManager.CheckForInvalidModifiers(classIds);
+        yield return BzFoodRegistration.RegisterFoods(infos, techTypes);
 
         // Register TechType specific data
 
@@ -113,6 +117,16 @@ public static class BzCreatureRegistration
             string databankName = ModData.GetDatabankName(techTypeName);
             techTypesToRequest.Add("Ency_" + databankName);
             techTypesToRequest.Add("EncyDesc_" + databankName);
+            
+            // COOKED
+            if (ModData.CookableCreatures.Contains(techTypeName))
+            {
+                string cookedName = ModData.FixCookedCreatureTechTypeName(techTypeName);
+                techTypesToRequest.Add("Cooked" + cookedName);
+                techTypesToRequest.Add("Tooltip_Cooked" + cookedName);
+                techTypesToRequest.Add("Cured" + cookedName);
+                techTypesToRequest.Add("Tooltip_Cured" + cookedName);
+            }
         }
 
         techTypesToRequest.AddRange(ModData.MiscLocalizationToRequest);

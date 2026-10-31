@@ -24,16 +24,48 @@ internal static class ModData
         "WhaleInteract"
     };
 
-    public static readonly HashSet<string> HoldableCreatures = new()
+    public static readonly HashSet<string> HoldableCreatures = new(StringComparer.OrdinalIgnoreCase)
     {
         "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish",
         "Triops", "PenguinBaby", "SeaMonkeyBaby", "Symbiote"
     };
 
-    public static readonly HashSet<string> CookableCreatures = new()
+    public static readonly HashSet<string> CookableCreatures = new(StringComparer.OrdinalIgnoreCase)
     {
         "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish", "Triops",
         "Symbiote"
+    };
+
+    public static readonly Dictionary<string, BehaviourType> BehaviourTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "ArrowRay", BehaviourType.SmallFish },
+        { "FeatherFish", BehaviourType.SmallFish },
+        { "FeatherFishRed", BehaviourType.SmallFish },
+        { "ArcticPeeper", BehaviourType.SmallFish },
+        { "SpinnerFish", BehaviourType.SmallFish },
+        { "Symbiote", BehaviourType.SmallFish },
+        { "Triops", BehaviourType.SmallFish },
+        { "SeaMonkeyBaby", BehaviourType.SmallFish },
+        { "DiscusFish", BehaviourType.SmallFish },
+        { "Penguin", BehaviourType.MediumFish },
+        { "Pinnacarid", BehaviourType.MediumFish },
+        { "ArcticRay", BehaviourType.MediumFish },
+        { "TrivalveBlue", BehaviourType.MediumFish },
+        { "TrivalveYellow", BehaviourType.MediumFish },
+        { "SeaMonkey", BehaviourType.MediumFish },
+        { "NootFish", BehaviourType.MediumFish },
+        { "Brinewing", BehaviourType.MediumFish },
+        { "RockPuncher", BehaviourType.Crab },
+        { "BruteShark", BehaviourType.Shark },
+        { "SquidShark", BehaviourType.Shark },
+        { "Cryptosuchus", BehaviourType.Shark },
+        { "SnowStalker", BehaviourType.Shark },
+        { "SnowStalkerBaby", BehaviourType.Shark },
+        { "GlowWhale", BehaviourType.Whale },
+        { "TitanHolefish", BehaviourType.Whale },
+        { "Jellyfish", BehaviourType.Whale },
+        { "Chelicerate", BehaviourType.Leviathan },
+        { "ShadowLeviathan", BehaviourType.Leviathan }
     };
     
     public static string GetDatabankName(string techTypeString)
@@ -65,5 +97,18 @@ internal static class ModData
         }
 
         return PrefabInfo.WithTechType(classId);
+    }
+    
+    public static string FixCookedCreatureAssetPath(string classId)
+    {
+        if (classId == "SpinnerFish") return "Spinnerfish";
+        if (classId == "NootFish") return "Nootfish";
+        return classId;
+    }
+    
+    public static string FixCookedCreatureTechTypeName(string classId)
+    {
+        if (classId == "SpinnerFish") return "Spinnerfish";
+        return classId;
     }
 }

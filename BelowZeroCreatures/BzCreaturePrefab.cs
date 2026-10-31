@@ -3,6 +3,7 @@ using BelowZeroCreatures.CreatureModifiers.System;
 using BZtoSNLoader;
 using ComponentPortFramework;
 using Nautilus.Assets;
+using Nautilus.Handlers;
 using Nautilus.Utility;
 using UnityEngine;
 
@@ -26,6 +27,20 @@ public class BzCreaturePrefab
         CustomPrefab nautilusPrefab = new CustomPrefab(Info);
         nautilusPrefab.SetGameObject(GetPrefabAsync);
         nautilusPrefab.Register();
+
+        var techType = Info.TechType;
+        BaseBioReactor.charge[techType] = 300;
+        if (ModData.HoldableCreatures.Contains(Info.ClassID))
+        {
+            GravSphereHandler.AddAffectedTechType(techType);
+        }
+        
+        CraftDataHandler.SetPickupSound(techType, "event:/loot/pickup_fish");
+
+        if (ModData.BehaviourTypes.TryGetValue(techType.ToString(), out var behaviourType))
+            CreatureData.behaviourTypeList[techType] = behaviourType;
+        else
+            Plugin.Logger.LogWarning("Did not find BehaviourType for creature: " + techType);
     }
 
     private IEnumerator GetPrefabAsync(IOut<GameObject> result)
