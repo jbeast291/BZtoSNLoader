@@ -18,12 +18,12 @@
         <MakeDir Directories="$(ModDir)\Structures"/>
         <Copy SourceFiles="@(StructureFiles)" DestinationFolder="$(ModDir)\Structures"/>
 
-        <MakeDir Directories="$(ModDir)\RandomSpawns"/>
-        <Copy SourceFiles="@(RandomSpawns)" DestinationFolder="$(ModDir)\RandomSpawns"/>
+        <MakeDir Directories="$(ModDir)\SpawnDistributions"/>
+        <Copy SourceFiles="@(SpawnDistributions)" DestinationFolder="$(ModDir)\SpawnDistributions"/>
     </Target>
 
     <ItemGroup>
         <StructureFiles Include="Structures/*.structure"/>
-        <RandomSpawns Include="RandomSpawns/*.json"/>
+        <SpawnDistributions Include="SpawnDistributions/*.json"/>
     </ItemGroup>
 </Project>

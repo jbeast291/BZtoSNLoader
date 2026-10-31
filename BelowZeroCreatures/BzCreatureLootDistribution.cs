@@ -15,13 +15,13 @@ internal static class BzCreatureLootDistribution
     {
         var prefabInfoMapping = MapPrefabInfos(infos);
         
-        var jsonFolder = Path.Combine(Path.GetDirectoryName(Plugin.Assembly.Location), "RandomSpawns");
+        var jsonFolder = Path.Combine(Path.GetDirectoryName(Plugin.Assembly.Location), "SpawnDistributions");
         foreach (var file in Directory.GetFiles(jsonFolder, "*.json"))
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
             if (!prefabInfoMapping.TryGetValue(fileName, out var info))
             {
-                Plugin.Logger.LogWarning($"Unknown creature TechType or ClassID found in RandomSpawns folder: '{fileName}'");
+                Plugin.Logger.LogWarning($"Unknown creature TechType or ClassID found in SpawnDistributions folder: '{fileName}'");
                 continue;
             }
             
