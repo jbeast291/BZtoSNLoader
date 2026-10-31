@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using BelowZeroCreatures.CreatureModifiers.System;
 using BZtoSNLoader;
 using ComponentPortFramework;
@@ -82,6 +83,19 @@ public class BzCreaturePrefab
         if (CreatureModifiersManager.TryGetCreatureEdit(Info.ClassID, out var modifier))
         {
             modifier.ApplyModifications(prefab);
+        }
+        
+        // Infectability
+        if (ModData.BehaviourTypes.TryGetValue(Info.ClassID, out var behaviourType) &&
+            behaviourType != BehaviourType.Leviathan && Info.ClassID != "GlowWhale" && !Info.ClassID.EndsWith("School"))
+        {
+            var infectableRenderers = prefab.GetComponentsInChildren<Renderer>(true).Where(r =>
+                r.sharedMaterials.All(m => m.shader != null && m.shader.name.Equals("MarmosetUBER"))).ToArray();
+            if (infectableRenderers.Length > 0)
+            {
+                var infectedMixin = prefab.AddComponent<InfectedMixin>();
+                infectedMixin.renderers = infectableRenderers;
+            }
         }
         
         result.Set(prefab);
