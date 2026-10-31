@@ -2,11 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Nautilus.Utility;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceLocations;
+
 
 namespace BZtoSNLoader;
 
@@ -35,7 +33,7 @@ public static class BZAssetLoader
     /// <returns></returns>
     /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
     /// the asset does not exist in any bundle.</exception>
-    /// <example><code>
+    /// <example>//TODO: write some explination of the example code<code>
     /// TaskResult&lt;GameObject&gt; result = new TaskResult&lt;GameObject&gt;();
     /// yield return LoadAssetAsync(new AddressablesAssetPath("WorldEntities/Creatures/Expansion/ArcticPeeper.prefab"), result);
     /// GameObject prefab = result.Get();
@@ -79,7 +77,7 @@ public static class BZAssetLoader
 
     private static IEnumerator LoadAssetWithDependencies(AssetKey asset, IOut<AssetBundle> assetBundle)
     {
-        if (!BZGameData.BundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.Path, out List<string> bundles))
+        if (!BZGameData.bundleDependencyData.assetPathToBundleDeps.TryGetValue(asset.Path, out List<string> bundles))
         {
             throw new InvalidKeyException($"Invalid BZ Addressables Path: \"{asset}\"!");
         }
