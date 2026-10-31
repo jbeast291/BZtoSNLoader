@@ -36,73 +36,6 @@ internal static class ModData
         "Symbiote"
     };
 
-    public static readonly Dictionary<string, BehaviourType> BehaviourTypes =
-        new(StringComparer.OrdinalIgnoreCase)
-        {
-            { "ArrowRay", BehaviourType.SmallFish },
-            { "FeatherFish", BehaviourType.SmallFish },
-            { "FeatherFishRed", BehaviourType.SmallFish },
-            { "ArcticPeeper", BehaviourType.SmallFish },
-            { "SpinnerFish", BehaviourType.SmallFish },
-            { "Symbiote", BehaviourType.SmallFish },
-            { "Triops", BehaviourType.SmallFish },
-            { "SeaMonkeyBaby", BehaviourType.SmallFish },
-            { "DiscusFish", BehaviourType.SmallFish },
-            { "Penguin", BehaviourType.MediumFish },
-            { "PenguinBaby", BehaviourType.MediumFish },
-            { "Pinnacarid", BehaviourType.MediumFish },
-            { "ArcticRay", BehaviourType.MediumFish },
-            { "TrivalveBlue", BehaviourType.MediumFish },
-            { "TrivalveYellow", BehaviourType.MediumFish },
-            { "SeaMonkey", BehaviourType.MediumFish },
-            { "NootFish", BehaviourType.MediumFish },
-            { "Brinewing", BehaviourType.MediumFish },
-            { "LilyPaddler", BehaviourType.MediumFish },
-            { "RockPuncher", BehaviourType.Crab },
-            { "BruteShark", BehaviourType.Shark },
-            { "SquidShark", BehaviourType.Shark },
-            { "Cryptosuchus", BehaviourType.Shark },
-            { "SnowStalker", BehaviourType.Shark },
-            { "SnowStalkerBaby", BehaviourType.Shark },
-            { "GlowWhale", BehaviourType.Whale },
-            { "TitanHolefish", BehaviourType.Whale },
-            { "Jellyfish", BehaviourType.Whale },
-            { "Chelicerate", BehaviourType.Leviathan },
-            { "ShadowLeviathan", BehaviourType.Leviathan }
-        };
-
-    public static readonly Dictionary<string, LargeWorldEntity.CellLevel> CellLevels =
-        new(StringComparer.OrdinalIgnoreCase)
-        {
-            { "ArcticPeeper", LargeWorldEntity.CellLevel.Near },
-            { "ArcticRay", LargeWorldEntity.CellLevel.Medium },
-            { "ArrowRay", LargeWorldEntity.CellLevel.Near },
-            { "Brinewing", LargeWorldEntity.CellLevel.Near },
-            { "BruteShark", LargeWorldEntity.CellLevel.Medium },
-            { "Cryptosuchus", LargeWorldEntity.CellLevel.Medium },
-            { "DiscusFish", LargeWorldEntity.CellLevel.Near },
-            { "FeatherFish", LargeWorldEntity.CellLevel.Near },
-            { "FeatherFishRed", LargeWorldEntity.CellLevel.Near },
-            { "GlowWhale", LargeWorldEntity.CellLevel.Far },
-            { "LilyPaddler", LargeWorldEntity.CellLevel.Medium },
-            { "NootFish", LargeWorldEntity.CellLevel.Near },
-            { "Penguin", LargeWorldEntity.CellLevel.Medium },
-            { "PenguinBaby", LargeWorldEntity.CellLevel.Medium },
-            { "Pinnacarid", LargeWorldEntity.CellLevel.Medium },
-            { "RockPuncher", LargeWorldEntity.CellLevel.Medium },
-            { "SeaMonkey", LargeWorldEntity.CellLevel.Medium },
-            { "SeaMonkeyBaby", LargeWorldEntity.CellLevel.Near },
-            { "ShadowLeviathan", LargeWorldEntity.CellLevel.VeryFar },
-            { "SnowStalker", LargeWorldEntity.CellLevel.Medium },
-            { "SnowStalkerBaby", LargeWorldEntity.CellLevel.Medium },
-            { "SpinnerFish", LargeWorldEntity.CellLevel.Near },
-            { "SquidShark", LargeWorldEntity.CellLevel.Medium },
-            { "Symbiote", LargeWorldEntity.CellLevel.Near },
-            { "Triops", LargeWorldEntity.CellLevel.Near },
-            { "TrivalveBlue", LargeWorldEntity.CellLevel.Medium },
-            { "TrivalveYellow", LargeWorldEntity.CellLevel.Medium }
-        };
-
     public static string GetDatabankName(string techTypeString)
     {
         return techTypeString switch
@@ -174,4 +107,74 @@ internal static class ModData
             Water = water;
         }
     }
+
+    public static readonly Dictionary<string, BehaviourType> BehaviourTypes =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ArrowRay", BehaviourType.SmallFish },
+            { "FeatherFish", BehaviourType.SmallFish },
+            { "FeatherFishRed", BehaviourType.SmallFish },
+            { "ArcticPeeper", BehaviourType.SmallFish },
+            { "SpinnerFish", BehaviourType.SmallFish },
+            { "Symbiote", BehaviourType.SmallFish },
+            { "Triops", BehaviourType.SmallFish },
+            { "SeaMonkeyBaby", BehaviourType.SmallFish },
+            { "DiscusFish", BehaviourType.SmallFish },
+            { "Penguin", BehaviourType.MediumFish },
+            { "PenguinBaby", BehaviourType.MediumFish },
+            { "Pinnacarid", BehaviourType.MediumFish },
+            { "ArcticRay", BehaviourType.MediumFish },
+            { "TrivalveBlue", BehaviourType.MediumFish },
+            { "TrivalveYellow", BehaviourType.MediumFish },
+            { "SeaMonkey", BehaviourType.MediumFish },
+            { "NootFish", BehaviourType.MediumFish },
+            { "Brinewing", BehaviourType.MediumFish },
+            { "LilyPaddler", BehaviourType.MediumFish },
+            { "RockPuncher", BehaviourType.Crab },
+            { "BruteShark", BehaviourType.Shark },
+            { "SquidShark", BehaviourType.Shark },
+            { "Cryptosuchus", BehaviourType.Shark },
+            { "SnowStalker", BehaviourType.Shark },
+            { "SnowStalkerBaby", BehaviourType.Shark },
+            { "GlowWhale", BehaviourType.Whale },
+            { "TitanHolefish", BehaviourType.Whale },
+            { "Jellyfish", BehaviourType.Whale },
+            { "Chelicerate", BehaviourType.Leviathan },
+            { "ShadowLeviathan", BehaviourType.Leviathan }
+        };
+
+    public static readonly Dictionary<string, LargeWorldEntity.CellLevel> CellLevels =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ArcticPeeper", LargeWorldEntity.CellLevel.Near },
+            { "ArcticRay", LargeWorldEntity.CellLevel.Medium },
+            { "ArrowRay", LargeWorldEntity.CellLevel.Near },
+            { "Brinewing", LargeWorldEntity.CellLevel.Near },
+            { "BruteShark", LargeWorldEntity.CellLevel.Medium },
+            { "Cryptosuchus", LargeWorldEntity.CellLevel.Medium },
+            { "DiscusFish", LargeWorldEntity.CellLevel.Near },
+            { "FeatherFish", LargeWorldEntity.CellLevel.Near },
+            { "FeatherFishRed", LargeWorldEntity.CellLevel.Near },
+            { "GlowWhale", LargeWorldEntity.CellLevel.Far },
+            { "LilyPaddler", LargeWorldEntity.CellLevel.Medium },
+            { "NootFish", LargeWorldEntity.CellLevel.Near },
+            { "Penguin", LargeWorldEntity.CellLevel.Medium },
+            { "PenguinBaby", LargeWorldEntity.CellLevel.Medium },
+            { "Pinnacarid", LargeWorldEntity.CellLevel.Medium },
+            { "RockPuncher", LargeWorldEntity.CellLevel.Medium },
+            { "SeaMonkey", LargeWorldEntity.CellLevel.Medium },
+            { "SeaMonkeyBaby", LargeWorldEntity.CellLevel.Near },
+            { "ShadowLeviathan", LargeWorldEntity.CellLevel.VeryFar },
+            { "SnowStalker", LargeWorldEntity.CellLevel.Medium },
+            { "SnowStalkerBaby", LargeWorldEntity.CellLevel.Medium },
+            { "SpinnerFish", LargeWorldEntity.CellLevel.Near },
+            { "SquidShark", LargeWorldEntity.CellLevel.Medium },
+            { "Symbiote", LargeWorldEntity.CellLevel.Near },
+            { "Triops", LargeWorldEntity.CellLevel.Near },
+            { "TrivalveBlue", LargeWorldEntity.CellLevel.Medium },
+            { "TrivalveYellow", LargeWorldEntity.CellLevel.Medium },
+            { "TitanHolefish", LargeWorldEntity.CellLevel.Medium },
+            { "Jellyfish", LargeWorldEntity.CellLevel.Medium },
+            { "Chelicerate", LargeWorldEntity.CellLevel.VeryFar }
+        };
 }
