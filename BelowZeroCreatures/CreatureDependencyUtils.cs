@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace BelowZeroCreatures;
 
-internal static class CreatureRespawnerUtils
+internal static class CreatureDependencyUtils
 {
     private static GameObject _creatureRespawnerPrefab;
+    private static GameObject _bloodParticlePrefab;
 
     public static IEnumerator GetCreatureRespawnerPrefab(IOut<GameObject> result)
     {
@@ -41,5 +42,35 @@ internal static class CreatureRespawnerUtils
 
         _creatureRespawnerPrefab = respawner;
         result.Set(respawner);
+    }
+    
+    public static IEnumerator GetBloodParticlePrefab(IOut<GameObject> result)
+    {
+        // Check if prefab is already cached
+        if (_bloodParticlePrefab != null)
+        {
+            result.Set(_bloodParticlePrefab);
+            yield break;
+        }
+        
+        // Fetch instance of prefab
+        var request = CraftData.GetPrefabForTechTypeAsync(TechType.Peeper);
+        yield return request;
+        var peeper = request.GetResult();
+        if (peeper == null)
+        {
+            Plugin.Logger.LogError("Peeper prefab not found");
+            yield break;
+        }
+
+        var liveMixin = peeper.GetComponent<LiveMixin>();
+        if (liveMixin == null || liveMixin.data == null)
+        {
+            Plugin.Logger.LogError($"No valid LiveMixin data found on {peeper}");
+            yield break;
+        }
+
+        _bloodParticlePrefab = liveMixin.data.damageEffect;
+        result.Set(_bloodParticlePrefab);
     }
 }

@@ -69,7 +69,7 @@ public class BzCreaturePrefab
         {
             // The creature respawner WILL be a 'stale' reference and must be fixed to point to the right one
             TaskResult<GameObject> respawnerPrefabResult = new TaskResult<GameObject>();
-            yield return CreatureRespawnerUtils.GetCreatureRespawnerPrefab(respawnerPrefabResult);
+            yield return CreatureDependencyUtils.GetCreatureRespawnerPrefab(respawnerPrefabResult);
             creatureDeath.respawnerPrefab = respawnerPrefabResult.Get();
         }
 
@@ -102,6 +102,9 @@ public class BzCreaturePrefab
             lm.data = lmData;
             lm.health = lmData.maxHealth;
             lm.defaultHealth = lmData.maxHealth;
+            TaskResult<GameObject> damageEffectResult = new TaskResult<GameObject>();
+            yield return CreatureDependencyUtils.GetBloodParticlePrefab(damageEffectResult);
+            lm.data.damageEffect = damageEffectResult.Get();
         }
         
         // Infectability
