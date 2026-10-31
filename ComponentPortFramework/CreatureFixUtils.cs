@@ -62,5 +62,15 @@ public static class CreatureFixUtils
             dropTool.holsterSoundUnderwater = null;
             dropTool.reloadSound = null;
         }
+
+        if (component is AggressiveWhenSeeTarget target)
+        {
+            target.creature = target.GetComponentInParent<Creature>();
+        }
+        
+        if (component is AggressiveWhenSeePlayer playerTarget)
+        {
+            playerTarget.creature = playerTarget.GetComponentInParent<Creature>();
+        }
     }
 }
