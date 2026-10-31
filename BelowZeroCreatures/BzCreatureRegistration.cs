@@ -74,6 +74,9 @@ public static class BzCreatureRegistration
         // Register structures
         StructureRegistrationUtils.RegisterStructures(
             StructureRegistrationUtils.GetStructuresFolderPath(Plugin.Assembly));
+        
+        // Register spawns
+        BzCreatureLootDistribution.LoadAllFromJson(infos);
 
         // Load creature icons
         TaskResult<SpriteAtlas> atlasResult = new TaskResult<SpriteAtlas>();
