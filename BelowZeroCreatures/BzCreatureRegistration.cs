@@ -31,7 +31,7 @@ public static class BzCreatureRegistration
         CreatureModifiersManager.RegisterCreatureEdits();
 
         // Register prefabs
-        List<TechType> techTypes = new List<TechType>();
+        List<TechType> creatureTechTypes = new List<TechType>();
         HashSet<string> classIds = new HashSet<string>();
         List<PrefabInfo> infos = new List<PrefabInfo>();
         foreach (var asset in AssetPathsWithComponentData)
@@ -49,21 +49,21 @@ public static class BzCreatureRegistration
 
             // IGNORE schools of fish in TechTypes list
             if (!classId.EndsWith("School"))
-                techTypes.Add(info.TechType);
+                creatureTechTypes.Add(info.TechType);
             classIds.Add(classId);
         }
-
+        
+        List<TechType> allModTechTypes = new List<TechType>(creatureTechTypes); // includes food items!
         CreatureModifiersManager.CheckForInvalidModifiers(classIds);
-        yield return BzFoodRegistration.RegisterFoods(infos, techTypes);
+        yield return BzFoodRegistration.RegisterFoods(infos, allModTechTypes);
 
         // Register TechType specific data
 
-        TechType[] techTypesArray = techTypes.ToArray();
-        RegisterAllLocalization(techTypesArray);
+        RegisterLocalizationForCreatures(creatureTechTypes);
 
         // Register PDA entries
         LanguageHandler.SetLanguageLine("EncyPath_Lifeforms/Fauna/BelowZero", "Sector Zero");
-        foreach (var techType in techTypesArray)
+        foreach (var techType in creatureTechTypes.ToArray())
         {
             string techTypeName = techType.ToString();
             string databankName = ModData.GetDatabankName(techTypeName);
@@ -83,7 +83,7 @@ public static class BzCreatureRegistration
         yield return BZAssetLoader.LoadAssetAsync(
             new BZAssetLoader.AssetKey("Assets/AddressableResources/Atlases/Items.spriteatlas"), atlasResult);
         var atlas = atlasResult.Get();
-        foreach (var techType in techTypes)
+        foreach (var techType in allModTechTypes)
         {
             string spriteName = techType.ToString().ToLower();
             var sprite = atlas.GetSprite(spriteName);
@@ -92,7 +92,7 @@ public static class BzCreatureRegistration
         }
 
         // Set equipment type
-        foreach (var techType in techTypes)
+        foreach (var techType in creatureTechTypes)
         {
             if (ModData.HoldableCreatures.Contains(techType.ToString()))
                 CraftDataHandler.SetEquipmentType(techType, EquipmentType.Hand);
@@ -109,10 +109,10 @@ public static class BzCreatureRegistration
         AssetPathsWithComponentData = JsonConvert.DeserializeObject<Dictionary<string, JsonPrefab>>(result);
     }
 
-    private static void RegisterAllLocalization(TechType[] techTypesArray)
+    private static void RegisterLocalizationForCreatures(IEnumerable<TechType> creatureTechTypes)
     {
         List<string> techTypesToRequest = new List<string>();
-        foreach (var techType in techTypesArray)
+        foreach (var techType in creatureTechTypes)
         {
             var techTypeName = techType.ToString();
             techTypesToRequest.Add(techTypeName);
