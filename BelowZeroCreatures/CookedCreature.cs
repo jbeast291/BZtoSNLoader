@@ -36,7 +36,8 @@ public class CookedCreature
             .WithStepsToFabricatorTab(IsCured
                 ? CraftTreeHandler.Paths.FabricatorCuredFood
                 : CraftTreeHandler.Paths.FabricatorCookedFood);
-        prefab.SetPdaGroupCategory(TechGroup.Survival, IsCured ? TechCategory.CuredFood : TechCategory.CookedFood);
+        prefab.SetUnlock(Info.TechType)
+            .WithPdaGroupCategory(TechGroup.Survival, IsCured ? TechCategory.CuredFood : TechCategory.CookedFood);
         prefab.Register();
     }
 
@@ -60,6 +61,11 @@ public class CookedCreature
         var prefab = UWE.Utils.InstantiateDeactivated(originalPrefab);
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, LargeWorldEntity.CellLevel.Near);
         prefab.AddComponent<Pickupable>();
+        var eatable = prefab.AddComponent<Eatable>();
+        var eatableData = ModData.GetEdibleDataForCookedFish(Info.ClassID, IsCured);
+        eatable.foodValue = eatableData.Food;
+        eatable.waterValue = eatableData.Water;
+        eatable.decomposes = true;
         result.Set(prefab);
     }
 }

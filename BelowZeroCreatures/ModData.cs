@@ -111,4 +111,32 @@ internal static class ModData
         if (classId == "SpinnerFish") return "Spinnerfish";
         return classId;
     }
+
+    public static EdibleData GetEdibleDataForCookedFish(string classId, bool cured)
+    {
+        var baseEdibleData = GetEdibleDataByClassId(classId);
+        if (cured) return new EdibleData(baseEdibleData.Food, -2);
+        return baseEdibleData;
+    }
+
+    private static EdibleData GetEdibleDataByClassId(string classId)
+    {
+        if (classId == "Triops") return new EdibleData(13, 5);
+        if (classId == "ArrowRay") return new EdibleData(13, 5);
+        if (classId == "ArcticPeeper") return new EdibleData(32, 5);
+        if (classId == "DiscusFish") return new EdibleData(18, 10);
+        return new EdibleData(23, 3);
+    }
+
+    public struct EdibleData
+    {
+        public float Food { get; }
+        public float Water { get; }
+
+        public EdibleData(float food, float water)
+        {
+            Food = food;
+            Water = water;
+        }
+    }
 }
