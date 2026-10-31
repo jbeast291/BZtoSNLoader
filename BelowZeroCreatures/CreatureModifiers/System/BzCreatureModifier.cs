@@ -16,5 +16,6 @@ public abstract class BzCreatureModifier
         {
             dropTool.customAnimToolName = HoldAnimationParam;
         }
+        ModifyPrefab(prefab);
     }
 }
