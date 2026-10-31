@@ -7,15 +7,6 @@ public static class CreatureFixUtils
 {
     public static void FixCreatureComponentIssues(Component component, ILogger logger)
     {
-        // TODO: Use proper health values
-        if (component is LiveMixin lm)
-        {
-            var lmData = ScriptableObject.CreateInstance<LiveMixinData>(); 
-            lm.data = lmData;
-            lm.health = lmData.maxHealth;
-            lm.defaultHealth = lmData.maxHealth;
-        }
-
         if (component is Creature creature)
         {
             var liveMixin = creature.GetComponent<LiveMixin>();

@@ -38,8 +38,8 @@ public class BzCreaturePrefab
         
         CraftDataHandler.SetPickupSound(techType, "event:/loot/pickup_fish");
 
-        if (ModData.BehaviourTypes.TryGetValue(techType.ToString(), out var behaviourType))
-            CreatureData.behaviourTypeList[techType] = behaviourType;
+        if (ModData.CreatureData.TryGetValue(techType.ToString(), out var data))
+            CreatureData.behaviourTypeList[techType] = data.BehaviourType;
         else
             Plugin.Logger.LogWarning("Did not find BehaviourType for creature: " + techType);
     }
@@ -85,9 +85,28 @@ public class BzCreaturePrefab
             modifier.ApplyModifications(prefab);
         }
         
+        // Live mixin
+        LiveMixin lm = prefab.GetComponent<LiveMixin>();
+        if (lm != null)
+        {
+            var lmData = ScriptableObject.CreateInstance<LiveMixinData>();
+            if (ModData.CreatureData.TryGetValue(Info.ClassID, out var creatureData))
+            {
+                lmData.maxHealth = creatureData.MaxHealth;
+            }
+            else
+            {
+                lmData.maxHealth = 100;
+                Plugin.Logger.LogWarning("Couldn't find max health for creature: " + Info.ClassID);
+            }
+            lm.data = lmData;
+            lm.health = lmData.maxHealth;
+            lm.defaultHealth = lmData.maxHealth;
+        }
+        
         // Infectability
-        if (ModData.BehaviourTypes.TryGetValue(Info.ClassID, out var behaviourType) &&
-            behaviourType != BehaviourType.Leviathan && Info.ClassID != "GlowWhale" && !Info.ClassID.EndsWith("School"))
+        if (ModData.CreatureData.TryGetValue(Info.ClassID, out var data) &&
+            data.BehaviourType != BehaviourType.Leviathan && Info.ClassID != "GlowWhale" && !Info.ClassID.EndsWith("School"))
         {
             var infectableRenderers = prefab.GetComponentsInChildren<Renderer>(true).Where(r =>
                 r.sharedMaterials.All(m => m.shader != null && m.shader.name.Equals("MarmosetUBER"))).ToArray();

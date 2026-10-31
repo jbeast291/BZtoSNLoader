@@ -38,14 +38,14 @@ internal static class BzCreatureLootDistribution
             return;
         }
 
-        if (!ModData.CellLevels.TryGetValue(info.TechType.ToString(), out var cellLevel))
+        if (!ModData.CreatureData.TryGetValue(info.TechType.ToString(), out var creatureData))
         {
             Plugin.Logger.LogWarning("Could not find CellLevel for creature TechType: " + info.TechType);
         }
         
         LootDistributionHandler.AddLootDistributionData(info, data, new WorldEntityInfo
         {
-            cellLevel = cellLevel,
+            cellLevel = creatureData.CellLevel,
             classId = info.ClassID,
             techType = info.TechType,
             localScale = Vector3.one,
