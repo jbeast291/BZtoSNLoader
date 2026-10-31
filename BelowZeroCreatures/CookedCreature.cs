@@ -62,10 +62,13 @@ public class CookedCreature
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, LargeWorldEntity.CellLevel.Near);
         prefab.AddComponent<Pickupable>();
         var eatable = prefab.AddComponent<Eatable>();
-        var eatableData = ModData.GetEdibleDataForCookedFish(Info.ClassID, IsCured);
+        var eatableData = ModData.GetEdibleDataForCookedFish(CreatureInfo.ClassID, IsCured);
         eatable.foodValue = eatableData.Food;
         eatable.waterValue = eatableData.Water;
         eatable.decomposes = true;
+        eatable.kDecayRate = 0.015f;
+        eatable.despawnDelay = 300;
+        eatable.despawns = true;
         result.Set(prefab);
     }
 }
