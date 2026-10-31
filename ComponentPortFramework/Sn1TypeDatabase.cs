@@ -96,7 +96,7 @@ public class Sn1TypeDatabase
                 return true;
         }
         // TODO: this is just terrible
-        if (name == "DropTool")
+        if (name == "DropTool" || name == "SymbioteFishTool")
         {
             type = typeof(LazyDropToolFix);
             return true;
