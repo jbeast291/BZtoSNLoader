@@ -39,6 +39,11 @@ public class CookedCreature
         prefab.SetUnlock(Info.TechType)
             .WithPdaGroupCategory(TechGroup.Survival, IsCured ? TechCategory.CuredFood : TechCategory.CookedFood);
         prefab.Register();
+
+        if (!IsCured)
+        {
+            CraftDataHandler.SetCookedVariant(CreatureInfo.TechType, Info.TechType);
+        }
     }
 
     private RecipeData GetRecipe()
@@ -65,10 +70,10 @@ public class CookedCreature
         var eatableData = ModData.GetEdibleDataForCookedFish(CreatureInfo.ClassID, IsCured);
         eatable.foodValue = eatableData.Food;
         eatable.waterValue = eatableData.Water;
-        eatable.decomposes = true;
+        eatable.decomposes = !IsCured;
         eatable.kDecayRate = 0.015f;
         eatable.despawnDelay = 300;
-        eatable.despawns = true;
+        eatable.despawns = !IsCured;
         result.Set(prefab);
     }
 }
