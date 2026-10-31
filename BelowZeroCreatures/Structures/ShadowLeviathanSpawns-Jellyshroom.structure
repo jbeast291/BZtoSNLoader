@@ -1,0 +1,32 @@
+{
+  "Entities": [
+    {
+      "classId": "ShadowLeviathan",
+      "id": "6fe6bd36-dc6c-45d2-8383-55782ee1e386",
+      "position": {
+        "x": -493.669922,
+        "y": -209.851486,
+        "z": -108.504494
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "cellLevel": 3,
+      "priority": 0
+    }
+  ],
+  "Metadata": {
+    "gridSnappingDistance": "1.0",
+    "gridRotationSnapping": "45.0",
+    "gridCenter": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}",
+    "gridRotation": "{\"x\":0.0,\"y\":0.0,\"z\":0.0}"
+  }
+}
