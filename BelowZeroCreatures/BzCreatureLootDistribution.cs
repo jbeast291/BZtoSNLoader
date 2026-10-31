@@ -19,7 +19,7 @@ internal static class BzCreatureLootDistribution
         foreach (var file in Directory.GetFiles(jsonFolder, "*.json"))
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
-            if (!prefabInfoMapping.TryGetValue(file, out var info))
+            if (!prefabInfoMapping.TryGetValue(fileName, out var info))
             {
                 Plugin.Logger.LogWarning($"Unknown creature TechType or ClassID found in RandomSpawns folder: '{fileName}'");
                 continue;
