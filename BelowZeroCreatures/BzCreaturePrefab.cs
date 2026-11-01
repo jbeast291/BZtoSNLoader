@@ -60,7 +60,7 @@ public class BzCreaturePrefab
         
         // Essentials
         PrefabUtils.AddBasicComponents(prefab, Info.ClassID, Info.TechType, cellLevel);
-        ApplyMaterials(prefab);
+        ApplyMaterials(prefab, Info.ClassID.EndsWith("_School"));
         
         // -- Various creature-related fixes --
         // Fix creature death
@@ -140,7 +140,7 @@ public class BzCreaturePrefab
         return cellLevel;
     }   
 
-    private static void ApplyMaterials(GameObject prefab)
+    private void ApplyMaterials(GameObject prefab, bool isSchool)
     {
         foreach (var renderer in prefab.GetComponentsInChildren<Renderer>())
         {
@@ -151,7 +151,8 @@ public class BzCreaturePrefab
                 if (!m.shader.name.Contains("MarmosetUBER")) continue;
                 if (m.GetInt("_ZWrite") == 0) continue; // Skip transparent materials
                 m.shader = MaterialUtils.Shaders.MarmosetUBER;
-                m.SetFloat("_SpecInt", m.GetFloat("_SpecInt") * 2);
+                if (!isSchool)
+                    m.SetFloat("_SpecInt", m.GetFloat("_SpecInt") * 2);
             }
             renderer.materials = materials;
         }
