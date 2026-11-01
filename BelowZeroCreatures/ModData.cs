@@ -123,7 +123,7 @@ internal static class ModData
         // MEDIUM FISH
         { "Penguin", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 50) },
         { "PenguinBaby", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 50) },
-        { "Pinnacarid", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 100) },
+        { "Pinnacarid", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Near, 100) },
         { "ArcticRay", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 100) },
         { "TrivalveBlue", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 500) },
         { "TrivalveYellow", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 500) },
@@ -132,7 +132,7 @@ internal static class ModData
         { "Brinewing", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Near, 100) },
         { "LilyPaddler", new(BehaviourType.MediumFish, LargeWorldEntity.CellLevel.Medium, 100) },
         // CRABS
-        { "RockPuncher", new(BehaviourType.Crab, LargeWorldEntity.CellLevel.Medium, 200) },
+        { "RockPuncher", new(BehaviourType.Crab, LargeWorldEntity.CellLevel.Near, 200) },
         // SHARKS
         { "BruteShark", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 200) },
         { "SquidShark", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 1000) },
