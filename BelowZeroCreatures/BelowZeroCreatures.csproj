@@ -7,8 +7,8 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
         <RootNamespace>BelowZeroCreatures</RootNamespace>
-        <BepInExPluginGuid>com.kallie23.SN1BelowZeroCreatures</BepInExPluginGuid>
-        <BepInExPluginName>SN1 Below Zero Creatures</BepInExPluginName>
+        <BepInExPluginGuid>com.kallie23.BelowZeroCreatures</BepInExPluginGuid>
+        <BepInExPluginName>Below Zero Creatures</BepInExPluginName>
 
         <RestoreAdditionalProjectSources>
             https://api.nuget.org/v3/index.json;
