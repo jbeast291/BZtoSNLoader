@@ -72,5 +72,10 @@ public static class CreatureFixUtils
         {
             playerTarget.creature = playerTarget.GetComponent<Creature>();
         }
+
+        if (component is WaterParkCreature wpkC)
+        {
+            wpkC.data = null;
+        }
     }
 }
