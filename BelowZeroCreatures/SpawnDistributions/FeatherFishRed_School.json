@@ -16,11 +16,5 @@
         "biome" : 836,
         "count" : 1,
         "probability" : 0.1
-    },
-    {
-        // GrassyPlateaus_Grass
-        "biome" : 302,
-        "count" : 1,
-        "probability" : 0.2
     }
 ]
