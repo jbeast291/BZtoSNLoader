@@ -1,0 +1,26 @@
+[
+    {
+        // BloodKelp_CaveFloor
+        "biome" : 1503,
+        "count" : 1,
+        "probability" : 0.6
+    },
+    {
+        // BloodKelp_TrenchFloor
+        "biome" : 1507,
+        "count" : 1,
+        "probability" : 0.5
+    },
+    {
+        // BloodKelp_Grass
+        "biome" : 1516,
+        "count" : 1,
+        "probability" : 0.15
+    },
+    {
+        // BloodKelp_TrenchRoots
+        "biome" : 1509,
+        "count" : 1,
+        "probability" : 2
+    }
+]
