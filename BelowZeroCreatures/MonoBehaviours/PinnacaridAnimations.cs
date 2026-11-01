@@ -18,7 +18,7 @@ public class PinnacaridAnimations : MonoBehaviour, IManagedUpdateBehaviour
 
     public void ManagedUpdate()
     {
-        bool onSurface = tracker.onSurface && Ocean.GetDepthOf(transform) <= 0;
+        bool onSurface = tracker.onSurface && Ocean.GetDepthOf(transform) <= 1;
         animator.SetBool(OnSurface, onSurface);
         animator.SetBool(InWater, !onSurface);
     }
