@@ -17,6 +17,7 @@ public class ChelicerateModifier : BzCreatureModifier
         attackCyclops.swimInterval = 0.8f;
         attackCyclops.aggressiveToNoise = new CreatureTrait(0, 0.01f);
         attackCyclops.lastTarget = prefab.EnsureComponent<LastTarget>();
+        attackCyclops.evaluatePriority = 0.91f;
         attackCyclops.priorityMultiplier = new AnimationCurve(
             new Keyframe(0, 1),
             new Keyframe(1, 1));
