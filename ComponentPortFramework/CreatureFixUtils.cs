@@ -65,12 +65,12 @@ public static class CreatureFixUtils
 
         if (component is AggressiveWhenSeeTarget target)
         {
-            target.creature = target.GetComponentInParent<Creature>();
+            target.creature = target.GetComponent<Creature>();
         }
         
         if (component is AggressiveWhenSeePlayer playerTarget)
         {
-            playerTarget.creature = playerTarget.GetComponentInParent<Creature>();
+            playerTarget.creature = playerTarget.GetComponent<Creature>();
         }
     }
 }
