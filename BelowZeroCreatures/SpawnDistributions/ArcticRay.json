@@ -1,0 +1,62 @@
+[
+    {
+        // BloodKelp_OpenShallow_CreatureOnly
+        "biome" : 1518,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // BloodKelp_OpenDeep_CreatureOnly
+        "biome" : 1519,
+        "count" : 1,
+        "probability" : 0.04
+    },
+    {
+        // BloodKelp_TrenchWall
+        "biome" : 1508,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // BloodKelp_Wall
+        "biome" : 1501,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // BloodKelp_Roots
+        "biome" : 1502,
+        "count" : 1,
+        "probability" : 0.3
+    },
+    {
+        // BloodKelp_Grass
+        "biome" : 1516,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // UnderwaterIslands_OpenShallow_CreatureOnly
+        "biome" : 1216,
+        "count" : 1,
+        "probability" : 0.03
+    },
+    {
+        // Mountains_OpenDeep_CreatureOnly
+        "biome" : 1620,
+        "count" : 1,
+        "probability" : 0.01
+    },
+    {
+        // GrandReef_OpenDeep_CreatureOnly
+        "biome" : 1319,
+        "count" : 1,
+        "probability" : 0.05
+    },
+    {
+        // DeepGrandReef_Wall
+        "biome" : 1403,
+        "count" : 1,
+        "probability" : 0.07
+    }
+]

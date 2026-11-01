@@ -1,0 +1,26 @@
+[
+    {
+        // Dunes_Grass
+        "biome" : 1702,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // Dunes_SandDune
+        "biome" : 1700,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // Mesas_Top
+        "biome" : 2802,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // MushroomForest_Grass
+        "biome" : 423,
+        "count" : 1,
+        "probability" : 0.1
+    }
+]

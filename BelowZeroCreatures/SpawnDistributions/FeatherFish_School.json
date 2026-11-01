@@ -1,0 +1,44 @@
+[
+    {
+        // SafeShallows_Grass
+        "biome" : 115,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // UnderwaterIslands_IslandTop
+        "biome" : 1203,
+        "count" : 1,
+        "probability" : 0.4
+    },
+    {
+        // KooshZone_OpenDeep_CreatureOnly
+        "biome" : 520,
+        "count" : 1,
+        "probability" : 0.15
+    },
+    {
+        // KooshZone_OpenShallow_CreatureOnly
+        "biome" : 519,
+        "count" : 3,
+        "probability" : 0.1
+    },
+    {
+        // GrandReef_Wall
+        "biome" : 1304,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // GrandReef_Ground
+        "biome" : 1300,
+        "count" : 1,
+        "probability" : 0.4
+    },
+    {
+        // DeepGrandReef_Ground
+        "biome" : 1400,
+        "count" : 1,
+        "probability" : 0.3
+    }
+]

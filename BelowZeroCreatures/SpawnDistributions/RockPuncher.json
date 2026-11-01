@@ -1,0 +1,38 @@
+[
+    {
+        // Dunes_SandDune
+        "biome" : 1700,
+        "count" : 1,
+        "probability" : 0.06
+    },
+    {
+        // GrandReef_Ground
+        "biome" : 1300,
+        "count" : 1,
+        "probability" : 0.08
+    },
+    {
+        // SparseReef_DeepFloor
+        "biome" : 1020,
+        "count" : 1,
+        "probability" : 0.06
+    },
+    {
+        // SparseReef_Spike
+        "biome" : 1011,
+        "count" : 3,
+        "probability" : 0.05
+    },
+    {
+        // SparseReef_Coral
+        "biome" : 1009,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // Mountains_Sand
+        "biome" : 1600,
+        "count" : 1,
+        "probability" : 0.12
+    }
+]

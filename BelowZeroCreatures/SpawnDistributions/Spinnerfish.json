@@ -1,0 +1,38 @@
+[
+    {
+        // Dunes_Grass
+        "biome" : 1702,
+        "count" : 1,
+        "probability" : 1
+    },
+    {
+        // Mesas_Top
+        "biome" : 2802,
+        "count" : 1,
+        "probability" : 1
+    },
+    {
+        // Kelp_Sand
+        "biome" : 205,
+        "count" : 2,
+        "probability" : 0.2
+    },
+    {
+        // GrassyPlateaus_Grass
+        "biome" : 302,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // GrassyPlateaus_Sand
+        "biome" : 304,
+        "count" : 2,
+        "probability" : 0.5
+    },
+    {
+        // Kelp_CaveFloor
+        "biome" : 211,
+        "count" : 1,
+        "probability" : 1.5
+    }
+]

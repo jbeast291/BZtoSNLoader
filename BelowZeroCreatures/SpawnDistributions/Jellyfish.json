@@ -1,0 +1,26 @@
+[
+    {
+        // TreeCove_TreeOpen_CreatureOnly
+        "biome" : 1908,
+        "count" : 1,
+        "probability" : 0.2
+    },
+    {
+        // GhostTree_Open_CreatureOnly
+        "biome" : 2109,
+        "count" : 1,
+        "probability" : 0.01
+    },
+    {
+        // KooshZone_OpenDeep_CreatureOnly
+        "biome" : 520,
+        "count" : 1,
+        "probability" : 0.01
+    },
+    {
+        // GrandReef_OpenDeep_CreatureOnly
+        "biome" : 1319,
+        "count" : 1,
+        "probability" : 0.01
+    }
+]

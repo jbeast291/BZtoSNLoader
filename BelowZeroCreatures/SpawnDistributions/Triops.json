@@ -1,0 +1,26 @@
+[
+    {
+        // JellyshroomCaves_CaveFloor
+        "biome" : 603,
+        "count" : 1,
+        "probability" : 1
+    },
+    {
+        // SafeShallows_Wall
+        "biome" : 117,
+        "count" : 2,
+        "probability" : 0.6
+    },
+    {
+        // JellyshroomCaves_CaveWall
+        "biome" : 605,
+        "count" : 3,
+        "probability" : 1
+    },
+    {
+        // KooshZone_CaveFloor
+        "biome" : 508,
+        "count" : 2,
+        "probability" : 0.6
+    }
+]

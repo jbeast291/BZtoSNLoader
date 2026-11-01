@@ -1,0 +1,50 @@
+[
+    {
+        // Dunes_Grass
+        "biome" : 1702,
+        "count" : 1,
+        "probability" : 1
+    },
+    {
+        // Mesas_Top
+        "biome" : 2802,
+        "count" : 1,
+        "probability" : 1
+    },
+    {
+        // MushroomForest_Grass
+        "biome" : 423,
+        "count" : 1,
+        "probability" : 0.4
+    },
+    {
+        // Kelp_DenseVine
+        "biome" : 217,
+        "count" : 2,
+        "probability" : 0.3
+    },
+    {
+        // Kelp_Wall
+        "biome" : 206,
+        "count" : 2,
+        "probability" : 0.8
+    },
+    {
+        // Kelp_Sand
+        "biome" : 205,
+        "count" : 3,
+        "probability" : 0.2
+    },
+    {
+        // SafeShallows_Plants
+        "biome" : 104,
+        "count" : 3,
+        "probability" : 0.4
+    },
+    {
+        // SparseReef_DeepWall
+        "biome" : 1013,
+        "count" : 4,
+        "probability" : 0.75
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        // CragField_OpenShallow_CreatureOnly
+        "biome" : 2504,
+        "count" : 1,
+        "probability" : 0.03
+    },
+    {
+        // CragField_Sand
+        "biome" : 2503,
+        "count" : 1,
+        "probability" : 0.03
+    },
+    {
+        // SparseReef_Coral
+        "biome" : 1009,
+        "count" : 1,
+        "probability" : 0.1
+    },
+    {
+        // SparseReef_Spike
+        "biome" : 1011,
+        "count" : 1,
+        "probability" : 0.1
+    }
+]

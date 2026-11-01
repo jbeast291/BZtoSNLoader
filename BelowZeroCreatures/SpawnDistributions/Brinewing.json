@@ -1,0 +1,26 @@
+[
+    {
+        // LostRiverJunction_Open_CreatureOnly
+        "biome" : 2206,
+        "count" : 2,
+        "probability" : 0.01
+    },
+    {
+        // SkeletonCave_Open_CreatureOnly
+        "biome" : 2406,
+        "count" : 3,
+        "probability" : 0.02
+    },
+    {
+        // SkeletonCave_Skeleton
+        "biome" : 2407,
+        "count" : 3,
+        "probability" : 0.05
+    },
+    {
+        // LostRiverCorridor_Open_CreatureOnly
+        "biome" : 2906,
+        "count" : 3,
+        "probability" : 0.005
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        // Kelp_Sand
+        "biome" : 205,
+        "count" : 1,
+        "probability" : 0.05
+    },
+    {
+        // SafeShallows_SandFlat
+        "biome" : 102,
+        "count" : 1,
+        "probability" : 0.11
+    },
+    {
+        // MushroomForest_UniqueCreature
+        "biome" : 424,
+        "count" : 2,
+        "probability" : 0.3
+    },
+    {
+        // MushroomForest_Grass
+        "biome" : 423,
+        "count" : 2,
+        "probability" : 0.1
+    }
+]

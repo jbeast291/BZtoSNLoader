@@ -1,0 +1,50 @@
+[
+    {
+        // LostRiverJunction_Open_CreatureOnly
+        "biome" : 2206,
+        "count" : 3,
+        "probability" : 0.007
+    },
+    {
+        // SkeletonCave_Open_CreatureOnly
+        "biome" : 2406,
+        "count" : 3,
+        "probability" : 0.01
+    },
+    {
+        // SkeletonCave_Skeleton
+        "biome" : 2407,
+        "count" : 2,
+        "probability" : 0.04
+    },
+    {
+        // LostRiverCorridor_Open_CreatureOnly
+        "biome" : 2906,
+        "count" : 4,
+        "probability" : 0.002
+    },
+    {
+        // MushroomForest_MushroomTreeBase
+        "biome" : 401,
+        "count" : 1,
+        "probability" : 0.4
+    },
+    {
+        // MushroomForest_GiantTreeRootBase
+        "biome" : 404,
+        "count" : 2,
+        "probability" : 0.4
+    },
+    {
+        // MushroomForest_GiantTreeRoot
+        "biome" : 422,
+        "count" : 3,
+        "probability" : 0.4
+    },
+    {
+        // MushroomForest_Grass
+        "biome" : 423,
+        "count" : 3,
+        "probability" : 0.5
+    }
+]

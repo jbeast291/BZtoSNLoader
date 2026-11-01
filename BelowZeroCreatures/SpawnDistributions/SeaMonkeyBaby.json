@@ -1,0 +1,14 @@
+[
+    {
+        // GrassyPlateaus_Grass
+        "biome" : 302,
+        "count" : 3,
+        "probability" : 0.1
+    },
+    {
+        // Kelp_DenseVine
+        "biome" : 217,
+        "count" : 3,
+        "probability" : 0.1
+    }
+]
