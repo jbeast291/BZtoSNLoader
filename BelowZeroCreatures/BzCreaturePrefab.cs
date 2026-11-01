@@ -135,7 +135,8 @@ public class BzCreaturePrefab
         else
             Plugin.Logger.LogWarning($"Couldn't find correct CellLevel for {prefab}");
 
-        if (Info.ClassID == "Pinnacarid") cellLevel = LargeWorldEntity.CellLevel.Near; // so they don't fall through terrain
+        if (Info.ClassID == "Pinnacarid" || Info.ClassID == "RockPuncher")
+            cellLevel = LargeWorldEntity.CellLevel.Near; // so they don't fall through terrain
         
         return cellLevel;
     }   
@@ -153,6 +154,7 @@ public class BzCreaturePrefab
                 m.shader = MaterialUtils.Shaders.MarmosetUBER;
                 if (!isSchool)
                     m.SetFloat("_SpecInt", m.GetFloat("_SpecInt") * 2);
+                m.SetFloat("_InfectionHeightStrength", 0);
             }
             renderer.materials = materials;
         }
