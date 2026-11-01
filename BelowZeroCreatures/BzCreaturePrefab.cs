@@ -45,6 +45,11 @@ public class BzCreaturePrefab
         else
             Plugin.Logger.LogWarning("Did not find BehaviourType for creature: " + techType);
 
+        if (!ModData.HoldableCreatures.Contains(Info.ClassID))
+        {
+            Info.WithSizeInInventory(new Vector2int(2, 2));
+        }
+
         RegisterWaterParkData();
     }
 
