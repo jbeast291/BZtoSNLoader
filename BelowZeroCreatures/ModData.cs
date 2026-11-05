@@ -18,12 +18,6 @@ internal static class ModData
         { "TitanHoleFish", "TitanHolefish" }
     };
 
-    public static readonly string[] MiscLocalizationToRequest =
-    {
-        "TitanHolefishOxygenUse",
-        "WhaleInteract"
-    };
-
     public static readonly HashSet<string> HoldableCreatures = new(StringComparer.OrdinalIgnoreCase)
     {
         "ArcticPeeper", "ArrowRay", "DiscusFish", "FeatherFish", "FeatherFishRed", "NootFish", "SpinnerFish",

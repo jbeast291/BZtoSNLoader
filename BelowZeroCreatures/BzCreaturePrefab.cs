@@ -16,6 +16,8 @@ public class BzCreaturePrefab
     private BZAssetLoader.AssetKey Key { get; }
     private JsonPrefab ComponentData { get; }
     
+    private WaterParkCreatureData WaterParkData { get; set; }
+    
     public BzCreaturePrefab(PrefabInfo info, BZAssetLoader.AssetKey assetKey, JsonPrefab componentData)
     {
         Info = info;
@@ -42,6 +44,13 @@ public class BzCreaturePrefab
             CreatureData.behaviourTypeList[techType] = data.BehaviourType;
         else
             Plugin.Logger.LogWarning("Did not find BehaviourType for creature: " + techType);
+
+        if (!ModData.HoldableCreatures.Contains(Info.ClassID))
+        {
+            Info.WithSizeInInventory(new Vector2int(2, 2));
+        }
+
+        RegisterWaterParkData();
     }
 
     private IEnumerator GetPrefabAsync(IOut<GameObject> result)
@@ -119,6 +128,11 @@ public class BzCreaturePrefab
                 infectedMixin.renderers = infectableRenderers;
             }
         }
+
+        if (prefab.TryGetComponent<WaterParkCreature>(out var waterParkCreature))
+        {
+            waterParkCreature.data = WaterParkData;
+        }
         
         result.Set(prefab);
     }
@@ -159,5 +173,40 @@ public class BzCreaturePrefab
             renderer.materials = materials;
         }
     }
-    
+
+    private void RegisterWaterParkData()
+    {
+        WaterParkData = ScriptableObject.CreateInstance<WaterParkCreatureData>();
+        WaterParkData.daysToGrow = 2;
+        WaterParkData.eggOrChildPrefab = new CustomGameObjectReference(Info.ClassID);
+        bool isChild = false;
+        if (Info.ClassID == "SeaMonkeyBaby")
+        {
+            WaterParkData.adultPrefab = new CustomGameObjectReference("SeaMonkey");
+            isChild = true;
+            WaterParkData.initialSize = 1;
+        }
+        else if (Info.ClassID == "PenguinBaby")
+        {
+            WaterParkData.adultPrefab = new CustomGameObjectReference("Penguin");
+            isChild = true;
+            WaterParkData.initialSize = 0.5f;
+        }
+        else if (Info.ClassID == "SeaMonkey")
+        {
+            WaterParkData.eggOrChildPrefab = new CustomGameObjectReference("SeaMonkeyBaby");
+        }
+        else if (Info.ClassID == "Penguin")
+        {
+            WaterParkData.eggOrChildPrefab = new CustomGameObjectReference("PenguinBaby");
+        }
+
+        if (!isChild)
+        {
+            WaterParkData.initialSize = 0.35f;
+        }
+        WaterParkData.canBreed = !isChild;
+        WaterParkData.isPickupableOutside = ModData.HoldableCreatures.Contains(Info.ClassID);
+        WaterParkData.outsideSize = 1;
+    }
 }

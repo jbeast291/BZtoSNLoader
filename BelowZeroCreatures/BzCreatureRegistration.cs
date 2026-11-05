@@ -132,7 +132,7 @@ public static class BzCreatureRegistration
             }
         }
 
-        techTypesToRequest.AddRange(ModData.MiscLocalizationToRequest);
+        techTypesToRequest.AddRange(ModLanguageData.MiscLocalizationToRequest);
         string[] allStringKeys = techTypesToRequest.ToArray();
 
         string[] allTranslations =  BZLocalizationLoader.GetLocalization(allStringKeys, true);
@@ -141,6 +141,21 @@ public static class BzCreatureRegistration
         {
             if (!string.Equals(allStringKeys[i], allTranslations[i]))
                 LanguageHandler.SetLanguageLine(allStringKeys[i], allTranslations[i]);
+        }
+
+        foreach (var replacement in ModLanguageData.EnglishNameReplacements)
+        {
+            LanguageHandler.SetLanguageLine(replacement.Key, replacement.Value);
+        }
+        
+        foreach (var pdaLineChange in ModLanguageData.PdaEntryModifications)
+        {
+            var current = Language.main.Get(pdaLineChange.Key);
+            foreach (var replacement in pdaLineChange.Value)
+            {
+                current = current.Replace(replacement.OriginalPhrase, replacement.ReplacementPhrase);
+            }
+            LanguageHandler.SetLanguageLine(pdaLineChange.Key, current);
         }
     }
 

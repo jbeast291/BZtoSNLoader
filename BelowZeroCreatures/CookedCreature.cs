@@ -36,7 +36,7 @@ public class CookedCreature
             .WithStepsToFabricatorTab(IsCured
                 ? CraftTreeHandler.Paths.FabricatorCuredFood
                 : CraftTreeHandler.Paths.FabricatorCookedFood);
-        prefab.SetUnlock(Info.TechType)
+        prefab.SetUnlock(CreatureInfo.TechType)
             .WithPdaGroupCategory(TechGroup.Survival, IsCured ? TechCategory.CuredFood : TechCategory.CookedFood);
         prefab.Register();
 
