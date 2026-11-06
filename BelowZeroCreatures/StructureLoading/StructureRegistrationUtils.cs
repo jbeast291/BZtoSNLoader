@@ -12,6 +12,12 @@ public static class StructureRegistrationUtils
     public static void RegisterStructures(string structuresFolderPath)
     {
         Plugin.Logger.LogInfo($"Registering structures from '{structuresFolderPath}'...");
+
+        if (!Directory.Exists(structuresFolderPath))
+        {
+            Plugin.Logger.LogWarning("'Structures' directory not found in mod folder. Skipping structure registration.");
+            return;
+        }
         
         var structureFiles = Directory.GetFiles(structuresFolderPath, "*.structure", SearchOption.AllDirectories);
         var successfulStructures = 0;
