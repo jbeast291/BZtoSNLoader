@@ -14,7 +14,7 @@ public static class BZLocalizationLoader
     private static Dictionary<string, string> CachedLocalization { get; set; }
     private static string CurrentlyCachedLanguageName { get; set; }
 
-    internal static void Register() => WaitScreenHandler.RegisterLateLoadTask(PluginInfo.PLUGIN_NAME, OnLoadingScreenEnd);
+    internal static void Register() => WaitScreenHandler.RegisterLateLoadTask(MyPluginInfo.PLUGIN_NAME, OnLoadingScreenEnd);
 
     /// <summary>
     /// Translates all requested keys and fills the results array with the translated strings.

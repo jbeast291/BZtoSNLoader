@@ -8,7 +8,7 @@ internal static class BzInstallationPopupBehavior
     internal static void OnButtonQuit() => Application.Quit();
     internal static void OnButtonEditPath()
     {
-        string path = Path.Combine(BepInEx.Paths.ConfigPath, $"{PluginInfo.PLUGIN_GUID}.cfg");
+        string path = Path.Combine(BepInEx.Paths.ConfigPath, $"{MyPluginInfo.PLUGIN_GUID}.cfg");
         Application.OpenURL(path);
     }
 

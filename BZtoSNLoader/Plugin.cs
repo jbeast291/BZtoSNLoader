@@ -9,7 +9,7 @@ using Nautilus.Handlers;
 namespace BZtoSNLoader;
 
 
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 [BepInDependency("com.snmodding.nautilus", "1.0.0.56")]
 internal sealed class Plugin : BaseUnityPlugin
 {
@@ -23,7 +23,7 @@ internal sealed class Plugin : BaseUnityPlugin
         Config = base.Config;
         BZGameData.InitDependencyData();
         BZLocalizationLoader.Register();
-        Harmony.CreateAndPatchAll(Assembly, PluginInfo.PLUGIN_GUID);
+        Harmony.CreateAndPatchAll(Assembly, MyPluginInfo.PLUGIN_GUID);
         ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
         Logger.LogInfo("Finished Loading!");
     }
