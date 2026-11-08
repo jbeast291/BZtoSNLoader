@@ -3,14 +3,18 @@
     <Target Name="ILRepacker" AfterTargets="Build">
         <ItemGroup>
             <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
-            <InputAssemblies Include="$(OutputPath)\AssetsTools.NET.dll" />
+            <InputAssemblies Include="@(ReferencePath)" Condition="'%(Filename)' == 'AssetsTools.NET'" />
         </ItemGroup>
+
         <ItemGroup>
-            <InteralizeAssemblies Include="AssetsTools.NET" />
+            <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
         </ItemGroup>
+
         <ILRepack
-                Parallel="true"
-                InternalizeAssembly="@(InteralizeAssemblies)"
+                Parallel="false"
+                Internalize="true"
+                InternalizeExclude="@(DoNotInternalizeAssemblies)"
+                RenameInternalized="true"
                 InputAssemblies="@(InputAssemblies)"
                 LibraryPath="$(OutputPath);@(ReferencePath->'%(RootDir)%(Directory)')"
                 TargetKind="Dll"
