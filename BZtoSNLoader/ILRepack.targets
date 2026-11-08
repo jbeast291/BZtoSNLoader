@@ -10,7 +10,7 @@
             <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
         </ItemGroup>
 
-        <ILRepack
+        <ILRepack 
                 Parallel="false"
                 Internalize="true"
                 InternalizeExclude="@(DoNotInternalizeAssemblies)"
