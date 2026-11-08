@@ -43,24 +43,6 @@
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
     </ItemGroup>
 
-    <Target Name="ILRepacker" AfterTargets="Build">
-        <ItemGroup>
-            <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
-            <InputAssemblies Include="$(OutputPath)\AssetsTools.NET.dll" />
-        </ItemGroup>
-        <ItemGroup>
-            <InteralizeAssemblies Include="AssetsTools.NET" />
-        </ItemGroup>
-        <ILRepack 
-                Parallel="true"
-                InternalizeAssembly="@(InteralizeAssemblies)"
-                InputAssemblies="@(InputAssemblies)"
-                LibraryPath="$(OutputPath);@(ReferencePath->'%(RootDir)%(Directory)')"
-                TargetKind="Dll"
-                OutputFile="$(OutputPath)\$(AssemblyName).dll"
-        />
-    </Target>
-
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />
     <Import Project="./PostBuild.targets"/>
 </Project>
