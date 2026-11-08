@@ -14,7 +14,6 @@
                 Parallel="false"
                 Internalize="true"
                 InternalizeExclude="@(DoNotInternalizeAssemblies)"
-                RenameInternalized="true"
                 InputAssemblies="@(InputAssemblies)"
                 LibraryPath="$(OutputPath);@(ReferencePath->'%(RootDir)%(Directory)')"
                 TargetKind="Dll"
