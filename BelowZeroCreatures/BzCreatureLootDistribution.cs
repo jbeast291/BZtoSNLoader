@@ -16,6 +16,13 @@ internal static class BzCreatureLootDistribution
         var prefabInfoMapping = MapPrefabInfos(infos);
         
         var jsonFolder = Path.Combine(Path.GetDirectoryName(Plugin.Assembly.Location), "SpawnDistributions");
+
+        if (!Directory.Exists(jsonFolder))
+        {
+            Plugin.Logger.LogWarning("'SpawnDistributions' directory not found in mod folder.");
+            return;
+        }
+        
         foreach (var file in Directory.GetFiles(jsonFolder, "*.json"))
         {
             var fileName = Path.GetFileNameWithoutExtension(file);
