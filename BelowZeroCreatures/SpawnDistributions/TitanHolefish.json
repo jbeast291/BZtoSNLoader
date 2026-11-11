@@ -3,7 +3,7 @@
         // GrassyPlateaus_OpenShallow_CreatureOnly
         "biome" : 325,
         "count" : 1,
-        "probability" : 0.075
+        "probability" : 0.025
     },
     {
         // GrandReef_OpenDeep_CreatureOnly
