@@ -3,21 +3,29 @@
     <Target Name="ILRepacker" AfterTargets="Build">
         <ItemGroup>
             <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
-            <InputAssemblies Include="@(ReferencePath)" Condition="'%(Filename)' == 'AssetsTools.NET'" />
+            <InputAssemblies Include="@(ReferencePath)" Condition="'%(Filename)' == 'AssetsTools.NET'"/>
+            <!--<InputAssemblies Include="$(OutputPath)\Fmod5Sharp.dll"/>
+            <InputAssemblies Include="$(OutputPath)\FModBankParser.dll"/>
+            <InputAssemblies Include="$(OutputPath)\OggVorbisEncoder.dll"/>
+            <InputAssemblies Include="$(OutputPath)\NAudio.Core.dll"/>
+            <InputAssemblies Include="$(OutputPath)\IndexRange.dll"/>-->
         </ItemGroup>
 
         <ItemGroup>
             <DoNotInternalizeAssemblies Include="$(AssemblyName)" />
         </ItemGroup>
 
-        <ILRepack 
-                Parallel="false"
+        <ILRepack
+                Parallel="true"
                 Internalize="true"
                 InternalizeExclude="@(DoNotInternalizeAssemblies)"
                 InputAssemblies="@(InputAssemblies)"
                 LibraryPath="$(OutputPath);@(ReferencePath->'%(RootDir)%(Directory)')"
                 TargetKind="Dll"
+                Union="true"
+                AllowedDuplicateNamespaces="System"
                 OutputFile="$(OutputPath)\$(AssemblyName).dll"
         />
+        <!-- AllowedDuplicateNamespaces for System fixes poly sharp issues -->
     </Target>
 </Project>

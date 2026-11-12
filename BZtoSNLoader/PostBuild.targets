@@ -9,5 +9,7 @@
     <Target Condition="Exists('.\..\TargetDirectories.targets')" Name="CopyAssemblyToBepInEx" AfterTargets="ILRepacker">
         <MakeDir Directories="$(ModDir)"/>
         <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)"/>
+        <Copy SourceFiles=".\3rd-Party-Licenses.txt" DestinationFolder="$(ModDir)"/>
+        <Copy SourceFiles="@(CopyToBuildFiles)" DestinationFolder="$(ModDir)"/>
     </Target>
 </Project>
