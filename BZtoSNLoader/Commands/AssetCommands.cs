@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 
 namespace BZtoSNLoader;
 
-internal static class DebugCommands
+internal static class AssetCommands
 {
     [ConsoleCommand("spawnbz")]
     private static void SpawnBzAsset(string prefabName, int count = 1, float distance = 12) 

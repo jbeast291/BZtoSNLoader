@@ -21,20 +21,39 @@ internal sealed class Plugin : BaseUnityPlugin
     {
         Logger = base.Logger;
         Config = base.Config;
+        LoadAllEmbeddedDlls();
         BZGameData.InitDependencyData();
         BZLocalizationLoader.Register();
         Harmony.CreateAndPatchAll(Assembly, MyPluginInfo.PLUGIN_GUID);
-        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
+        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(AudioCommands));
+        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(AssetCommands));
         Logger.LogInfo("Finished Loading!");
     }
 
-    internal static string ReadFromResources(string assetName)
+    internal static void LoadAllEmbeddedDlls()
     {
-        using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"BZtoSNLoader.Resources.{assetName}");
+        string[] names = Assembly.GetManifestResourceNames();
+        foreach (string resourceName in names)
+        {
+            if (!resourceName.EndsWith(".dll")) continue;
+            using Stream stream = Assembly.GetManifestResourceStream(resourceName);
+            using BinaryReader br = new(stream);
+            byte[] bytes = br.ReadBytes((int)stream.Length);
+            Assembly.Load(bytes);
+            Logger.LogInfo("Loaded Assembly: " + resourceName);
+        }
+    }
+
+    internal static string ReadTextResources(string assetName)
+    {
+        using Stream stream = Assembly.GetManifestResourceStream($"BZtoSNLoader.Resources.{assetName}");
 
         if (stream == null) throw new FileNotFoundException($"Embedded resource '{assetName}' not found!");
 
         using TextReader tr = new StreamReader(stream);
         return tr.ReadToEnd();
     }
+
+    internal static string GetFilePathNextToPlugin(string assetName) 
+        => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, assetName);
 } 

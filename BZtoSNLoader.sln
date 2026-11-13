@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentPortFramework", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BelowZeroCreatures", "BelowZeroCreatures\BelowZeroCreatures.csproj", "{30E47106-ED15-44CB-9478-4BE7234EF900}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fmod5Sharp", "Fmod5Sharp\Fmod5Sharp.csproj", "{5C239863-2D9C-4CF4-972C-77E68EE89B5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FModBankParser", "FModBankParser\FModBankParser.csproj", "{2CA8CDEC-D0A6-417E-AF60-5F21F2D93B01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +42,13 @@ Global
 		{30E47106-ED15-44CB-9478-4BE7234EF900}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30E47106-ED15-44CB-9478-4BE7234EF900}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30E47106-ED15-44CB-9478-4BE7234EF900}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C239863-2D9C-4CF4-972C-77E68EE89B5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C239863-2D9C-4CF4-972C-77E68EE89B5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C239863-2D9C-4CF4-972C-77E68EE89B5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C239863-2D9C-4CF4-972C-77E68EE89B5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CA8CDEC-D0A6-417E-AF60-5F21F2D93B01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CA8CDEC-D0A6-417E-AF60-5F21F2D93B01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CA8CDEC-D0A6-417E-AF60-5F21F2D93B01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CA8CDEC-D0A6-417E-AF60-5F21F2D93B01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

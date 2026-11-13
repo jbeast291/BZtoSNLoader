@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net472</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Authors>Masusder</Authors>
+		<PackageId>FModBankParser</PackageId>
+		<PackageTags>FMOD;Soundbank;Audio</PackageTags>
+		<Nullable>enable</Nullable>
+		<Version>1.2.0</Version>
+		<LangVersion>14</LangVersion>
+		<Title>FMOD Soundbank Parser</Title>
+		<Description>FMOD Soundbank file parser library for .NET</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Fmod5Sharp\Fmod5Sharp.csproj" />
+		<PackageReference Include="PolySharp" Version="1.16.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+	</ItemGroup>
+</Project>

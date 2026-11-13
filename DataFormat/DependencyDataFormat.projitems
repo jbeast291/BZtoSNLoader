@@ -10,5 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BundleDependencyFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FMODFileLocatorFormat.cs" />
   </ItemGroup>
 </Project>
