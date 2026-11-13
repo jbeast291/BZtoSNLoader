@@ -33,5 +33,11 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="..\DataFormat\FMODFileLocatorFormat.cs">
+        <Link>DataFormat\FMODFileLocatorFormat.cs</Link>
+      </Compile>
+    </ItemGroup>
+
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />
 </Project>

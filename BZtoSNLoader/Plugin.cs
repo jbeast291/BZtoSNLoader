@@ -25,7 +25,8 @@ internal sealed class Plugin : BaseUnityPlugin
         BZGameData.InitDependencyData();
         BZLocalizationLoader.Register();
         Harmony.CreateAndPatchAll(Assembly, MyPluginInfo.PLUGIN_GUID);
-        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(DebugCommands));
+        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(AudioCommands));
+        ConsoleCommandsHandler.RegisterConsoleCommands(typeof(AssetCommands));
         Logger.LogInfo("Finished Loading!");
     }
 
@@ -52,4 +53,7 @@ internal sealed class Plugin : BaseUnityPlugin
         using TextReader tr = new StreamReader(stream);
         return tr.ReadToEnd();
     }
+
+    internal static string GetFilePathNextToPlugin(string assetName) 
+        => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, assetName);
 } 

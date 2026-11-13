@@ -7,6 +7,7 @@ namespace BZtoSNLoader;
 internal static class BZGameData
 {
     internal static BundleDependencyFormat bundleDependencyData;
+    internal static FMODFileLocatorFormat fmodFileLocatorData;
 
     private static string addressablesFolder;
     private static string localizationFolder;
@@ -17,12 +18,14 @@ internal static class BZGameData
         BelowZeroFound = BZPathFinder.TryDetermineBZAddressables(out LocatedPaths paths);
 
         // Load bundles dependency data
-        string jsonData = Plugin.ReadTextResources("assetPathToBundleDeps.json");
-        var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
+        string jsonData_bundleDependencyData = Plugin.ReadTextResources("assetPathToBundleDeps.json");
+        bundleDependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData_bundleDependencyData);
+
+        string jsonData_fmodFileLocatorData = Plugin.ReadTextResources("fmodFilePaths.json");
+        fmodFileLocatorData = JsonConvert.DeserializeObject<FMODFileLocatorFormat>(jsonData_fmodFileLocatorData);
 
         addressablesFolder = paths.AddressablesFolder;
         localizationFolder = paths.LocalizationFolder;
-        bundleDependencyData = dependencyData;
         Plugin.Logger.LogInfo("Loaded Dependency Data!");
     }
 

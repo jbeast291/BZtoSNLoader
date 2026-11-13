@@ -14,7 +14,8 @@ namespace BZtoSNLoader;
 public static class BZAssetLoader
 {
     /// <summary>
-    /// Holds a path to an Addressable asset.
+    /// Holds a path to an Addressable asset. You can find a list of valid paths here:
+    /// https://raw.githubusercontent.com/jbeast291/BZtoSNLoader/refs/heads/master/BZtoSNLoader/Resources/assetPathToBundleDeps.json
     /// </summary>
     /// <param name="Path">The full path including the file extension.</param>
     /// <example><c>WorldEntities/Alterra/AbandonedBases/AlterraBase2/Alterra_Base_2.prefab</c></example>

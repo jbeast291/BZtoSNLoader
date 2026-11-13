@@ -22,6 +22,7 @@
         <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
         <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" PrivateAssets="all"/>
         <PackageReference Include="LitJson" Version="0.19.0" />
+        <PackageReference Include="Subnautica.BelowZero.GameLibs" Version="53115.0.0-r.0" />
         <PackageReference Include="Subnautica.Nautilus" Version="1.0.0-pre.56" />
         <PackageReference Include="UnityEngine.Modules" Version="2019.4.36" IncludeAssets="compile"/>
         <PackageReference Include="Unity.InputSystem" Version="1.4.1" IncludeAssets="compile"/>
