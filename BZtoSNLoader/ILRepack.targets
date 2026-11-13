@@ -4,11 +4,11 @@
         <ItemGroup>
             <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
             <InputAssemblies Include="@(ReferencePath)" Condition="'%(Filename)' == 'AssetsTools.NET'"/>
-            <!--<InputAssemblies Include="$(OutputPath)\Fmod5Sharp.dll"/>
+            <InputAssemblies Include="$(OutputPath)\Fmod5Sharp.dll"/>
             <InputAssemblies Include="$(OutputPath)\FModBankParser.dll"/>
             <InputAssemblies Include="$(OutputPath)\OggVorbisEncoder.dll"/>
             <InputAssemblies Include="$(OutputPath)\NAudio.Core.dll"/>
-            <InputAssemblies Include="$(OutputPath)\IndexRange.dll"/>-->
+            <InputAssemblies Include="$(OutputPath)\IndexRange.dll"/>
         </ItemGroup>
 
         <ItemGroup>

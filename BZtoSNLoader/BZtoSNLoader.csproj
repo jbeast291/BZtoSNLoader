@@ -36,17 +36,15 @@
         </PackageReference>
 
         <ProjectReference Include="..\FModBankParser\FModBankParser.csproj" />
+    </ItemGroup>
 
+    <ItemGroup>
         <EmbeddedResource Include="Resources\**"/>
         <Compile Remove="Resources\**" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="CopyToBuild\" />
     </ItemGroup>
 
     <Import Project="..\DataFormat\DependencyDataFormat.projitems" Label="Shared" />

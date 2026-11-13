@@ -17,7 +17,7 @@ internal static class BZGameData
         BelowZeroFound = BZPathFinder.TryDetermineBZAddressables(out LocatedPaths paths);
 
         // Load bundles dependency data
-        string jsonData = Plugin.ReadFromResources("assetPathToBundleDeps.json");
+        string jsonData = Plugin.ReadTextResources("assetPathToBundleDeps.json");
         var dependencyData = JsonConvert.DeserializeObject<BundleDependencyFormat>(jsonData);
 
         addressablesFolder = paths.AddressablesFolder;
