@@ -40,7 +40,7 @@ internal static class BzCreaturesAudio
             length = (uint)result.Length,
         };
 
-        RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE._3D | MODE._3D_LINEARSQUAREROLLOFF, ref exinfo, out Sound sound);
+        RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE._3D | MODE._3D_LINEARSQUAREROLLOFF | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
         sound.set3DMinMaxDistance(minDistance, maxDistance);
         CustomSoundHandler.RegisterCustomSound(eventPath, sound, CreaturesBus);
     }
