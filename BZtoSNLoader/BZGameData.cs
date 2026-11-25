@@ -35,5 +35,5 @@ internal static class BZGameData
         => Path.Combine(paths.LocalizationFolder, localizationFileName);
 
     internal static string GetBankFilePath(string bankFileNameNoExt) 
-        => Path.Combine(paths.LocalizationFolder, $"{bankFileNameNoExt}.bank");
+        => Path.Combine(paths.BankFolder, $"{bankFileNameNoExt}.bank");
 }

@@ -77,8 +77,8 @@ internal static class BZPathLocator
     private static bool ArePathsValid(LocatedPaths paths, out string errorMsg)
     {
         errorMsg = string.Empty;
-        return ValidatePath(paths.AddressablesFolder, "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle", ref errorMsg) &
-               ValidatePath(paths.LocalizationFolder, "English.json", ref errorMsg) &
+        return ValidatePath(paths.AddressablesFolder, "shadowleviathan.prefab_414f7245007e8f135caaae693fbdf7d5.bundle", ref errorMsg) &&
+               ValidatePath(paths.LocalizationFolder, "English.json", ref errorMsg) &&
                ValidatePath(paths.BankFolder, "Player.bank", ref errorMsg);
 
         bool ValidatePath(string path, string fileToCheck, ref string msg)

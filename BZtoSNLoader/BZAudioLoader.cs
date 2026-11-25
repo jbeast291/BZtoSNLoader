@@ -14,6 +14,7 @@ namespace BZtoSNLoader;
 
 public static class BZAudioLoader
 {
+    //TODO: docs
     public readonly record struct FMODAudioName(string Path);
 
     //TODO: docs
@@ -31,10 +32,13 @@ public static class BZAudioLoader
 
         Task decode = Task.Run(() => {
             FModReader reader = FModBankParser.FModBankParser.LoadSoundBank(
-                new(BZGameData.GetBankFilePath(audioName.Path))
+                new(BZGameData.GetBankFilePath(locator.bankName))
             );
 
-            reader.SoundBankData[0].Samples[locator.sampleIndex].RebuildAsStandardFileFormat(out byte[] data, out _);
+            reader
+                .SoundBankData[0]
+                .Samples[locator.sampleIndex]
+                .RebuildAsStandardFileFormat(out byte[] data, out _);
             reader = null; // for gc stuff, don't remove
             result.Set(data);
         });
