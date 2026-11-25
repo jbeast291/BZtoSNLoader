@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Runtime.InteropServices;
-using DependencyDataFormat;
 using FMOD;
 using FMODUnity;
 using Nautilus.Commands;
 using Nautilus.Handlers;
 using Nautilus.Utility;
-using UnityEngine;
 using UWE;
 
 namespace BZtoSNLoader;
@@ -21,7 +19,7 @@ internal static class AudioCommands
     private static IEnumerator PlayAudioAsync(string bzSoundName)
     {
         TaskResult<byte[]> requestResult = new();
-        yield return BZAudioLoader.LoadAudioAsync(new(bzSoundName), requestResult);
+        yield return BZAudioLoader.LoadRawAudioAsync(new(bzSoundName), requestResult);
         byte[] result = requestResult.Get();
         EnsureCreateEventMemory(result, bzSoundName);
         RuntimeManager.StudioSystem.flushCommands();
@@ -30,7 +28,7 @@ internal static class AudioCommands
 
     private static void EnsureCreateEventMemory(byte[] audioFile, string eventName)
     {
-        if (CustomSoundHandler.TryGetCustomSound(eventName, out Sound _)) return;
+        if (CustomSoundHandler.TryGetCustomSound(eventName, out _)) return;
 
         CREATESOUNDEXINFO exinfo = new() {
             cbsize = Marshal.SizeOf<CREATESOUNDEXINFO>(),
@@ -47,9 +45,12 @@ internal static class AudioCommands
 
     private static IEnumerator PlayAllAudioAsync()
     {
-        foreach (string fileName in 
-                 BZGameData.fmodFileLocatorData.fileNameToLocation.Keys)
+        var audioDict = BZGameData.fmodFileLocatorData.fileNameToLocation;
+        int total = audioDict.Count;
+        int current = 0;
+        foreach (string fileName in audioDict.Keys)
         {
+            Plugin.Logger.LogInfo($"Loading... {current++}/{total} | {fileName}");
             yield return PlayAudioAsync(fileName);
         }
     }

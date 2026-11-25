@@ -30,7 +30,7 @@ public class SoundDataNode
             {
                 SoundBank = bank;
                 Ar.BaseStream.Position = fsbOffset - relativeOffset + size;
-                Debug.WriteLine($"FSB5 parsed successfully, samples: {bank.Samples.Count}");
+                //Debug.WriteLine($"FSB5 parsed successfully, samples: {bank.Samples.Count}");
 #if DEBUG
                 var audioType = bank.Header.AudioType;
                 if (!audioType.IsSupported())

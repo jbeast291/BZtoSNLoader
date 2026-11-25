@@ -14,20 +14,54 @@ namespace BZtoSNLoader;
 
 public static class BZAudioLoader
 {
-    //TODO: docs
-    public readonly record struct FMODAudioName(string Path);
+    /// <summary>
+    /// Holds a path to a FMOD audio file name. This is reefers to a fmod file compressed within a bank.
+    /// A list of valid names is available here:
+    /// https://raw.githubusercontent.com/jbeast291/BZtoSNLoader/refs/heads/master/BZtoSNLoader/Resources/fmodFilePaths.json
+    /// </summary>
+    /// <param name="name">The name of the file, do not include any extensions</param>
+    /// <example><c>vo_Log_Cine_MeetAl_P5_Component_03</c></example>
+    public readonly record struct FMODRawName(string name);
 
-    //TODO: docs
-    public static IEnumerator LoadAudioAsync(FMODAudioName audioName, IOut<byte[]> result)
+    /// <summary>
+    /// Asynchronously loads the given raw audio file from a BZ FMOD bank file.
+    /// </summary>
+    /// <remarks>
+    /// This method can cause GC stutters as it loads entire banks into memory.
+    /// It is preferred to load sounds on the loading screen/main menu before actual gameplay.
+    /// </remarks>
+    /// <param name="rawName">The raw audio file from BZ. See <see cref="FMODRawName"/> for more details.</param>
+    /// <param name="result">The interface used to output the resulting audio file as an array of bytes.
+    /// See <seealso cref="TaskResult{T}"/>.</param>
+    /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
+    /// the FMODRawName does not exist within BZ</exception>
+    /// <example>The following example code loads an Alan voiceline and registers it with Nautilus
+    /// custom sound's handler on the <c>"bus:/master"</c>. It must be executed in a coroutine.
+    /// <code>
+    /// TaskResult&lt;byte[]&gt; requestResult = new();
+    /// yield return BZAudioLoader.LoadRawAudioAsync(new("vo_Log_Cine_MeetAl_P5_Component_03"), requestResult);
+    /// byte[] result = requestResult.Get();
+    /// </code>
+    /// Register with nautilus:
+    /// <code>
+    /// CREATESOUNDEXINFO exinfo = new() {
+    ///     cbsize = Marshal.SizeOf&lt;CREATESOUNDEXINFO&gt;(),
+    ///     length = (uint)result.Length,
+    /// };
+    /// RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY, ref exinfo, out Sound sound);
+    /// CustomSoundHandler.RegisterCustomSound(eventName, sound, "bus:/master");
+    /// </code>
+    /// </example>
+    public static IEnumerator LoadRawAudioAsync(FMODRawName rawName, IOut<byte[]> result)
     {
         if (!BZGameData.BelowZeroFound) {
             throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
         }
 
-        if (!BZGameData.fmodFileLocatorData.fileNameToLocation.TryGetValue(audioName.Path, 
+        if (!BZGameData.fmodFileLocatorData.fileNameToLocation.TryGetValue(rawName.name, 
                 out FMODFileLocatorFormat.FMODAudioLocator locator)
         ) {
-            throw new InvalidKeyException($"Invalid BZ FMOD Audio Name: \"{audioName}\"!");
+            throw new InvalidKeyException($"Invalid BZ FMOD Audio Name: \"{rawName}\"!");
         }
 
         Task decode = Task.Run(() => {

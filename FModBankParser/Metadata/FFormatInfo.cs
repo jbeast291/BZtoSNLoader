@@ -12,8 +12,8 @@ public readonly struct FFormatInfo
 
     public FFormatInfo(BinaryReader Ar)
     {
-        FileVersion = Ar.ReadInt32();
-        Debug.WriteLine($"Soundbank version: 0x{FileVersion:X}");
+        FileVersion = Ar.ReadInt32(); 
+        //Debug.WriteLine($"Soundbank version: 0x{FileVersion:X}");
         var latestVersion = (int)EFModVersion.NEWEST_SUPPORTED_FILEVERSION;
         if (FileVersion > latestVersion)
         {

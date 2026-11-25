@@ -73,7 +73,7 @@ public class FModReader
         else if (actualSize > expectedSize)
             Debug.WriteLine($"Warning: file larger than RIFF size (expected {expectedSize}, got {actualSize})");
 
-        Debug.WriteLine($"FMod bank detected, size={riffSize}, type={fileType}");
+        //Debug.WriteLine($"FMod bank detected, size={riffSize}, type={fileType}");
     }
 
     private void ParseNodes(BinaryReader Ar, long start, long end)
