@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using BelowZeroCreatures.BzCreatureAudio;
 using BelowZeroCreatures.CreatureModifiers.System;
 using BelowZeroCreatures.StructureLoading;
 using BZtoSNLoader;
@@ -27,6 +28,8 @@ public static class BzCreatureRegistration
 
         _waitScreenTaskExecuted = true;
 
+        task.Status = "Creatures";
+        
         LoadComponentExportData();
         CreatureModifiersManager.RegisterCreatureEdits();
 
@@ -55,10 +58,11 @@ public static class BzCreatureRegistration
         
         List<TechType> allModTechTypes = new List<TechType>(creatureTechTypes); // includes food items!
         CreatureModifiersManager.CheckForInvalidModifiers(classIds);
+        
+        task.Status = "Food";
         yield return BzFoodRegistration.RegisterFoods(infos, allModTechTypes);
 
-        // Register TechType specific data
-
+        task.Status = "Localization";
         RegisterLocalizationForCreatures(creatureTechTypes);
 
         // Register PDA entries
@@ -70,6 +74,8 @@ public static class BzCreatureRegistration
             PDAHandler.AddCustomScannerEntry(techType, 3, false, databankName);
             PDAHandler.AddEncyclopediaEntry(databankName, "Lifeforms/Fauna/BelowZero");
         }
+        
+        task.Status = "Spawns";
 
         // Register structures
         StructureRegistrationUtils.RegisterStructures(
@@ -78,6 +84,8 @@ public static class BzCreatureRegistration
         // Register spawns
         BzCreatureLootDistribution.LoadAllFromJson(infos);
 
+        task.Status = "Icons";
+        
         // Load creature icons
         TaskResult<SpriteAtlas> atlasResult = new TaskResult<SpriteAtlas>();
         yield return BZAssetLoader.LoadAssetAsync(
@@ -91,12 +99,19 @@ public static class BzCreatureRegistration
                 SpriteHandler.RegisterSprite(techType, sprite);
         }
 
+        task.Status = "Tech data";
+        
         // Set equipment type
         foreach (var techType in creatureTechTypes)
         {
             if (ModData.HoldableCreatures.Contains(techType.ToString()))
                 CraftDataHandler.SetEquipmentType(techType, EquipmentType.Hand);
         }
+        
+        // Load audio
+        task.Status = "Audio";
+
+        yield return BzCreaturesAudio.RegisterAudio();
     }
 
     private static void LoadComponentExportData()
