@@ -1,35 +1,42 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections;
+using System.Runtime.InteropServices;
 using FMOD;
 using FMODUnity;
 using Nautilus.Commands;
 using Nautilus.Handlers;
 using Nautilus.Utility;
-using UnityEngine;
+using UWE;
 
 namespace BZtoSNLoader;
 
-public static class AudioCommands
+internal static class AudioCommands
 {
-    [ConsoleCommand("" +
-                    "audioBZ" +
-                    "")]
-    private static void SpawnBzAsset(string soundName)
+    //audiobz vo_Log_Cine_MeetAl_P5_Component_03
+    [ConsoleCommand("audiobz")]
+    private static void PlayBzAudio(string bzSoundName) 
+        => CoroutineHost.StartCoroutine(playAudioAsync(bzSoundName));
+
+    private static IEnumerator playAudioAsync(string bzSoundName)
     {
         TaskResult<byte[]> requestResult = new();
-        BZAudioLoader.LoadAudioAsync(new(soundName), requestResult);
+        yield return BZAudioLoader.LoadAudioAsync(new(bzSoundName), requestResult);
         byte[] result = requestResult.Get();
+        CreateEventMemory(result, bzSoundName);
+        yield return null;
+        FMODUWE.PlayOneShot(AudioUtils.GetFmodAsset(bzSoundName), Player.main.transform.position);
 
-        CREATESOUNDEXINFO exinfo;
-        unsafe
-        {
-            exinfo = new() {
-                cbsize = sizeof(CREATESOUNDEXINFO),
-                length = (uint)result.Length
-            };
-        }
+    }
 
-        RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY, ref exinfo, out Sound sound);
-        CustomSoundHandler.RegisterCustomSound(soundName, sound, AudioUtils.BusPaths.PlayerSFXs);
-        FMODUWE.PlayOneShot(AudioUtils.GetFmodAsset(soundName), Player.main.transform.position);
+    private static void CreateEventMemory(byte[] audioFile, string eventName)
+    {
+        if (CustomSoundHandler.TryGetCustomSound(eventName, out Sound _)) return;
+
+        CREATESOUNDEXINFO exinfo = new() {
+            cbsize = Marshal.SizeOf<CREATESOUNDEXINFO>(),
+            length = (uint)audioFile.Length,
+        };
+
+        RuntimeManager.CoreSystem.createSound(audioFile, MODE.OPENMEMORY, ref exinfo, out Sound sound);
+        CustomSoundHandler.RegisterCustomSound(eventName, sound, "bus:/master");
     }
 }

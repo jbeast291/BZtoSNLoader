@@ -5,8 +5,11 @@ using System.IO;
 using DependencyDataFormat;
 using Fmod5Sharp.FmodTypes;
 using FModBankParser;
+using Nautilus.Utility;
 using Newtonsoft.Json;
 using UnityEngine.AddressableAssets;
+using UWE;
+using Task = System.Threading.Tasks.Task;
 
 namespace BZtoSNLoader;
 
@@ -14,7 +17,7 @@ public static class BZAudioLoader
 {
     public readonly record struct FMODAudioName(string Path);
 
-    public static void LoadAudioAsync(FMODAudioName audioName, IOut<byte[]> result)
+    public static IEnumerator LoadAudioAsync(FMODAudioName audioName, IOut<byte[]> result)
     {
         if (!BZGameData.BelowZeroFound) {
             throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
@@ -26,12 +29,16 @@ public static class BZAudioLoader
             throw new InvalidKeyException($"Invalid BZ FMOD Audio Name: \"{audioName}\"!");
         }
 
-        FModReader reader = FModBankParser.FModBankParser.LoadSoundBank(
-            new(@$"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\StreamingAssets\{locator.bankName}.bank"));
+        Task decode = Task.Run(() =>
+        {
+            FModReader reader = FModBankParser.FModBankParser.LoadSoundBank(
+                new(@$"C:\Program Files (x86)\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\StreamingAssets\{locator.bankName}.bank"));
 
-        reader.SoundBankData[0].Samples[locator.sampleIndex].RebuildAsStandardFileFormat(out byte[] data, out _);
-
-        result.Set(data);
+            reader.SoundBankData[0].Samples[locator.sampleIndex].RebuildAsStandardFileFormat(out byte[] data, out _);
+            reader = null; // for gc stuff don't remove
+            result.Set(data);
+        });
+        yield return AsyncUtils.WaitUntilTaskComplete(decode);
     }
 
     private static void DumpAudioPaths()

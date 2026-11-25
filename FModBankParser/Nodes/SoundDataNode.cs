@@ -3,6 +3,7 @@ using Fmod5Sharp.FmodTypes;
 using Fmod5Sharp.Util;
 using SubstreamSharp;
 using System.Diagnostics;
+using FModBankParser.Metadata;
 
 namespace FModBankParser.Nodes;
 
@@ -10,18 +11,18 @@ public class SoundDataNode
 {
     public readonly FmodSoundBank? SoundBank;
 
-    public SoundDataNode(BinaryReader Ar, long nodeStart, uint size, int soundDataIndex)
+    public SoundDataNode(BinaryReader Ar, long nodeStart, uint size, int soundDataIndex, SoundDataInfo soundDataInfo)
     {
-        uint fsbOffset = FModReader.SoundDataInfo!.Header[soundDataIndex].FSBOffset;
+        uint fsbOffset = soundDataInfo.Header[soundDataIndex].FSBOffset;
         var relativeOffset = fsbOffset - nodeStart - 8;
         Stream fsbStream = Ar.BaseStream.Substream(fsbOffset, size);
 
         // In case FSB5 is encrypted
-        if (!Fsb5Decryption.IsFSB5Header(fsbStream))
+        /*if (!Fsb5Decryption.IsFSB5Header(fsbStream))
         {
             Debug.WriteLine($"Encrypted FSB5 header at {fsbOffset}");
             fsbStream = Fsb5Decryption.Decrypt(fsbStream, FModReader.EncryptionKey);
-        }
+        }*/
 
         try
         {

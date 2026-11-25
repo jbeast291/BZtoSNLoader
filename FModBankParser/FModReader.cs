@@ -18,8 +18,8 @@ public class FModReader
     public readonly string BankName;
     public static int Version => FormatInfo.FileVersion;
     public static FFormatInfo FormatInfo;
-    public static SoundDataInfo? SoundDataInfo;
-    public static byte[]? EncryptionKey;
+    public SoundDataInfo? SoundDataInfo;
+    public byte[]? EncryptionKey;
     public StringTable? StringTable;
     public SoundTable? SoundTable;
     public FBankInfo BankInfo;
@@ -279,7 +279,7 @@ public class FModReader
 
                 case ERIFFID.CHUNKID_SOUNDDATA: // Sound Data Node
                     {
-                        var node = new SoundDataNode(Ar, nodeStart, nodeSize, soundDataIndex);
+                        var node = new SoundDataNode(Ar, nodeStart, nodeSize, soundDataIndex, SoundDataInfo!);
                         visitedSoundNode = true;
                         soundDataIndex++;
                         if (node.SoundBank != null)
