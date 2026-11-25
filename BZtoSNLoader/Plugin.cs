@@ -40,7 +40,7 @@ internal sealed class Plugin : BaseUnityPlugin
             using BinaryReader br = new(stream);
             byte[] bytes = br.ReadBytes((int)stream.Length);
             Assembly.Load(bytes);
-            Logger.LogInfo("Loaded Assembly: " + resourceName);
+            Logger.LogInfo("Loaded Resource Assembly: " + resourceName);
         }
     }
 

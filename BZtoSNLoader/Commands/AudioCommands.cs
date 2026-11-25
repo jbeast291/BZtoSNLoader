@@ -22,9 +22,8 @@ internal static class AudioCommands
         yield return BZAudioLoader.LoadAudioAsync(new(bzSoundName), requestResult);
         byte[] result = requestResult.Get();
         CreateEventMemory(result, bzSoundName);
-        yield return null;
+        RuntimeManager.StudioSystem.flushCommands();
         FMODUWE.PlayOneShot(AudioUtils.GetFmodAsset(bzSoundName), Player.main.transform.position);
-
     }
 
     private static void CreateEventMemory(byte[] audioFile, string eventName)
