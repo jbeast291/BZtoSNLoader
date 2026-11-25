@@ -19,8 +19,8 @@ internal static class BzCreaturesAudio
         var requestedSounds = BzSoundRequestLocator.GetAllRequestedBelowZeroSounds();
         foreach (var requested in requestedSounds)
         {
-            yield return RegisterSound(PathPrefix + requested, requested.Item2,
-                requested.Item3, new BZAudioLoader.FMODRawName(requested.Item1));
+            yield return RegisterSound(PathPrefix + requested.EventName, requested.MinDistance,
+                requested.MaxDistance, new BZAudioLoader.FMODRawName(requested.EventName));
         }
     }
 
