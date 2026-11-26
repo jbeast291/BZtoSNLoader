@@ -43,7 +43,7 @@ public class BzCreatureVoice : MonoBehaviour, IScheduledUpdateBehaviour
 
     private void Start()
     {
-        _timePlayNext = Time.time + Random.Range(minDelay, maxDelay);
+        _timePlayNext = Time.time + Random.Range(minDelay, maxDelay) * Random.value;
     }
 
     public void ScheduledUpdate()
