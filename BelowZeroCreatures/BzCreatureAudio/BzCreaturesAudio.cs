@@ -14,6 +14,8 @@ internal static class BzCreaturesAudio
     public const string PathPrefix = "bz_creatures_mod_";
     
     private const string CreaturesBus = "bus:/master/SFX_for_pause/PDA_pause/all/SFX/creatures";
+
+    private static readonly MODE Mode = MODE.OPENMEMORY | MODE._3D | MODE._3D_LINEARSQUAREROLLOFF | MODE.CREATESAMPLE;
     
     public static IEnumerator RegisterAudio()
     {
@@ -45,7 +47,7 @@ internal static class BzCreaturesAudio
                 length = (uint)result.Length,
             };
 
-            RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE._3D | MODE._3D_LINEARSQUAREROLLOFF | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
+            RuntimeManager.CoreSystem.createSound(result, Mode, ref exinfo, out Sound sound);
             sound.set3DMinMaxDistance(request.MinDistance, request.MaxDistance);
         
             CustomSoundHandler.RegisterCustomSound(eventName, sound, CreaturesBus);
@@ -64,7 +66,7 @@ internal static class BzCreaturesAudio
                     length = (uint)result.Length,
                 };
 
-                RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE._3D | MODE._3D_LINEARSQUAREROLLOFF | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
+                RuntimeManager.CoreSystem.createSound(result, Mode, ref exinfo, out Sound sound);
                 sound.set3DMinMaxDistance(request.MinDistance, request.MaxDistance);
                 allSounds[i] = sound;
             }
