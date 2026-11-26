@@ -7,7 +7,7 @@
     </ItemGroup>
     
     <Target Condition="Exists('.\..\TargetDirectories.targets')" Name="CopyAssemblyToBelowZeroCreaturesMod" AfterTargets="Build">
-        <MakeDir Directories="$(BepInPluginsDir)/BelowZeroCreatures"/>
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInPluginsDir)/BelowZeroCreatures"/>
+        <MakeDir Directories="$(ModDir)\..\BelowZeroCreatures"/>
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)\..\BelowZeroCreatures"/>
     </Target>
 </Project>
