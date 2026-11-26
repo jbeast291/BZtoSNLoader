@@ -10,7 +10,7 @@ namespace BZtoSNLoader;
 
 
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
-[BepInDependency("com.snmodding.nautilus", "1.0.0.56")]
+[BepInDependency("com.snmodding.nautilus", "1.0.0.57")]
 internal sealed class Plugin : BaseUnityPlugin
 {
     internal new static ManualLogSource Logger { get; private set; }
