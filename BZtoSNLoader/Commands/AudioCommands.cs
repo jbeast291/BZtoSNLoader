@@ -35,7 +35,7 @@ internal static class AudioCommands
             length = (uint)audioFile.Length,
         };
 
-        RuntimeManager.CoreSystem.createSound(audioFile, MODE.OPENMEMORY, ref exinfo, out Sound sound);
+        RuntimeManager.CoreSystem.createSound(audioFile, MODE.OPENMEMORY | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
         CustomSoundHandler.RegisterCustomSound(eventName, sound, "bus:/master");
     }
 

@@ -48,7 +48,7 @@ public static class BZAudioLoader
     ///     cbsize = Marshal.SizeOf&lt;CREATESOUNDEXINFO&gt;(),
     ///     length = (uint)result.Length,
     /// };
-    /// RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY, ref exinfo, out Sound sound);
+    /// RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
     /// CustomSoundHandler.RegisterCustomSound(eventName, sound, "bus:/master");
     /// </code>
     /// </example>
