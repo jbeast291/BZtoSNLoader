@@ -5,8 +5,6 @@ namespace BelowZeroCreatures.BzCreatureAudio;
 
 internal static class BzSoundRequestLocator
 {
-    private const float MIN_DIST_TEMPORARY = 5;
-    
     public static IEnumerable<SoundRequest> GetAllRequestedBelowZeroSounds()
     {
         var set = new List<SoundRequest>();
@@ -17,13 +15,7 @@ internal static class BzSoundRequestLocator
             {
                 if (attribute is not RequestBzSoundsAttribute soundRequest) continue;
                 
-                foreach (var soundName in soundRequest.SoundNames)
-                    set.Add(new SoundRequest
-                    {
-                        EventName = soundName,
-                        MinDistance = MIN_DIST_TEMPORARY,
-                        MaxDistance = soundRequest.MaxDistance,
-                    });
+                set.AddRange(soundRequest.SoundRequests);
             }
         }
         return set;
