@@ -31,9 +31,9 @@ public static class BZAudioLoader
     /// <typeparam name="Action{string, byte[]}"></typeparam>
     public union FMODRawNameCallback(Action<byte[]>, Action<string, byte[]>);
 
-    private static bool canRegister = true;
+    private static bool allowNewWaitScreenAudioRequests = true;
     private static readonly Dictionary<string, List<RawNameLoadRequest>> waitScreenLoadRequests = new();
-    private record struct RawNameLoadRequest(
+    private readonly record struct RawNameLoadRequest(
         FMODRawName rawName, 
         FMODFileLocatorFormat.FMODAudioLocator locator,
         FMODRawNameCallback onLoaded
@@ -43,8 +43,7 @@ public static class BZAudioLoader
     /// Queue's an audio request
     /// </summary>
     /// <param name="rawName">The raw audio file from BZ. See <see cref="FMODRawName"/> for more details.</param>
-    /// <param name="result">The interface used to output the resulting audio file as an array of bytes.
-    /// See <seealso cref="TaskResult{T}"/>.</param>
+    /// TODO: docs update
     /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
     /// the FMODRawName does not exist within BZ</exception>
     public static void RequestWaitScreenLoadAudio(FMODRawName rawName, FMODRawNameCallback onLoaded)
@@ -53,7 +52,7 @@ public static class BZAudioLoader
 
         GetLocator(rawName, out var locator);
 
-        if(!canRegister) throw new Exception("Cannot register wait screen audio this late!");
+        if(!allowNewWaitScreenAudioRequests) throw new Exception("Cannot register wait screen audio this late!");
 
         if (!waitScreenLoadRequests.TryGetValue(locator.bankName, 
                 out List<RawNameLoadRequest> requests)
@@ -91,6 +90,7 @@ public static class BZAudioLoader
             FmodSoundBank soundBank = reader.SoundBankData[0];
             yield return ProcessBankAudioRequests(soundBank, requests);
         }
+        allowNewWaitScreenAudioRequests = false;
     }
 
     private static IEnumerator ProcessBankAudioRequests(FmodSoundBank soundBank, List<RawNameLoadRequest> requests)
