@@ -1,3 +1,4 @@
+using BelowZeroCreatures.BzCreatureAudio;
 using ComponentPortFramework;
 using UnityEngine;
 
@@ -17,5 +18,15 @@ public abstract class BzCreatureModifier
             dropTool.customAnimToolName = HoldAnimationParam;
         }
         ModifyPrefab(prefab);
+    }
+
+    protected void AddMeleeAttackSound(GameObject prefab, FMODAsset asset, float interval, Transform bone = null)
+    {
+        Transform toAddTo = prefab.transform;
+        if (bone) toAddTo = bone;
+        var biteEmitter = toAddTo.gameObject.AddComponent<FMOD_StudioEventEmitter>();
+        biteEmitter.path = asset.path;
+        biteEmitter.minInterval = interval;
+        prefab.GetComponent<MeleeAttack>().attackSound = biteEmitter;
     }
 }
