@@ -28,6 +28,12 @@ internal static class BZGameData
         Plugin.Logger.LogInfo("Loaded Dependency Data!");
     }
 
+    internal static void ThrowIfNotFound() {
+        if (!BelowZeroFound) {
+            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
+        }
+    }
+
     internal static string GetPathToBelowZeroBundle(string bundleName) 
         => Path.Combine(paths.AddressablesFolder, bundleName);
 

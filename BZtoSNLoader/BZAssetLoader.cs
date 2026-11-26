@@ -41,10 +41,8 @@ public static class BZAssetLoader
     /// </code></example>
     public static IEnumerator LoadAssetAsync<T>(AssetKey asset, IOut<T> result) where T : UnityEngine.Object
     {
-        if (!BZGameData.BelowZeroFound)
-        {
-            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
-        }
+        BZGameData.ThrowIfNotFound();
+
         TaskResult<AssetBundle> bundleRequest = new();
         yield return LoadAssetWithDependencies(asset, bundleRequest);
 

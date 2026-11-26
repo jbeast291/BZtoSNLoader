@@ -27,9 +27,8 @@ public static class BZLocalizationLoader
     /// <exception cref="FileNotFoundException">An exception is thrown if the designated language file, AND the default fallback of English.json, could not be found.</exception>
     public static string[] GetLocalization(string[] requestedKeys, bool warnMissing, string languageOverride = null)
     {
-        if (!BZGameData.BelowZeroFound) {
-            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
-        }
+        BZGameData.ThrowIfNotFound();
+
         if (!WaitScreen.IsWaiting) {
             throw new Exception("Below Zero localization cannot be accessed outside of the WaitScreen.");
         }

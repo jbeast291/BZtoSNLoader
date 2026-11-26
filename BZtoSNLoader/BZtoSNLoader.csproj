@@ -5,7 +5,7 @@
         <AssemblyName>BZtoSNLoader</AssemblyName>
         <Version>1.1.0</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>14</LangVersion>
+        <LangVersion>15</LangVersion>
         <RootNamespace>BZtoSNLoader</RootNamespace>
         <BepInExPluginGuid>com.snmodding.BZtoSNLoader</BepInExPluginGuid>
         <BepInExPluginName>Below Zero to Subnautica Loader</BepInExPluginName>

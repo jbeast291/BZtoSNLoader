@@ -5,9 +5,11 @@ using System.IO;
 using DependencyDataFormat;
 using Fmod5Sharp.FmodTypes;
 using FModBankParser;
+using Nautilus.Handlers;
 using Nautilus.Utility;
 using Newtonsoft.Json;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Bindings;
 using Task = System.Threading.Tasks.Task;
 
 namespace BZtoSNLoader;
@@ -22,47 +24,108 @@ public static class BZAudioLoader
     /// <param name="name">The name of the file, do not include any extensions</param>
     /// <example><c>vo_Log_Cine_MeetAl_P5_Component_03</c></example>
     public readonly record struct FMODRawName(string name);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="Action{string, byte[]}"></typeparam>
+    public union FMODRawNameCallback(Action<byte[]>, Action<string, byte[]>);
+
+    private static bool canRegister = true;
+    private static readonly Dictionary<string, List<RawNameLoadRequest>> waitScreenLoadRequests = new();
+    private record struct RawNameLoadRequest(
+        FMODRawName rawName, 
+        FMODFileLocatorFormat.FMODAudioLocator locator,
+        FMODRawNameCallback onLoaded
+    );
 
     /// <summary>
-    /// Asynchronously loads the given raw audio file from a BZ FMOD bank file.
+    /// Queue's an audio request
     /// </summary>
-    /// <remarks>
-    /// This method can cause GC stutters as it loads entire banks into memory.
-    /// It is preferred to load sounds on the loading screen/main menu before actual gameplay.
-    /// </remarks>
     /// <param name="rawName">The raw audio file from BZ. See <see cref="FMODRawName"/> for more details.</param>
     /// <param name="result">The interface used to output the resulting audio file as an array of bytes.
     /// See <seealso cref="TaskResult{T}"/>.</param>
     /// <exception cref="Exception">This method throws an exception if 1) the Below Zero installation was not found or 2)
     /// the FMODRawName does not exist within BZ</exception>
-    /// <example>The following example code loads an Alan voiceline and registers it with Nautilus
-    /// custom sound's handler on the <c>"bus:/master"</c>. It must be executed in a coroutine.
-    /// <code>
-    /// TaskResult&lt;byte[]&gt; requestResult = new();
-    /// yield return BZAudioLoader.LoadRawAudioAsync(new("vo_Log_Cine_MeetAl_P5_Component_03"), requestResult);
-    /// byte[] result = requestResult.Get();
-    /// </code>
-    /// Register with nautilus:
-    /// <code>
-    /// CREATESOUNDEXINFO exinfo = new() {
-    ///     cbsize = Marshal.SizeOf&lt;CREATESOUNDEXINFO&gt;(),
-    ///     length = (uint)result.Length,
-    /// };
-    /// RuntimeManager.CoreSystem.createSound(result, MODE.OPENMEMORY | MODE.CREATESAMPLE, ref exinfo, out Sound sound);
-    /// CustomSoundHandler.RegisterCustomSound(eventName, sound, "bus:/master");
-    /// </code>
-    /// </example>
-    public static IEnumerator LoadRawAudioAsync(FMODRawName rawName, IOut<byte[]> result)
+    public static void RequestWaitScreenLoadAudio(FMODRawName rawName, FMODRawNameCallback onLoaded)
     {
-        if (!BZGameData.BelowZeroFound) {
-            throw new Exception("BZ Asset Loader not initialized! Check the console for previous path errors");
+        BZGameData.ThrowIfNotFound();
+
+        GetLocator(rawName, out var locator);
+
+        if(!canRegister) throw new Exception("Cannot register wait screen audio this late!");
+
+        if (!waitScreenLoadRequests.TryGetValue(locator.bankName, 
+                out List<RawNameLoadRequest> requests)
+        ) {
+            requests = new();
+            waitScreenLoadRequests[locator.bankName] = requests;
         }
 
-        if (!BZGameData.fmodFileLocatorData.fileNameToLocation.TryGetValue(rawName.name, 
-                out FMODFileLocatorFormat.FMODAudioLocator locator)
-        ) {
+        requests.Add(new RawNameLoadRequest(rawName, locator, onLoaded));
+    }
+
+    private static void GetLocator(FMODRawName rawName, out FMODFileLocatorFormat.FMODAudioLocator locator) {
+        if (!BZGameData.fmodFileLocatorData.fileNameToLocation.TryGetValue(rawName.name, out locator)) {
             throw new InvalidKeyException($"Invalid BZ FMOD Audio Name: \"{rawName}\"!");
         }
+    }
+
+    internal static void Register()
+    {
+        WaitScreenHandler.RegisterLateAsyncLoadTask(MyPluginInfo.PLUGIN_NAME, ProcessAllAudioRequests);
+    }
+
+    private static IEnumerator ProcessAllAudioRequests(WaitScreenHandler.WaitScreenTask task)
+    {
+        foreach ((string bankName, List<RawNameLoadRequest> requests) in waitScreenLoadRequests)
+        {
+            FModReader reader = null;
+            Task bankLoad = Task.Run(() => {
+                reader = FModBankParser.FModBankParser.LoadSoundBank(
+                    new(BZGameData.GetBankFilePath(bankName))
+                );
+            });
+            yield return AsyncUtils.WaitUntilTaskComplete(bankLoad);
+
+            FmodSoundBank soundBank = reader.SoundBankData[0];
+            yield return ProcessBankAudioRequests(soundBank, requests);
+        }
+    }
+
+    private static IEnumerator ProcessBankAudioRequests(FmodSoundBank soundBank, List<RawNameLoadRequest> requests)
+    {
+        foreach (RawNameLoadRequest request in requests)
+        {
+            byte[] data = null;
+            Task fileLoad = Task.Run(() => {
+                soundBank
+                    .Samples[request.locator.sampleIndex]
+                    .RebuildAsStandardFileFormat(out data, out _);
+            });
+            yield return AsyncUtils.WaitUntilTaskComplete(fileLoad);
+
+            try {
+                switch (request.onLoaded)
+                {
+                    case Action<byte[]> action: 
+                        action.Invoke(data); 
+                        break;
+                    case Action<string, byte[]> actionWithName:
+                        actionWithName.Invoke(request.rawName.name, data);
+                        break;
+                }
+            } catch (Exception e) {
+                Plugin.Logger.LogError("Error while executing onLoaded callback: " + e.Message);
+            }
+        }
+    }
+
+    internal static IEnumerator LoadRawAudioAsync(FMODRawName rawName, IOut<byte[]> result) 
+    {
+        BZGameData.ThrowIfNotFound();
+
+        GetLocator(rawName, out var locator);
 
         Task decode = Task.Run(() => {
             FModReader reader = FModBankParser.FModBankParser.LoadSoundBank(
