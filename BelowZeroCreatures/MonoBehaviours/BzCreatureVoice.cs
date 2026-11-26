@@ -8,7 +8,7 @@ public class BzCreatureVoice : MonoBehaviour, IScheduledUpdateBehaviour
 {
     private static readonly int CallVariantParam = Animator.StringToHash("callVariant");
     [SerializeField] private int roarTriggerParam;
-    [SerializeField] private FMOD_CustomEmitter emitter;
+    [SerializeField] internal FMOD_CustomEmitter emitter;
     [SerializeField] private Animator animator;
     [SerializeField] private FMODAsset[] sounds;
     [SerializeField] private float minDelay;
@@ -16,10 +16,11 @@ public class BzCreatureVoice : MonoBehaviour, IScheduledUpdateBehaviour
     [SerializeField] internal int minCallVariant = 1;
     [SerializeField] internal int maxCallVariant;
     [SerializeField] internal bool callVariantMatchesSoundIndex;
+    [SerializeField] internal Transform emitterTransform;
     
     private float _timePlayNext;
 
-    public static BzCreatureVoice ApplyToCreature(GameObject creaturePrefab, string triggerName, float minDelay, float maxDelay,
+    public static BzCreatureVoice StartApplyingToCreature(GameObject creaturePrefab, string triggerName, float minDelay, float maxDelay,
         params string[] roarSounds)
     {
         var roar = creaturePrefab.AddComponent<BzCreatureVoice>();
@@ -35,11 +36,7 @@ public class BzCreatureVoice : MonoBehaviour, IScheduledUpdateBehaviour
         
         roar.roarTriggerParam = Animator.StringToHash(triggerName);
         
-        // Add emitter
-        var emitter = creaturePrefab.AddComponent<FMOD_CustomEmitter>();
-        emitter.followParent = true;
-        emitter.playOnAwake = false;
-        roar.emitter = emitter;
+        roar.emitterTransform = creaturePrefab.transform;
 
         return roar;
     }
@@ -92,15 +89,32 @@ public class BzCreatureVoice : MonoBehaviour, IScheduledUpdateBehaviour
 
 public static class BzCreatureVoiceExtensions
 {
-    public static void WithCallAnimationVariants(this BzCreatureVoice voice, int maxCallVariant, int minCallVariant = 1)
+    public static BzCreatureVoice WithCallAnimationVariants(this BzCreatureVoice voice, int maxCallVariant, int minCallVariant = 1)
     {
         voice.minCallVariant = minCallVariant;
         voice.maxCallVariant = maxCallVariant;
+        return voice;
     }
 
-    public static void WithCallAnimationMatchingSoundIndex(this BzCreatureVoice voice)
+    public static BzCreatureVoice WithCallAnimationMatchingSoundIndex(this BzCreatureVoice voice)
     {
         voice.callVariantMatchesSoundIndex = true;
         voice.minCallVariant = 1;
+        return voice;
+    }
+    
+    public static BzCreatureVoice WithChildEmitterTransform(this BzCreatureVoice voice, Transform emitterTransform)
+    {
+        voice.emitterTransform = emitterTransform;
+        return voice;
+    }
+
+    public static void CompleteAndApply(this BzCreatureVoice voice)
+    {
+        // Add emitter
+        var emitter = voice.emitterTransform.gameObject.AddComponent<FMOD_CustomEmitter>();
+        emitter.followParent = true;
+        emitter.playOnAwake = false;
+        voice.emitter = emitter;
     }
 }
