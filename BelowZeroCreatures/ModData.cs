@@ -130,6 +130,7 @@ internal static class ModData
         // SHARKS
         { "BruteShark", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 200) },
         { "SquidShark", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 1000) },
+        { "SquidShark_LilyPads", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 1000) },
         { "Cryptosuchus", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 200) },
         { "SnowStalker", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 200) },
         { "SnowStalkerBaby", new(BehaviourType.Shark, LargeWorldEntity.CellLevel.Medium, 200) },
