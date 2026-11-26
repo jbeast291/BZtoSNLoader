@@ -21,7 +21,10 @@
         <PackageReference Include="UnityEngine.Modules" Version="2019.4.36" IncludeAssets="compile"/>
         <PackageReference Include="Subnautica.BelowZero.GameLibs" Version="53115.0.0-r.0"/>
         <PackageReference Include="SubnauticaZero.Nautilus" Version="1.*-*" PrivateAssets="all"/>
-        <PackageReference Include="PolySharp" Version="1.15.0"/>
+        <PackageReference Include="PolySharp" Version="1.17.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
