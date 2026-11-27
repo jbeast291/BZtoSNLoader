@@ -9,7 +9,7 @@ using ILogger = ComponentPortFramework.ILogger;
 namespace BelowZeroCreatures;
 
 [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-[BepInDependency("com.snmodding.nautilus", "1.0.0.56")]
+[BepInDependency("com.snmodding.nautilus", "1.0.0.57")]
 [BepInDependency("com.snmodding.BZtoSNLoader", "1.1.0")]
 public class Plugin : BaseUnityPlugin
 {
