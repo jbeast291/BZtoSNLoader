@@ -40,7 +40,7 @@ internal static class BzCreaturesAudio
         if (soundFiles.Length == 1)
         {
             TaskResult<byte[]> requestResult = new();
-            yield return BZAudioLoader.LoadRawAudioAsync(new BZAudioLoader.FMODRawName(soundFiles[0]), requestResult);
+            yield return BZAudioLoader.LoadRawAudioAsync(new BZAudioLoader.FMODRaw(soundFiles[0]), requestResult);
             byte[] result = requestResult.Get();
             CREATESOUNDEXINFO exinfo = new() {
                 cbsize = Marshal.SizeOf<CREATESOUNDEXINFO>(),
@@ -59,7 +59,7 @@ internal static class BzCreaturesAudio
             for (int i = 0; i < soundFiles.Length; i++)
             {
                 TaskResult<byte[]> requestResult = new();
-                yield return BZAudioLoader.LoadRawAudioAsync(new BZAudioLoader.FMODRawName(soundFiles[i]), requestResult);
+                yield return BZAudioLoader.LoadRawAudioAsync(new BZAudioLoader.FMODRaw(soundFiles[i]), requestResult);
                 byte[] result = requestResult.Get();
                 CREATESOUNDEXINFO exinfo = new() {
                     cbsize = Marshal.SizeOf<CREATESOUNDEXINFO>(),
